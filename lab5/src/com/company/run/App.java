@@ -20,7 +20,7 @@ public class App {
 //            sizer.tryToMaximize();
 //        }catch (InterruptedException e){
 //            System.out.println("Расширьте экран.");
-//        }
+//        } 
         System.out.println("Добро пожаловать в обитель моей лабы 5. Здесь вы можете ознакомиться с коллекцией LabWorks.");
         CollectionLogic collectionLogic0 = new CollectionLogic(System.getenv("VARRY"));   // переменная окружения
 //        CollectionLogic collectionLogic = new CollectionLogic(); // добавьте в аргумент путь к файлу коллекции

@@ -63,7 +63,7 @@ public class CollectionLogic {
                     userCommand = commandReader.nextLine().trim().split(" ", 2);
                 }
                 switch (userCommand[0]) {
-                    case "":
+                     case "":
                         break;
                     case "help":
                         commandInformer.help(userCommand);
@@ -127,7 +127,7 @@ public class CollectionLogic {
             System.out.println(CommandInformer.PS1
                     + "Возникла непредвиденная ошибка. Программа остановлена, обратитесь в поддержку.");
             fileManager.makeDump(userCommand, collection);
-            exception.printStackTrace();
+//            exception.printStackTrace();
             System.exit(0);
         } catch (ArrayIndexOutOfBoundsException exception) {
             if (!isScript) {
