@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>C:/Users/amirh/IdeaProjects/itmoProgramming/lab5/src</OriginalElement>
+  <nodes>
+    <node x="734.0" y="888.0">com.company.data.secretDontOpen.ScreenSizer</node>
+    <node x="649.0" y="563.0">com.company.data.initial.Coordinates</node>
+    <node x="653.0" y="0.0">com.company.data.initial.Person</node>
+    <node x="866.0" y="563.0">com.company.data.secretDontOpen.SecretExit</node>
+    <node x="939.0" y="888.0">com.company.run.App</node>
+    <node x="0.0" y="563.0">com.company.data.initial.Location</node>
+    <node x="274.0" y="563.0">com.company.logic.FileLogic</node>
+    <node x="0.0" y="0.0">com.company.logic.CollectionLogic</node>
+    <node x="0.0" y="888.0">com.company.logic.CommandInformer</node>
+    <node x="273.0" y="0.0">com.company.data.initial.LabWork</node>
+    <node x="293.0" y="888.0">com.company.data.initial.Difficulty</node>
+    <node x="516.0" y="888.0">com.company.data.initial.Country</node>
+  </nodes>
+  <notes />
+  <edges />
+  <settings layout="Hierarchic" zoom="0.5087040618955513" showDependencies="false" x="547.0000000000001" y="506.9999999999999" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Constructors</Category>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
