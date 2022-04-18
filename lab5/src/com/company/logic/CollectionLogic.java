@@ -3,9 +3,12 @@ package com.company.logic;
 
 import com.company.data.initial.*;
 import com.company.data.secretDontOpen.SecretExit;
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.*;
@@ -18,7 +21,6 @@ public class CollectionLogic {
     private FileLogic fileManager;
     private String[] userCommand;
     private final Scanner commandReader;
-    private BufferedReader br;
     private boolean isScript;
     private LocalDate creationTimeOfCollection;
     private LinkedHashSet<LabWork> collection;
@@ -63,7 +65,7 @@ public class CollectionLogic {
                     userCommand = commandReader.nextLine().trim().split(" ", 2);
                 }
                 switch (userCommand[0]) {
-                     case "":
+                    case "":
                         break;
                     case "help":
                         commandInformer.help(userCommand);
@@ -186,34 +188,35 @@ public class CollectionLogic {
         Location location = null;
         int yForCoordinates = 0, xForLocation = 0, zForLocation = 0;
         double yForLocation = 0;
-
         Float minimalPoint = null;
 
         try {
             if (isScript) {
-                System.out.print(CommandInformer.PS1 + "Попытка добавить элемент в коллекцию...  ");
-
                 try {
-                    nameOfLabWork = br.readLine().trim();
+                    String[] elementValueList = userCommand[1].split(";");
+                    nameOfLabWork = elementValueList[0];
 //                nameOfLabWork += commandReader.nextLine();
-                    xForCoordinates = Long.parseLong(br.readLine().trim());
-                    yForCoordinates = Integer.parseInt(br.readLine().trim());
+                    xForCoordinates = Long.parseLong(elementValueList[1]);
+                    yForCoordinates = Integer.parseInt(elementValueList[2]);
                     coordinatesOfLab = new Coordinates(xForCoordinates, yForCoordinates);
-                    minimalPoint = Float.parseFloat(br.readLine().trim());
-                    difficulty = Difficulty.valueOf(br.readLine().trim());
+                    minimalPoint = Float.parseFloat(elementValueList[3]);
+                    difficulty = Difficulty.valueOf(elementValueList[4]);
 
-                    nameOfPerson = br.readLine().trim();
+                    nameOfPerson = elementValueList[5];
 //                nameOfPerson += commandReader.nextLine();
-                    birthday = LocalDate.parse(br.readLine().trim());
-                    nationality = Country.valueOf(br.readLine().trim());
-                    xForLocation = Integer.parseInt(br.readLine().trim());
-                    yForLocation = Double.parseDouble(br.readLine().trim());
-                    zForLocation = Integer.parseInt(br.readLine().trim());
+                    birthday = LocalDate.parse(elementValueList[6]);
+                    nationality = Country.valueOf(elementValueList[7]);
+                    xForLocation = Integer.parseInt(elementValueList[8]);
+                    yForLocation = Double.parseDouble(elementValueList[9]);
+                    zForLocation = Integer.parseInt(elementValueList[10]);
                     location = new Location(xForLocation, yForLocation, zForLocation);
                     Person author = new Person(nameOfPerson, birthday, nationality, location);
+
+
                     return new LabWork(nameOfLabWork, coordinatesOfLab, minimalPoint, difficulty, author);
                 } catch (Exception exception) {
                     System.out.println("Элемент не добавлен, так как в данных была ошибка.");
+
                 }
 
             } else {
@@ -428,7 +431,7 @@ public class CollectionLogic {
             collection.add(newLabWork);
             System.out.println(CommandInformer.PS1 + "Спасибо. Лабораторная работа добавлена в коллекцию.");
         } else {
-            System.out.println("Аргумент newLabWork пришел в в неправильном виде!");
+            System.out.println("Аргумент newLabWork пришел в неправильном виде!");
         }
     }
 
@@ -505,14 +508,6 @@ public class CollectionLogic {
                 String approve = null;
                 if (!isScript) {
                     approve = commandReader.next().trim().toLowerCase(Locale.ROOT);
-                } else {
-                    try {
-                        approve = br.readLine().trim();
-                    } catch (IOException exception1) {
-                        fileManager.makeDump(userCommand, collection);
-                        exception1.printStackTrace();
-                        System.exit(0);
-                    }
                 }
                 try {
                     if (approve.equals("y") || approve.equals("yes")) {
@@ -537,6 +532,7 @@ public class CollectionLogic {
      * Executes the script.
      */
     public void executeScript() {
+        BufferedReader br;
         String scriptPath = userCommand[1];
         if (nameOfFilesThatWasBroughtToExecuteMethod.contains(scriptPath)) {
             System.out.println("В файле присутствует конструкция, которая приводит к рекурсии!\n" +
@@ -551,6 +547,13 @@ public class CollectionLogic {
                     String line = "";
                     while ((line = br.readLine()) != null) {
                         userCommand = line.trim().split(" ", 2);
+                        if (userCommand[0].toLowerCase(Locale.ROOT).equals("add")) {
+                            StringBuilder elementLine = new StringBuilder();
+                            for(int i = 0; i < 11; i++){
+                                elementLine.append(br.readLine().trim()).append(";");
+                            }
+                            userCommand = new String[]{"add", elementLine.toString()};
+                        }
                         interactiveMode();
                     }
                     System.out.println(CommandInformer.PS1 + "Исполнение скрипта завершено.");
@@ -568,7 +571,8 @@ public class CollectionLogic {
             isScript = false;
             interactiveMode();
             nameOfFilesThatWasBroughtToExecuteMethod.remove(scriptPath);
-        }nameOfFilesThatWasBroughtToExecuteMethod.clear();
+        }
+        nameOfFilesThatWasBroughtToExecuteMethod.clear();
     }
 
     /**
@@ -609,14 +613,6 @@ public class CollectionLogic {
                 String approve = null;
                 if (!isScript) {
                     approve = commandReader.next().trim().toLowerCase(Locale.ROOT);
-                } else {
-                    try {
-                        approve = br.readLine().trim();
-                    } catch (IOException exception1) {
-                        fileManager.makeDump(userCommand, collection);
-                        exception1.printStackTrace();
-                        System.exit(0);
-                    }
                 }
                 try {
                     if (approve.equals("y") || approve.equals("yes")) {
@@ -831,7 +827,7 @@ public class CollectionLogic {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(commandInformer, creationTimeOfCollection, commandReader, isScript, br, collection);
+        int result = Objects.hash(commandInformer, creationTimeOfCollection, commandReader, isScript, collection);
         result = 31 * result + Arrays.hashCode(userCommand);
         return result;
     }
@@ -844,7 +840,6 @@ public class CollectionLogic {
         return isScript == that.isScript && Objects.equals(commandInformer, that.commandInformer)
                 && Arrays.equals(userCommand, that.userCommand) && Objects.equals(creationTimeOfCollection, that.creationTimeOfCollection)
                 && Objects.equals(commandReader, that.commandReader)
-                && Objects.equals(br, that.br)
                 && Objects.equals(collection, that.collection);
     }
 
@@ -855,5 +850,6 @@ public class CollectionLogic {
                 append("\n Дата инициализации: ").append(creationTimeOfCollection).
                 append("\n Количество элементов: ").append(collection.size());
         return collectionInfo.toString();
+
     }
 }

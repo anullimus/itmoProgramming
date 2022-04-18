@@ -1,16 +1,14 @@
 show
 add
-Lab27
-3124
-1324
-32
+Lab0228
+3634
+434
+12
 NORMAL
-Tommy
-1300-11-11
+Piter
+1981-02-01
 RUSSIA
 4312
 1234
 1234
-updateId 1
-maxByAuthor
 show
