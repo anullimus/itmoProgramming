@@ -1,48 +1,27 @@
 package com.company.server.command;
 
+import com.company.client.MyValidator;
 import com.company.common.data.initial.LabWork;
-import com.company.server.logic.CommandInformer;
-import com.company.server.logic.NewElementReader;
 
 import java.util.LinkedHashSet;
 
 public class AddIfMinCommand implements Command<LinkedHashSet<LabWork>> {
-    private final LinkedHashSet<LabWork> collection;
-    private final boolean isScript;
-    private final String argumentLine;
-    private final NewElementReader newElementReader;
+    private LinkedHashSet<LabWork> collection;
+    private final MyValidator myValidator;
 
-    public AddIfMinCommand(LinkedHashSet<LabWork> collection, boolean isScript, String argumentLine) {
+    public AddIfMinCommand(LinkedHashSet<LabWork> collection) {
         this.collection = collection;
-        this.isScript = isScript;
-        this.argumentLine = argumentLine;
-        this.newElementReader = new NewElementReader();
+        myValidator = new MyValidator();
     }
 
     @Override
     public LinkedHashSet<LabWork> execute() {
-        LabWork labWork;
-        if (isScript) {
-            labWork = newElementReader.readNewElementFromScript(argumentLine);
+        boolean success = myValidator.checkAddIfMinCommand(collection);
+        if (success) {
+            collection = myValidator.getCollection();
+            System.out.println("Элемент успешно добавлен");
         } else {
-            labWork = newElementReader.readNewElementFromConsole();
-        }
-        if (collection.size() == 0) {
-            System.out.println("Коллекция пуста.");
-        } else {
-            for (LabWork lw : collection) {
-                if (labWork.getMinimalPoint().compareTo(lw.getMinimalPoint()) < 0) {
-                    System.out.println("Наименьший балл введенной лабораторной работы не является меньше " +
-                            "минимального балла лабораторных из коллекции.");
-                    return collection;
-                }
-                collection.add(labWork);
-                System.out.println(CommandInformer.PS1
-                        + "Наименьший балл введенной лабораторной работы является меньше "
-                        + "минимального балла лабораторных из коллекции, "
-                        + "поэтому лабораторная работа добавлена в коллекцию. Текущее количество элементов в коллекции: "
-                        + collection.size());
-            }
+            System.out.println("Ошибка при добавлении элемента, возможно, такой элемент уже существует");
         }
         return collection;
     }

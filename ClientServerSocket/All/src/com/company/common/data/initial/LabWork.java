@@ -1,7 +1,7 @@
 package com.company.common.data.initial;
 
-import com.company.server.logic.CommandInformer;
-import com.company.server.logic.FileManager;
+import com.company.server.CommandInformer;
+import com.company.server.FileManager;
 
 import java.time.LocalDate;
 import java.util.Objects;

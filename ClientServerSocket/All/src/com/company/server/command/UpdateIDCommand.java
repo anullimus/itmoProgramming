@@ -1,5 +1,6 @@
 package com.company.server.command;
 
+import com.company.client.MyValidator;
 import com.company.common.data.initial.LabWork;
 
 import java.util.LinkedHashSet;
@@ -9,31 +10,22 @@ import java.util.LinkedHashSet;
  * Updates id of element from collection.
  */
 public class UpdateIDCommand implements Command<LinkedHashSet<LabWork>> {
-    private final String valueOfId;
-    private final LinkedHashSet<LabWork> collection;
+    private LinkedHashSet<LabWork> collection;
+    private final MyValidator myValidator;
 
-    public UpdateIDCommand(String valueOfId, LinkedHashSet<LabWork> collection) {
-        this.valueOfId = valueOfId;
+    public UpdateIDCommand(LinkedHashSet<LabWork> collection) {
         this.collection = collection;
+        myValidator = new MyValidator();
     }
 
     @Override
     public LinkedHashSet<LabWork> execute() {
-        long id;
-        try {
-            id = Long.parseLong(valueOfId);
-        } catch (NumberFormatException | NullPointerException e) {
-            System.out.println("Введеныные данные некорректны.");
-            return collection;
+        boolean success = myValidator.checkUpdateIDCommand(collection);
+        if (success) {
+            collection = myValidator.getCollection();
+        } else {
+            System.out.println("Ошибка при обновлении ID. Перепроверьте корректность введенных данных.");
         }
-        for (LabWork labWork : collection) {
-            if (labWork.getId() == id) {
-                labWork.changeId();
-                System.out.println("Элемент с id = " + id + " успешно обновлен");
-                return collection;
-            }
-        }
-        System.out.println("Here is no lab work find with id=" + id);
         return collection;
     }
 }

@@ -1,28 +1,28 @@
 package com.company.server.command;
 
+import com.company.client.MyValidator;
 import com.company.common.data.initial.LabWork;
-import com.company.server.logic.NewElementReader;
 
-public class AddCommand implements Command<LabWork> {
-    private final String argumentLine;
-    private final boolean isScript;
+import java.util.LinkedHashSet;
 
-    public AddCommand(String argumentLine, boolean isScript) {
-        this.argumentLine = argumentLine;
-        this.isScript = isScript;
+public class AddCommand implements Command<LinkedHashSet<LabWork>> {
+    private LinkedHashSet<LabWork> collection;
+    private final MyValidator myValidator;
+
+    public AddCommand(LinkedHashSet<LabWork> collection) {
+        this.collection = collection;
+        myValidator = new MyValidator();
     }
 
     @Override
-    public LabWork execute() {
-        LabWork newLabWork;
-        NewElementReader newElementReader = new NewElementReader();
-        if (isScript) {
-            newLabWork = newElementReader.readNewElementFromScript(argumentLine);
+    public LinkedHashSet<LabWork> execute() {
+        boolean success = myValidator.checkAddCommand(collection);
+        if (success) {
+            collection = myValidator.getCollection();
+            System.out.println("Элемент успешно добавлен");
         } else {
-            newLabWork = newElementReader.readNewElementFromConsole();
+            System.out.println("Ошибка при добавлении элемента, возможно, такой элемент уже существует");
         }
-        newLabWork.changeId();
-        System.out.println("Элемент успешно добавлен.");
-        return newLabWork;
+        return collection;
     }
 }

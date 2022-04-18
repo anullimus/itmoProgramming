@@ -1,30 +1,28 @@
 package com.company.server.command;
 
+import com.company.client.MyValidator;
 import com.company.common.data.initial.LabWork;
 
 import java.util.LinkedHashSet;
 
 public class MaxByAuthorCommand implements Command<String> {
     private final LinkedHashSet<LabWork> collection;
+    private final MyValidator myValidator;
 
     public MaxByAuthorCommand(LinkedHashSet<LabWork> collection) {
         this.collection = collection;
+        myValidator = new MyValidator();
     }
 
     @Override
     public String execute() {
-        if (collection.isEmpty()) {
-            return "Коллекция пуста.";
+        String stringResultOfValidation = "Ответ не пришел :(";
+        boolean success = myValidator.checMaxByAuthorCommand(collection);
+        if (success) {
+            stringResultOfValidation = myValidator.getStringResultOfValidation();
         } else {
-            LabWork[] arr = new LabWork[collection.size()];
-            arr = collection.toArray(arr);
-            LabWork lwWithOldestAuthor = arr[0];
-            for (LabWork lw : collection) {
-                if (lwWithOldestAuthor.getAuthor().getBirthday().compareTo(lw.getAuthor().getBirthday()) < 0) {
-                    lwWithOldestAuthor = lw;
-                }
-            }
-            return "Лабораторная работа, написанная самым старым автором: " + lwWithOldestAuthor;
+            System.out.println("Ошибка при обработке.");
         }
+        return stringResultOfValidation;
     }
 }

@@ -1,44 +1,28 @@
 package com.company.server.command;
 
+import com.company.client.MyValidator;
 import com.company.common.data.initial.LabWork;
-import com.company.common.data.initial.Person;
-import com.company.server.logic.CommandInformer;
 
 import java.util.LinkedHashSet;
 
 public class CountLessThanAuthorCommand implements Command<String> {
     private final LinkedHashSet<LabWork> collection;
-    private final String authorName;
+    private final MyValidator myValidator;
 
-    public CountLessThanAuthorCommand(LinkedHashSet<LabWork> collection, String authorName) {
+    public CountLessThanAuthorCommand(LinkedHashSet<LabWork> collection) {
         this.collection = collection;
-        this.authorName = authorName;
+        myValidator = new MyValidator();
     }
 
     @Override
     public String execute() {
-        if (collection.size() == 0) {
-            return "Коллекция пуста.";
+        String stringResultOfValidation = "Ответ не пришел :(";
+        boolean success = myValidator.checkLessThanAuthorCommand(collection);
+        if (success) {
+            stringResultOfValidation = myValidator.getStringResultOfValidation();
         } else {
-            Person author = null;
-            for (LabWork lw : collection) {
-                if (lw.getName().equals(authorName)) {
-                    author = lw.getAuthor();
-                }
-            }
-            if (author != null) {
-                long countOfAuthors = 0;
-                for (LabWork lw : collection) {
-                    if (lw.getAuthor().getBirthday().compareTo(author.getBirthday()) < 0) {
-                        countOfAuthors++;
-                    }
-                }
-                return CommandInformer.PS1
-                        + "Количество лабораторных работ, авторы которых родились раньше введенного автора: "
-                        + countOfAuthors;
-            } else {
-                return "Автор не найден.";
-            }
+            System.out.println("Ошибка при обработке.");
         }
+        return stringResultOfValidation;
     }
 }

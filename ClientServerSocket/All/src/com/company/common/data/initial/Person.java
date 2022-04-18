@@ -1,6 +1,6 @@
 package com.company.common.data.initial;
 
-import com.company.server.logic.CommandInformer;
+import com.company.server.CommandInformer;
 
 import java.time.LocalDate;
 

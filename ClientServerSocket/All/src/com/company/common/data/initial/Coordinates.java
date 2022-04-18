@@ -18,7 +18,7 @@ public class Coordinates {
     /**
      * @return x-coordinate
      */
-    public Long getX() {
+    public long getX() {
         return x;
     }
 

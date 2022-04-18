@@ -1,16 +1,15 @@
 package com.company.server.command;
 
-import com.company.common.data.initial.LabWork;
-import com.company.common.util.Request;
-
 @FunctionalInterface
 public interface Command<T> {
     T execute();
 }
 
-//Receiver нам нафиг не нужен, все реализации команд будем осуществлять в самих классах команд
-
 /*
+//Receiver
+class MyValidator(){}
+
+
 //ConcreteCommand0
 class Command0 implements Command{
     @Override
@@ -27,21 +26,20 @@ class Command1 implements Command{
     }
 }
 
-// client-invoker
-class CollectionManager0{
-    Command add;
-    Command clear;
+// invoker
+class CollectionManager{
 
-    public CollectionManager0(Command add, Command clear) {
-        this.add = add;
-        this.clear = clear;
-    }
     void addLabwork(){
         add.execute();
     }
     void clearLabwork(){
         clear.execute();
     }
+}
+
+// client
+class App{
+
 }
 
 }

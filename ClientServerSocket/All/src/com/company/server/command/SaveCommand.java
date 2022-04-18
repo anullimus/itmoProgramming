@@ -1,7 +1,7 @@
 package com.company.server.command;
 
 import com.company.common.data.initial.LabWork;
-import com.company.server.logic.FileManager;
+import com.company.server.FileManager;
 
 import java.util.LinkedHashSet;
 

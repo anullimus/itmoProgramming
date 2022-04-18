@@ -1,11 +1,12 @@
 package com.company.server.command;
 
-import com.company.server.logic.CollectionManager;
-import com.company.server.logic.CommandInformer;
+import com.company.server.CollectionManager;
+import com.company.server.CommandInformer;
+
 /**
  * Prints full information about the command that manages the collection.
  */
-public class InfoCommand implements Command<String>{
+public class InfoCommand implements Command<String> {
     private final CollectionManager collectionManager;
 
     public InfoCommand(CollectionManager collectionManager) {
@@ -15,9 +16,10 @@ public class InfoCommand implements Command<String>{
     @Override
     public String execute() {
         StringBuilder collectionInfo = new StringBuilder(CommandInformer.PS1);
-        collectionInfo.append("Тип коллекции: ").append(collectionManager.getClass()).
+        collectionInfo.append("Тип коллекции: ").append(collectionManager.getCollection().getClass()).
                 append("\n Дата инициализации: ").append(collectionManager.getCreationDate()).
                 append("\n Количество элементов: ").append(collectionManager.getSize());
         return collectionInfo.toString();
     }
 }
+
