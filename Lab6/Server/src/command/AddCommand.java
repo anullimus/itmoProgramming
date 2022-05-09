@@ -1,31 +1,28 @@
 package command;
 
-//import serverLogic.MyValidator;
 import com.google.gson.JsonSyntaxException;
 import data.initial.LabWork;
 import serverLogic.CollectionManager;
-import serverLogic.NewElementReader;
+import serverLogic.Tool;
 
 
-public class AddCommand extends AbstractCommand {
-//    private final MyValidator myValidator;
-    private LabWork labWork;
+public class AddCommand extends Command {
 
     public AddCommand(CollectionManager collectionManager) {
         super(collectionManager);
-        setDescription("!!!!!!!!!!!должен быть релакс месседж, тк элементы будут добавляться поочередно!!!");
-//        myValidator = new MyValidator();
+        setDescription(Tool.RELAX);
     }
 
     @Override
     public String execute(String arg) {
+        LabWork inputLabwork;
         try {
-//            labWork = new NewElementReader();
-            getCollectionManager().getLabWorks().add(getCollectionManager().getSerializer().fromJson(arg, LabWork.class));
+            inputLabwork = getCollectionManager().getSerializer().fromJson(arg, LabWork.class);
+            getCollectionManager().getLabWorks().add(inputLabwork);
             getCollectionManager().save();
             return "Элемент успешно добавлен.";
         } catch (JsonSyntaxException ex) {
-            return "Синтаксическая ошибка JSON. Не удалось добавить элемент.";        }
+            return "Ошибка в синтаксисе JSON. Не удалось добавить элемент.";
+        }
     }
-
 }

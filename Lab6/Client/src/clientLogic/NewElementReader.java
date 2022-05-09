@@ -1,9 +1,13 @@
-package serverLogic;
+package clientLogic;
 
 
+import com.google.gson.*;
 import data.initial.*;
-import exception.ReadElementFromScriptException;
+import exception.ReadElementException;
+import serverLogic.Tool;
 
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -13,21 +17,26 @@ import java.util.Scanner;
 
 public class NewElementReader {
     private final Scanner scanner;
-    private final boolean isScriptExecuting;
     private final String standardErrorMessage;
 
-    public NewElementReader(boolean isScriptExecuting) {
+    public NewElementReader() {
         this.scanner = new Scanner(System.in);
-        this.isScriptExecuting = isScriptExecuting;
         standardErrorMessage = "Ошибка при вводе, повторите попытку: ";
     }
 
     /**
      * @return new Lab work read
      */
-    private LabWork readNewLabwork() {
+    public String readNewLabwork() {
         Person author = new Person(readNameOfCreator(), readBirthdayOfCreator(), readCountry(), readLocation());
-        return new LabWork(readNameOfLabwork(), readCoordinates(), readMinPoints(), readDifficulty(), author);
+        LabWork labWork = new LabWork(readNameOfLabwork(), readCoordinates(), readMinPoints(), readDifficulty(), author);
+        Gson gsonWithRewritedMethodForLocalDate = new GsonBuilder().registerTypeAdapter(LocalDate.class, new JsonSerializer<LocalDate>() {
+            @Override
+            public JsonElement serialize(LocalDate localDate, Type type, JsonSerializationContext jsonSerializationContext) {
+                return new JsonPrimitive(localDate.toString());
+            }
+        }).create();
+        return new String(gsonWithRewritedMethodForLocalDate.toJson(labWork).getBytes(StandardCharsets.UTF_8));
     }
 
     public int readInt() {
@@ -86,9 +95,6 @@ public class NewElementReader {
         System.out.println("Введите название лабораторной работы: ");
         String name = scanner.nextLine().trim();
         while (name.isEmpty()) {
-            if (isScriptExecuting) {
-                throw new ReadElementFromScriptException("Название маршрута не может быть пустым");
-            }
             System.out.print("Поле 'название лабораторной работы' не может быть пустым, повторите попытку: ");
             name = scanner.nextLine().trim();
         }
@@ -122,36 +128,16 @@ public class NewElementReader {
         System.out.println(Tool.PS1 + "Введите минимальный балл, который можно получить за lab work: ");
         float minPoints = readFloat();
         while (minPoints < 0) {
-            if (isScriptExecuting) {
-                throw new ReadElementFromScriptException("Неправильный аргумент. Он не может быть меньше 0.");
-            }
             System.out.println("Неправильный аргумент. Введите положительное число: ");
             minPoints = readFloat();
         }
         return minPoints;
     }
 
-    private Difficulty readDifficulty() {
-        System.out.println(Tool.PS1 + "Введите один из следующих уровней сложности: ("
-                + Arrays.toString(Country.values()) + "): ");
-        String difficulty = scanner.nextLine().trim().toUpperCase(Locale.ROOT);
-        while (!Arrays.toString(Difficulty.values()).contains(difficulty)) {
-            if (isScriptExecuting) {
-                throw new ReadElementFromScriptException("Неправильный аргумент сложности.");
-            }
-            System.out.println(standardErrorMessage);
-            difficulty = scanner.nextLine().trim();
-        }
-        return Difficulty.valueOf(difficulty);
-    }
-
     private String readNameOfCreator() {
         System.out.println(Tool.PS1 + "Введите имя автора: ");
         String name = scanner.nextLine().trim();
         while (name.isEmpty()) {
-            if (isScriptExecuting) {
-                throw new ReadElementFromScriptException("Поле 'имя автора' не может быть пустым.");
-            }
             System.out.print("Поле 'имя автора' не может быть пустым, повторите попытку: ");
             name = scanner.nextLine().trim();
         }
@@ -166,9 +152,6 @@ public class NewElementReader {
                 birthday = LocalDate.parse(scanner.nextLine().trim());
                 break;
             } catch (DateTimeException | NullPointerException exception) {
-                if (isScriptExecuting) {
-                    throw new ReadElementFromScriptException("Дата рождения введена неверно.");
-                }
                 System.out.println(standardErrorMessage);
             }
         }
@@ -178,15 +161,38 @@ public class NewElementReader {
     private Country readCountry() {
         System.out.println(Tool.PS1 + "Введите одну из предложенных стран проживания автора: ("
                 + Arrays.toString(Country.values()) + "): ");
-        String country = scanner.nextLine().trim().toUpperCase(Locale.ROOT);
-        while (!Arrays.toString(Country.values()).contains(country)) {
-            if (isScriptExecuting) {
-                throw new ReadElementFromScriptException("Неправильный аргумент страны.");
+        String country;
+        while (true) {
+            try {
+                country = scanner.nextLine().trim();
+                if (!country.equals("") & Arrays.toString(Country.values()).contains(country)) {
+                    break;
+                } else {
+                    throw new IllegalArgumentException();
+                }
+            } catch (IllegalArgumentException illegalArgumentException) {
+                System.out.println(standardErrorMessage);
             }
-            System.out.println(standardErrorMessage);
-            country = scanner.nextLine().trim();
         }
         return Country.valueOf(country);
     }
-}
 
+    private Difficulty readDifficulty() {
+        System.out.println(Tool.PS1 + "Введите один из следующих уровней сложности: ("
+                + Arrays.toString(Difficulty.values()) + "): ");
+        String difficulty;
+        while (true) {
+            try {
+                difficulty = scanner.nextLine().trim().toUpperCase(Locale.ROOT);
+                if (!difficulty.equals("") & Arrays.toString(Difficulty.values()).contains(difficulty)) {
+                    break;
+                } else {
+                    throw new IllegalArgumentException();
+                }
+            } catch (IllegalArgumentException illegalArgumentException) {
+                System.out.println(standardErrorMessage);
+            }
+        }
+        return Difficulty.valueOf(difficulty);
+    }
+}

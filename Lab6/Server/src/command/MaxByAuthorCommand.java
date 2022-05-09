@@ -7,7 +7,7 @@ import serverLogic.CollectionManager;
 import java.util.LinkedHashSet;
 
 
-public class MaxByAuthorCommand extends AbstractCommand {
+public class MaxByAuthorCommand extends Command {
 
     public MaxByAuthorCommand(CollectionManager manager) {
         super(manager);

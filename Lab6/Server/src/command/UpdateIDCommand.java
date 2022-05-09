@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 /**
  * Updates id of element from collection.
  */
-public class UpdateIDCommand extends AbstractCommand {
+public class UpdateIDCommand extends Command {
 
     public UpdateIDCommand(CollectionManager manager) {
         super(manager);

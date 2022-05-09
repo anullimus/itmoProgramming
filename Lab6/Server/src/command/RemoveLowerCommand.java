@@ -6,7 +6,7 @@ import serverLogic.CollectionManager;
 
 import java.util.LinkedHashSet;
 
-public class RemoveLowerCommand extends AbstractCommand {
+public class RemoveLowerCommand extends Command {
     public RemoveLowerCommand(CollectionManager manager) {
         super(manager);
         setDescription("Удаляет все элементы из коллекции, которые меньше заданного(по показателю минимального балла)");

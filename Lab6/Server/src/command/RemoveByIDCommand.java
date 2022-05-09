@@ -6,7 +6,7 @@ import serverLogic.CollectionManager;
 
 import java.util.LinkedHashSet;
 
-public class RemoveByIDCommand extends AbstractCommand {
+public class RemoveByIDCommand extends Command {
     public RemoveByIDCommand(CollectionManager manager) {
         super(manager);
         setDescription("Удаляет элемент из коллекции по его ID.");

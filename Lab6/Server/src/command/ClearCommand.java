@@ -3,7 +3,7 @@ package command;
 
 import serverLogic.CollectionManager;
 
-public class ClearCommand extends AbstractCommand {
+public class ClearCommand extends Command {
     public ClearCommand(CollectionManager manager) {
         super(manager);
         setDescription("Очистить коллекцию.");

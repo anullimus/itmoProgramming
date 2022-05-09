@@ -6,7 +6,7 @@ import serverLogic.Tool;
 /**
  * Prints full information about the command that manages the collection.
  */
-public class InfoCommand extends AbstractCommand {
+public class InfoCommand extends Command {
 
     public InfoCommand(CollectionManager manager) {
         super(manager);

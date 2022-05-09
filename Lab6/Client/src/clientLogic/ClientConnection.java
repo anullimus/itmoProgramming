@@ -1,8 +1,10 @@
 package clientLogic;
 
 
+import utility.CommandAnalyzer;
+import utility.Request;
+
 import java.io.*;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -17,6 +19,7 @@ public class ClientConnection {
      */
     public void work() {
         try (Scanner scanner = new Scanner(System.in)) {
+            commandAnalyzer = new CommandAnalyzer();
             fromKeyboard = scanner;
             Socket outcoming;
             ObjectOutputStream outputStream;
@@ -53,28 +56,46 @@ public class ClientConnection {
      *
      * @throws IOException при отправке и получении данных с сервера.
      */
-    private void interactiveMode() throws IOException {
+    private void interactiveMode() {
         try {
             System.out.println((String) fromServer.readObject());
             String command;
             while (!(command = fromKeyboard.nextLine()).equals("exit")) {
-                String[] parsedCommand = command.trim().split(" ", 2);
-                if ("".equals(parsedCommand[0])) {
-                    continue;
-                }
-                if (commandAnalyzer.analyzeCommand(command)) {
-                    toServer.writeObject(command);
-                    System.out.println((String) fromServer.readObject());
-                } else {
-                    throw new IllegalArgumentException();
+                try {
+                    String[] parsedCommand = command.trim().split(" ", 2);
+                    if ("".equals(parsedCommand[0])) {
+                        continue;
+                    }
+                    if (commandAnalyzer.analyzeCommand(command)) {
+                        String inputLabwork;
+                        if (commandAnalyzer.getCommandName().equals("add")) {
+                            inputLabwork = new NewElementReader().readNewLabwork();
+                            toServer.writeObject(new Request("add", inputLabwork));
+                        } else if (commandAnalyzer.getCommandName().equals("add_if_man")) {
+                            inputLabwork = new NewElementReader().readNewLabwork();
+                            toServer.writeObject(new Request("add_if_min", inputLabwork));
+                        } else if (commandAnalyzer.isCommandHaveArgument()) {
+                            toServer.writeObject(new Request(commandAnalyzer);
+                        } else {
+                            toServer.writeObject(new Request(commandAnalyzer.getCommandName()));
+                        }
+                        System.out.println((String) fromServer.readObject());
+                    } else {
+                        throw new IllegalArgumentException();
+                    }
+                } catch (IllegalArgumentException illegalArgumentException) {
+                    System.err.print("Введена некорректная команда. Воспользуйтесь 'man'-инструкцией для более " +
+                            "подробной информации о команде.\n");
                 }
             }
             exit();
         } catch (IllegalArgumentException illegalArgumentException) {
             System.err.print("Введена некорректная команда. Воспользуйтесь 'man'-инструкцией для более " +
-                    "подробной информации о команде.");
+                    "подробной информации о команде.\n");
         } catch (ClassNotFoundException classNotFoundException) {
-            System.err.println("Класс не найден: " + classNotFoundException.getMessage());
+            System.err.println("Класс не найден: " + classNotFoundException.getMessage() + "\n");
+        } catch (IOException ioException) {
+            ioException.printStackTrace();  // idk how can it happen
         }
     }
 

@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 /**
  * Prints all elements of the collection.
  */
-public class ShowCommand extends AbstractCommand{
+public class ShowCommand extends Command {
 
     public ShowCommand(CollectionManager manager) {
         super(manager);

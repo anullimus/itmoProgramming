@@ -3,11 +3,11 @@ package command;
 
 import serverLogic.CollectionManager;
 
-public abstract class AbstractCommand {
+public class Command {
     private CollectionManager collectionManager; //Позволяет изменить коллекцию.
     private String description; //Содержит краткое руководство к команде.
 
-    public AbstractCommand(CollectionManager manager) {
+    public Command(CollectionManager manager) {
         this.collectionManager = manager;
     }
 

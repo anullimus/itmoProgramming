@@ -15,7 +15,7 @@ import java.util.*;
  */
 public class FileManager {
     private File jsonCollection;
-    private LinkedHashSet<LabWork> labWorks;
+    private final LinkedHashSet<LabWork> labWorks;
 
     public FileManager(String collectionPath) {
         System.out.println(collectionPath);

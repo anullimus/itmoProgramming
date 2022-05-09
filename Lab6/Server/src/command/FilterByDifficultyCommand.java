@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 
-public class FilterByDifficultyCommand extends AbstractCommand {
+public class FilterByDifficultyCommand extends Command {
 
     public FilterByDifficultyCommand(CollectionManager manager) {
         super(manager);

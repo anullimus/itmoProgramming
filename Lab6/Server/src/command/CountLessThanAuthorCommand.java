@@ -7,7 +7,7 @@ import serverLogic.CollectionManager;
 
 import java.util.LinkedHashSet;
 
-public class CountLessThanAuthorCommand extends AbstractCommand {
+public class CountLessThanAuthorCommand extends Command {
 
     public CountLessThanAuthorCommand(CollectionManager manager) {
         super(manager);

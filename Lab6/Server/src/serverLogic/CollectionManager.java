@@ -6,7 +6,6 @@ import data.initial.LabWork;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -36,26 +35,6 @@ public class CollectionManager {
      */
     public String save() {
         return fileManager.save(labWorks);
-//
-//        try {
-//            OutputStream os = new FileOutputStream(System.getenv("VARRY"));
-//            BufferedOutputStream br = new BufferedOutputStream(os, 16384);
-//
-//            Gson gsonWithRewritedMethodForLocalDate = new GsonBuilder().registerTypeAdapter(LocalDate.class, new JsonSerializer<LocalDate>() {
-//                @Override
-//                public JsonElement serialize(LocalDate localDate, Type type, JsonSerializationContext jsonSerializationContext) {
-//                    return new JsonPrimitive(localDate.toString());
-//                }
-//            }).create();
-//            System.out.println(labWorks.toString());
-//            br.write(gsonWithRewritedMethodForLocalDate.toJson(labWorks).getBytes(StandardCharsets.UTF_8));
-//            br.close();
-//            System.out.println(ServerConnection.PS1 + "Коллекция успешно сохранена в файл.");
-//        } catch (FileNotFoundException exception) {
-//            System.out.println(ServerConnection.PS1 + "Файл-коллекция не найден.");
-//        } catch (IOException e) {
-//            System.out.println("Возникла непредвиденная ошибка. Коллекция не может быть сохранена.");
-//        }
     }
 
     public Type getCollectionType() {
