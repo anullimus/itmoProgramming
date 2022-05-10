@@ -35,7 +35,7 @@ public class NewElementReader {
     public LabWork readNewLabwork(boolean isSriptExecuting) {
         this.isSriptExecuting = isSriptExecuting;
         Person author = new Person(readNameOfCreator(), readBirthdayOfCreator(), readCountry(), readLocation());
-//        LabWork.MAX_ID++;
+        LabWork.MAX_ID++;
         return new LabWork(readNameOfLabwork(), readCoordinates(), readMinPoints(), readDifficulty(), author);
     }
 

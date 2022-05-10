@@ -18,6 +18,7 @@ public class LabWork implements Comparable<LabWork>, Serializable {
     private Float minimalPoint;
     private Difficulty difficulty;
     private Person author;
+    public static Long MAX_ID;
 
     public LabWork(String name, Coordinates coordinates, Float minimalPoint, Difficulty difficulty, Person author) {
         this.id = generateID();
@@ -40,7 +41,7 @@ public class LabWork implements Comparable<LabWork>, Serializable {
         }
     }
     private long generateID(){
-        return this.hashCode() * 17L + 32;
+        return MAX_ID++;
     }
 
     /**
@@ -59,7 +60,7 @@ public class LabWork implements Comparable<LabWork>, Serializable {
      * Changes id of the Lab work.
      */
     public void changeId() {
-        this.id = generateID();
+        this.id = MAX_ID++;
     }
 
     /**

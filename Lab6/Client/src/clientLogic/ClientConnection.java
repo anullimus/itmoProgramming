@@ -2,6 +2,7 @@ package clientLogic;
 
 
 import com.google.gson.JsonSyntaxException;
+import data.initial.LabWork;
 import exception.DeserializeException;
 import serverLogic.Tool;
 import utility.*;
@@ -55,7 +56,7 @@ public class ClientConnection {
             socketChannel.write(ByteBuffer.wrap(serializedRequest));
             Response response = receiveResponse();
             System.out.println(response);
-
+            LabWork.MAX_ID = response.getMaxIdInCollection();
 
             interactiveMode();
         } catch (IOException e) {
