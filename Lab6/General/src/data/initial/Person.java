@@ -2,6 +2,7 @@ package data.initial;
 
 import serverLogic.Tool;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import java.util.Objects;
@@ -9,7 +10,7 @@ import java.util.Objects;
 /**
  * Objects of the Person class are authors of lab work{@link LabWork}.
  */
-public class Person implements Comparable<Person> {
+public class Person implements Comparable<Person>, Serializable {
     private String name;
     private LocalDate birthday;
     private Country nationality;

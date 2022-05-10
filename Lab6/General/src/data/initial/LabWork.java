@@ -1,15 +1,16 @@
 package data.initial;
 
 
-import serverLogic.ServerConnection;
+import serverLogic.Tool;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
 /**
  * Main data class data.initial.LabWork. Objects of this class will be figured in <Strong>collection</Strong>.
  */
-public class LabWork implements Comparable<LabWork> {
+public class LabWork implements Comparable<LabWork>, Serializable {
     private Long id;
     private String name;
     private Coordinates coordinates;
@@ -33,7 +34,7 @@ public class LabWork implements Comparable<LabWork> {
                 throw new NullPointerException();
             }
         } catch (NullPointerException exception) {
-            System.out.println(ServerConnection.PS1 + "Вы ввели некорректные данные и попали туда, куда не стоило " +
+            System.out.println(Tool.PS1 + "Вы ввели некорректные данные и попали туда, куда не стоило " +
                     "попадать, поэтому на этой сессии вы получаете бан.");
             System.exit(0);
         }

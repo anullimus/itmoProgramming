@@ -2,8 +2,12 @@ package command;
 
 
 import serverLogic.CollectionManager;
+import utility.Request;
+import utility.Response;
 
-public class Command {
+import java.io.Serializable;
+
+public class Command implements Serializable {
     private CollectionManager collectionManager; //Позволяет изменить коллекцию.
     private String description; //Содержит краткое руководство к команде.
 
@@ -15,10 +19,10 @@ public class Command {
      * Метод служит для выполнения кода команды без агрументов(если его не переопределили).
      * @return строка, которая содержит результат операции.
      */
-    public String execute(){
-        return "Отсутствует аргумент.";
+    public Response execute(){
+        return new Response("Отсутствует аргумент.");
     }
-    public String execute(String arg) {
+    public Response execute(Request request) {
         return execute();
     }
 
@@ -37,4 +41,5 @@ public class Command {
     public String getDescription() {
         return description;
     }
+
 }

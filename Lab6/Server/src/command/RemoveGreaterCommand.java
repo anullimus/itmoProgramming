@@ -3,6 +3,8 @@ package command;
 import com.google.gson.JsonSyntaxException;
 import data.initial.LabWork;
 import serverLogic.CollectionManager;
+import utility.Request;
+import utility.Response;
 
 import java.util.LinkedHashSet;
 
@@ -13,18 +15,16 @@ public class RemoveGreaterCommand extends Command {
     }
 
     @Override
-    public String execute(String arg) {
+    public Response execute(Request request) {
         LinkedHashSet<LabWork> collection = getCollectionManager().getLabWorks();
         if (collection.size() != 0) {
             int beginSize = collection.size();
-            try {
-                collection.removeIf(p -> (p != null && p.compareTo(getCollectionManager().getSerializer()
-                        .fromJson(arg, LabWork.class)) > 0));
-                getCollectionManager().save();
-                return "Удалено из коллекции " + (beginSize - collection.size()) + " элементов.";
-            } catch (JsonSyntaxException ex) {
-                return "Синтаксическая ошибка JSON. Не удалось удалить элемент.";
-            }
-        } else return "Элементу не с чем сравнивать. Коллекция пуста.";
+            collection.removeIf(p -> (p != null && p.compareTo(request.getLabWorkArgument()) > 0));
+            getCollectionManager().save();
+            return new Response("Удалено из коллекции " + (beginSize - collection.size()) + " элементов.");
+
+        } else {
+            return new Response("Элементу не с чем сравнивать. Коллекция пуста.");
+        }
     }
 }

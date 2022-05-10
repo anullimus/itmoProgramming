@@ -1,52 +1,55 @@
 package clientLogic;
 
 
-import com.google.gson.*;
 import data.initial.*;
-import exception.ReadElementException;
 import serverLogic.Tool;
 
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 
 public class NewElementReader {
     private final Scanner scanner;
     private final String standardErrorMessage;
+    private final String standardErrorMessageForScript;
+    private boolean isSriptExecuting;
+    private final String[] addDataFromScript;
+    private int iter;
 
-    public NewElementReader() {
+    public NewElementReader(String[] addDataFromScript) {
+        this.addDataFromScript = addDataFromScript;
         this.scanner = new Scanner(System.in);
+        this.isSriptExecuting = false;
+        iter = -1;
         standardErrorMessage = "Ошибка при вводе, повторите попытку: ";
+        standardErrorMessageForScript = "+1 ошибка при вводе";
     }
 
     /**
      * @return new Lab work read
      */
-    public String readNewLabwork() {
+    public LabWork readNewLabwork(boolean isSriptExecuting) {
+        this.isSriptExecuting = isSriptExecuting;
         Person author = new Person(readNameOfCreator(), readBirthdayOfCreator(), readCountry(), readLocation());
-        LabWork labWork = new LabWork(readNameOfLabwork(), readCoordinates(), readMinPoints(), readDifficulty(), author);
-        Gson gsonWithRewritedMethodForLocalDate = new GsonBuilder().registerTypeAdapter(LocalDate.class, new JsonSerializer<LocalDate>() {
-            @Override
-            public JsonElement serialize(LocalDate localDate, Type type, JsonSerializationContext jsonSerializationContext) {
-                return new JsonPrimitive(localDate.toString());
-            }
-        }).create();
-        return new String(gsonWithRewritedMethodForLocalDate.toJson(labWork).getBytes(StandardCharsets.UTF_8));
+//        LabWork.MAX_ID++;
+        return new LabWork(readNameOfLabwork(), readCoordinates(), readMinPoints(), readDifficulty(), author);
     }
 
     public int readInt() {
         int value;
         while (true) {
             try {
-                value = Integer.parseInt(scanner.nextLine());
+                value = Integer.parseInt(lineReader());
                 break;
             } catch (NumberFormatException | NullPointerException e) {
-                System.out.print(standardErrorMessage);
+                System.err.print(standardErrorMessage);
+                if (isSriptExecuting) {
+                    System.err.println(standardErrorMessageForScript);
+                }
             }
         }
         return value;
@@ -56,10 +59,13 @@ public class NewElementReader {
         long value;
         while (true) {
             try {
-                value = Long.parseLong(scanner.nextLine());
+                value = Long.parseLong(lineReader());
                 break;
             } catch (NumberFormatException | NullPointerException e) {
-                System.out.print(standardErrorMessage);
+                System.err.print(standardErrorMessage);
+                if (isSriptExecuting) {
+                    System.err.println(standardErrorMessageForScript);
+                }
             }
         }
         return value;
@@ -69,10 +75,13 @@ public class NewElementReader {
         double value;
         while (true) {
             try {
-                value = Double.parseDouble(scanner.nextLine());
+                value = Double.parseDouble(lineReader());
                 break;
             } catch (NumberFormatException | NullPointerException e) {
-                System.out.print(standardErrorMessage);
+                System.err.print(standardErrorMessage);
+                if (isSriptExecuting) {
+                    System.err.println(standardErrorMessageForScript);
+                }
             }
         }
         return value;
@@ -82,10 +91,13 @@ public class NewElementReader {
         float value;
         while (true) {
             try {
-                value = Float.parseFloat(scanner.nextLine());
+                value = Float.parseFloat(lineReader());
                 break;
             } catch (NumberFormatException | NullPointerException e) {
-                System.out.print(standardErrorMessage);
+                System.err.print(standardErrorMessage);
+                if (isSriptExecuting) {
+                    System.err.println(standardErrorMessageForScript);
+                }
             }
         }
         return value;
@@ -93,10 +105,13 @@ public class NewElementReader {
 
     private String readNameOfLabwork() {
         System.out.println("Введите название лабораторной работы: ");
-        String name = scanner.nextLine().trim();
+        String name = lineReader().trim();
         while (name.isEmpty()) {
-            System.out.print("Поле 'название лабораторной работы' не может быть пустым, повторите попытку: ");
-            name = scanner.nextLine().trim();
+            System.err.print("Поле 'название лабораторной работы' не может быть пустым, повторите попытку: ");
+            if (isSriptExecuting) {
+                System.err.println(standardErrorMessageForScript);
+            }
+            name = lineReader().trim();
         }
         return name;
     }
@@ -128,7 +143,7 @@ public class NewElementReader {
         System.out.println(Tool.PS1 + "Введите минимальный балл, который можно получить за lab work: ");
         float minPoints = readFloat();
         while (minPoints < 0) {
-            System.out.println("Неправильный аргумент. Введите положительное число: ");
+            System.err.println("Неправильный аргумент. Введите положительное число: ");
             minPoints = readFloat();
         }
         return minPoints;
@@ -136,10 +151,13 @@ public class NewElementReader {
 
     private String readNameOfCreator() {
         System.out.println(Tool.PS1 + "Введите имя автора: ");
-        String name = scanner.nextLine().trim();
+        String name = lineReader().trim();
         while (name.isEmpty()) {
-            System.out.print("Поле 'имя автора' не может быть пустым, повторите попытку: ");
-            name = scanner.nextLine().trim();
+            System.err.print("Поле 'имя автора' не может быть пустым, повторите попытку: ");
+            if (isSriptExecuting) {
+                System.err.println(standardErrorMessageForScript);
+            }
+            name = lineReader().trim();
         }
         return name;
     }
@@ -149,10 +167,13 @@ public class NewElementReader {
         System.out.println(Tool.PS1 + "Введите его дату рождения автора в формате: YYYY-MM-DD: ");
         while (true) {
             try {
-                birthday = LocalDate.parse(scanner.nextLine().trim());
+                birthday = LocalDate.parse(lineReader().trim());
                 break;
             } catch (DateTimeException | NullPointerException exception) {
-                System.out.println(standardErrorMessage);
+                System.err.println(standardErrorMessage);
+                if (isSriptExecuting) {
+                    System.err.println(standardErrorMessageForScript);
+                }
             }
         }
         return birthday;
@@ -164,14 +185,17 @@ public class NewElementReader {
         String country;
         while (true) {
             try {
-                country = scanner.nextLine().trim();
+                country = lineReader().trim();
                 if (!country.equals("") & Arrays.toString(Country.values()).contains(country)) {
                     break;
                 } else {
                     throw new IllegalArgumentException();
                 }
             } catch (IllegalArgumentException illegalArgumentException) {
-                System.out.println(standardErrorMessage);
+                System.err.println(standardErrorMessage);
+                if (isSriptExecuting) {
+                    System.err.println(standardErrorMessageForScript);
+                }
             }
         }
         return Country.valueOf(country);
@@ -183,16 +207,31 @@ public class NewElementReader {
         String difficulty;
         while (true) {
             try {
-                difficulty = scanner.nextLine().trim().toUpperCase(Locale.ROOT);
+                difficulty = lineReader().trim().toUpperCase(Locale.ROOT);
                 if (!difficulty.equals("") & Arrays.toString(Difficulty.values()).contains(difficulty)) {
                     break;
                 } else {
                     throw new IllegalArgumentException();
                 }
             } catch (IllegalArgumentException illegalArgumentException) {
-                System.out.println(standardErrorMessage);
+                System.err.println(standardErrorMessage);
+                if (isSriptExecuting) {
+                    System.err.println(standardErrorMessageForScript);
+                }
             }
         }
         return Difficulty.valueOf(difficulty);
+    }
+
+    private String lineReader() {
+        if (isSriptExecuting) {
+            try {
+                iter++;
+                return addDataFromScript[iter];
+            } catch (NoSuchElementException exception) {
+                System.err.println("Ошибка при чтении нового элемента из скрипта.");
+            }
+        }
+        return scanner.nextLine();
     }
 }

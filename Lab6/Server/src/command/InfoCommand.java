@@ -2,6 +2,7 @@ package command;
 
 import serverLogic.CollectionManager;
 import serverLogic.Tool;
+import utility.Response;
 
 /**
  * Prints full information about the command that manages the collection.
@@ -14,17 +15,12 @@ public class InfoCommand extends Command {
                 "о коллекции (тип, дата инициализации, количество элементов и т.д.)");
     }
     @Override
-    public String execute(String arg) {
-        return execute();
-    }
-
-    @Override
-    public String execute() {
+    public Response execute() {
         StringBuilder collectionInfo = new StringBuilder(Tool.PS1);
         collectionInfo.append("Тип коллекции: ").append(getCollectionManager().getLabWorks().getClass()).
                 append("\n Дата инициализации: ").append(getCollectionManager().getCreationDate()).
                 append("\n Количество элементов: ").append(getCollectionManager().getSize());
-        return collectionInfo.toString();
+        return new Response(collectionInfo.toString());
     }
 }
 

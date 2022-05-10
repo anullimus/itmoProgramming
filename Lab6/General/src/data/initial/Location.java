@@ -1,11 +1,12 @@
 package data.initial;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Location class for presenting location of the author{@link Person} of the lab work{@link LabWork}.
  */
-public class Location implements Comparable<Location> {
+public class Location implements Comparable<Location>, Serializable {
     private final Integer x;
     private final Double y;
     private final Integer z;

@@ -15,16 +15,17 @@ public class ServerSide {
      * @param args массив по умолчанию в основном методе. Не используется здесь.
      */
     public static void main(String[] args) {
-        Socket incoming;
+        Socket socket;
         ServerSocket serverSocket;
         try {
             serverSocket = new ServerSocket(8000);
             System.out.print("Сервер начал слушать клиентов. " + "\nПорт " + serverSocket.getLocalPort() +
                     " / Адрес " + InetAddress.getLocalHost() + ".\nОжидаем подключения клиента");
             ServerSide.waitingPointer();
-            incoming = serverSocket.accept();
-            System.out.println(incoming + " подключился к серверу.");
-            ServerConnection serverConnection = new ServerConnection(serverCollection, incoming);
+            socket = serverSocket.accept();
+            System.out.println(socket + " подключился к серверу.");
+//            todo: логирование
+            ServerConnection serverConnection = new ServerConnection(serverCollection, socket);
             serverConnection.work();
         } catch (IOException ex) {
             System.err.println(ex.getMessage());

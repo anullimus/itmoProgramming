@@ -1,12 +1,13 @@
 package data.initial;
 
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Coordinates class for presenting where the lab work was actually have been written.
  */
-public class Coordinates {
+public class Coordinates implements Serializable {
     private final Long x;
     private final int y;
 

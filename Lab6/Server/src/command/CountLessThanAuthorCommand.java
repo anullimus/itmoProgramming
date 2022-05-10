@@ -4,6 +4,8 @@ package command;
 import data.initial.LabWork;
 import data.initial.Person;
 import serverLogic.CollectionManager;
+import utility.Request;
+import utility.Response;
 
 import java.util.LinkedHashSet;
 
@@ -15,36 +17,33 @@ public class CountLessThanAuthorCommand extends Command {
     }
 
     @Override
-    public String execute(String arg) {
+    public Response execute(Request request) {
         LinkedHashSet<LabWork> collection = getCollectionManager().getLabWorks();
+        String inputAuthor = request.getStringArgument();
         if (collection.size() != 0) {
-            try {
-                // создаю объект, тк поиск сначала идет по имени, но потом мы сравниваем другие поля
-                Person author = null;
+            // создаю объект, тк поиск сначала идет по имени, но потом мы сравниваем другие поля
+            Person author = null;
+            for (LabWork lw : collection) {
+                if (lw.getAuthor().getName().equals(inputAuthor)) {
+                    author = lw.getAuthor();
+                    break;
+                }
+            }
+            if (author != null) {
+                long countOfAuthors = 0;
                 for (LabWork lw : collection) {
-                    if (lw.getAuthor().getName().equals(arg)) {
-                        author = lw.getAuthor();
-                        break;
+                    if (lw.getAuthor().getBirthday().compareTo(author.getBirthday()) < 0) {
+                        countOfAuthors++;
                     }
                 }
-                if (author != null) {
-                    long countOfAuthors = 0;
-                    for (LabWork lw : collection) {
-                        if (lw.getAuthor().getBirthday().compareTo(author.getBirthday()) < 0) {
-                            countOfAuthors++;
-                        }
-                    }
-                    return "Количество лабораторных работ, авторы которых родились раньше введенного автора: "
-                            + countOfAuthors;
-                } else {
-                    return "Автор не найден.";
+                return new Response("Количество лабораторных работ, авторы которых родились раньше введенного автора: "
+                        + countOfAuthors);
+            } else {
+                return new Response("Автор не найден.");
 
-                }
-            }catch (NullPointerException | IllegalArgumentException exception) {
-                return "Передан некорректный аргумент.";
             }
         } else {
-            return "Элементу не с чем сравнивать. Коллекция пуста.";
+            return new Response("Элементу не с чем сравнивать. Коллекция пуста.");
         }
     }
 }

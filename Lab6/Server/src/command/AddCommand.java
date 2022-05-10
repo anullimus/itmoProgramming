@@ -1,9 +1,9 @@
 package command;
 
-import com.google.gson.JsonSyntaxException;
-import data.initial.LabWork;
 import serverLogic.CollectionManager;
 import serverLogic.Tool;
+import utility.Request;
+import utility.Response;
 
 
 public class AddCommand extends Command {
@@ -14,15 +14,9 @@ public class AddCommand extends Command {
     }
 
     @Override
-    public String execute(String arg) {
-        LabWork inputLabwork;
-        try {
-            inputLabwork = getCollectionManager().getSerializer().fromJson(arg, LabWork.class);
-            getCollectionManager().getLabWorks().add(inputLabwork);
-            getCollectionManager().save();
-            return "Элемент успешно добавлен.";
-        } catch (JsonSyntaxException ex) {
-            return "Ошибка в синтаксисе JSON. Не удалось добавить элемент.";
-        }
+    public Response execute(Request request) {
+        getCollectionManager().getLabWorks().add(request.getLabWorkArgument());
+        getCollectionManager().save();
+        return new Response("Элемент успешно добавлен.");
     }
 }

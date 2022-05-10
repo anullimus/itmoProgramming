@@ -1,1 +1,149 @@
-[{"id":124,"name":"HelloWorld","coordinates":{"x":2134,"y":14231},"creationDate":"2022-02-11","minimalPoint":90.0,"difficulty":"HOPELESS","author":{"name":"Karabas Barabas","birthday":"1930-08-12","nationality":"RUSSIA","location":{"x":142,"y":1324.0,"z":124}}},{"id":2684,"name":"Piligrim","coordinates":{"x":4132,"y":1235},"creationDate":"2022-02-12","minimalPoint":20.0,"difficulty":"HOPELESS","author":{"name":"Женя Совенко","birthday":"2003-07-09","nationality":"RUSSIA","location":{"x":5441,"y":143.0,"z":14}}},{"id":541,"name":"Tacos","coordinates":{"x":4132,"y":1235},"creationDate":"2022-02-12","minimalPoint":20.0,"difficulty":"HOPELESS","author":{"name":"Женя Совенко","birthday":"2003-07-09","nationality":"RUSSIA","location":{"x":5441,"y":143.0,"z":14}}},{"id":123,"name":"Lab45","coordinates":{"x":2543,"y":4763},"creationDate":"2022-02-07","minimalPoint":18.0,"difficulty":"NORMAL","author":{"name":"Sergo","birthday":"2008-06-15","nationality":"GERMANY","location":{"x":25346,"y":35634.0,"z":36346}}}]
+[
+  {
+    "id": 124,
+    "name": "HelloWorld",
+    "coordinates": {
+      "x": 2134,
+      "y": 14231
+    },
+    "creationDate": "2022-02-11",
+    "minimalPoint": 90.0,
+    "difficulty": "HOPELESS",
+    "author": {
+      "name": "Karabas Barabas",
+      "birthday": "1930-08-12",
+      "nationality": "RUSSIA",
+      "location": {
+        "x": 142,
+        "y": 1324.0,
+        "z": 124
+      }
+    }
+  },
+  {
+    "id": 2684,
+    "name": "Piligrim",
+    "coordinates": {
+      "x": 4132,
+      "y": 1235
+    },
+    "creationDate": "2022-02-12",
+    "minimalPoint": 20.0,
+    "difficulty": "HOPELESS",
+    "author": {
+      "name": "Женя Совенко",
+      "birthday": "2003-07-09",
+      "nationality": "RUSSIA",
+      "location": {
+        "x": 5441,
+        "y": 143.0,
+        "z": 14
+      }
+    }
+  },
+  {
+    "id": 541,
+    "name": "Tacos",
+    "coordinates": {
+      "x": 4132,
+      "y": 1235
+    },
+    "creationDate": "2022-02-12",
+    "minimalPoint": 20.0,
+    "difficulty": "HOPELESS",
+    "author": {
+      "name": "Женя Совенко",
+      "birthday": "2003-07-09",
+      "nationality": "RUSSIA",
+      "location": {
+        "x": 5441,
+        "y": 143.0,
+        "z": 14
+      }
+    }
+  },
+  {
+    "id": 559,
+    "name": "Great the Britain",
+    "coordinates": {
+      "x": 412,
+      "y": 41
+    },
+    "creationDate": "2022-05-10",
+    "minimalPoint": 1000.0,
+    "difficulty": "HOPELESS",
+    "author": {
+      "name": "Charlse",
+      "birthday": "1901-04-05",
+      "nationality": "GERMANY",
+      "location": {
+        "x": 234,
+        "y": 21134.0,
+        "z": 2
+      }
+    }
+  },
+  {
+    "id": 10000,
+    "name": "Дискретка",
+    "coordinates": {
+      "x": 32423,
+      "y": 234
+    },
+    "creationDate": "2022-05-10",
+    "minimalPoint": 100.0,
+    "difficulty": "TERRIBLE",
+    "author": {
+      "name": "Влад Чечетко",
+      "birthday": "1837-05-07",
+      "nationality": "GERMANY",
+      "location": {
+        "x": 4342,
+        "y": 423.0,
+        "z": 234
+      }
+    }
+  },
+  {
+    "id": 1,
+    "name": "Funny pringles",
+    "coordinates": {
+      "x": 4312,
+      "y": 1234
+    },
+    "creationDate": "2022-05-10",
+    "minimalPoint": 123.0,
+    "difficulty": "NORMAL",
+    "author": {
+      "name": "Gerald",
+      "birthday": "1977-04-10",
+      "nationality": "RUSSIA",
+      "location": {
+        "x": 586,
+        "y": 566.0,
+        "z": 123
+      }
+    }
+  },
+  {
+    "id": 100,
+    "name": "LOLOLOLO",
+    "coordinates": {
+      "x": 23423,
+      "y": 234
+    },
+    "creationDate": "2022-05-11",
+    "minimalPoint": 342.0,
+    "difficulty": "NORMAL",
+    "author": {
+      "name": "AKAKAIIIIAS",
+      "birthday": "1090-02-05",
+      "nationality": "RUSSIA",
+      "location": {
+        "x": 324,
+        "y": 23.0,
+        "z": 23
+      }
+    }
+  }
+]

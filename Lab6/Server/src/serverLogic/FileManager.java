@@ -27,18 +27,18 @@ public class FileManager {
                     jsonCollection = new File(collectionPath);
                     readJsonFile();
                 } else {
-                    System.out.println(ServerConnection.PS1 + "У вас нет доступа к файлу.");
+                    System.out.println(Tool.PS1 + "У вас нет доступа к файлу.");
                 }
-                System.out.println(ServerConnection.PS1 + "Введите команду 'help' для начала работы.");
+                System.out.println(Tool.PS1 + "Введите команду 'help' для начала работы.");
             } else {
                 throw new FileNotFoundException();
             }
         } catch (NullPointerException exception) {
             System.out.println("Системе не удалось найти файл!(была передана null строка)");
         } catch (FileNotFoundException ex) {
-            System.out.println(ServerConnection.PS1 + "Файл-коллекция по указанному пути не существует.\n" +
+            System.out.println(Tool.PS1 + "Файл-коллекция по указанному пути не существует.\n" +
                     "Элементы не добавлены в коллекцию программы.");
-            System.out.println(ServerConnection.PS1 + "Введите команду 'help' для начала работы.");
+            System.out.println(Tool.PS1 + "Введите команду 'help' для начала работы.");
         }
     }
 
@@ -50,7 +50,7 @@ public class FileManager {
     private void readJsonFile() throws FileNotFoundException {
         ArrayList<Integer> incorrectLinesNumbersInInputFileCollection = new ArrayList<>();
         ArrayList<Long> addedIDOfLabWorks = new ArrayList<>();
-        int iteratorForCountTheIncorrectElements = 0;
+        int iteratorForCountTheIncorrectElements = -1;
 
         LinkedHashSet<LabWork> addedLabWorks = null;
         try {
@@ -76,6 +76,7 @@ public class FileManager {
             if (addedLabWorks.size() != 0) {
 
                 for (LabWork labObj : addedLabWorks) {
+                    iteratorForCountTheIncorrectElements++;
                     try {
                         if (addedIDOfLabWorks.contains(labObj.getId())) {
                             throw new IllegalArgumentException();
@@ -103,7 +104,7 @@ public class FileManager {
                 throw new NullPointerException();
             }
             if (incorrectLinesNumbersInInputFileCollection.size() == 0) {
-                System.out.println(ServerConnection.PS1 + "Файл-коллекция успешно загружен на сервер.");
+                System.out.println(Tool.PS1 + "Файл-коллекция успешно загружен на сервер.");
             } else {
                 throw new IllegalArgumentException();
             }
@@ -141,9 +142,9 @@ public class FileManager {
             }).create();
             br.write(gsonWithRewritedMethodForLocalDate.toJson(collection).getBytes(StandardCharsets.UTF_8));
             br.close();
-            return ServerConnection.PS1 + "Коллекция успешно сохранена в файл.";
+            return Tool.PS1 + "Коллекция успешно сохранена в файл.";
         } catch (FileNotFoundException exception) {
-            return ServerConnection.PS1 + "Файл-коллекция не найден.";
+            return Tool.PS1 + "Файл-коллекция не найден.";
         } catch (IOException e) {
             return "Возникла непредвиденная ошибка. Коллекция не может быть сохранена.";
         }

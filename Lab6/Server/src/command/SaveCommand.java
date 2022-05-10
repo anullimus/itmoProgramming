@@ -2,6 +2,7 @@ package command;
 
 import serverLogic.CollectionManager;
 import serverLogic.FileManager;
+import utility.Response;
 
 public class SaveCommand extends Command {
 
@@ -10,8 +11,8 @@ public class SaveCommand extends Command {
     }
 
     @Override
-    public String execute() {
+    public Response execute() {
         getCollectionManager().save();
-        return "Коллекция сохранена успешно.";
+        return new Response("Коллекция сохранена успешно.");
     }
 }

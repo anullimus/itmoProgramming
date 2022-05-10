@@ -1,10 +1,8 @@
 package serverLogic;
 
-import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import data.initial.LabWork;
 
-import java.io.*;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
@@ -60,9 +58,6 @@ public class CollectionManager {
      */
     public int getSize() {
         return labWorks.size();
-    }
-    public Gson getSerializer() {
-        return new Gson();
     }
 
     @Override

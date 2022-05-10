@@ -2,6 +2,8 @@ package command;
 
 import data.initial.LabWork;
 import serverLogic.CollectionManager;
+import utility.Request;
+import utility.Response;
 
 import java.util.LinkedHashSet;
 
@@ -17,23 +19,17 @@ public class UpdateIDCommand extends Command {
     }
 
     @Override
-    public String execute(String arg) {
+    public Response execute(Request request) {
         LinkedHashSet<LabWork> collection = getCollectionManager().getLabWorks();
-        try {
-            long id = Long.parseLong(arg);
+        long id = request.getLongArgument();
 
-            for (LabWork labWork : collection) {
-                if (labWork.getId() == id) {
-                    labWork.changeId();
-                    getCollectionManager().save();
-                    return "Элемент с id = " + id + " успешно обновлен.";
-                }
+        for (LabWork labWork : collection) {
+            if (labWork.getId() == id) {
+                labWork.changeId();
+                getCollectionManager().save();
+                return new Response("Элемент с id = " + id + " успешно обновлен.");
             }
-            return "Here is no lab work find with id=" + id;
-        } catch (NumberFormatException e) {
-            return "Введеныные данные содержат неверный формат.";
-        } catch (NullPointerException | IllegalArgumentException exception) {
-            return "Передан некорректный аргумент.";
         }
+        return new Response("Here is no lab work find with id=" + id);
     }
 }
