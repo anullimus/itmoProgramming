@@ -1,0 +1,78 @@
+package utility;
+
+
+import clientLogic.NewElementReader;
+import com.google.gson.JsonSyntaxException;
+import data.initial.Difficulty;
+import data.initial.LabWork;
+
+import java.io.Serializable;
+import java.util.Locale;
+
+public class Request implements Serializable {
+
+
+    // heer should be sent a labwork and other not big info from client to server
+
+    private final String commandName;
+    private final boolean commandHaveArgument;
+    private final CommandAnalyzer commandAnalyzer;
+
+    private LabWork labWorkArgument;
+    private Long longArgument;
+    private String stringArgument;
+    private Difficulty difficultyArgument;
+
+    public Request(CommandAnalyzer commandAnalyzer) {
+        this.commandAnalyzer = commandAnalyzer;
+        this.commandName = commandAnalyzer.getCommandName();
+        this.commandHaveArgument = commandAnalyzer.isCommandHaveArgument();
+        classArgumentDefiner();
+    }
+
+
+    public String getCommandName() {
+        return commandName;
+    }
+
+    public LabWork getLabWorkArgument() {
+        return labWorkArgument;
+    }
+
+    public Long getLongArgument() {
+        return longArgument;
+    }
+
+    public String getStringArgument() {
+        return stringArgument;
+    }
+
+    public Difficulty getDifficultyArgument() {
+        return difficultyArgument;
+    }
+
+    private void classArgumentDefiner() {
+        try {
+            if (commandAnalyzer.getArgumentClass() == LabWork.class) {
+                labWorkArgument = new NewElementReader().readNewLabwork(commandAnalyzer.isSriptExecuting());
+            } else if (commandAnalyzer.getArgumentClass() == Long.class) {
+                longArgument = Long.parseLong(commandAnalyzer.getCommandArgumentString());
+            } else if (commandAnalyzer.getArgumentClass() == Difficulty.class) {
+                difficultyArgument = Difficulty.
+                        valueOf(commandAnalyzer.getCommandArgumentString().toUpperCase(Locale.ROOT));
+            } else {
+                stringArgument = commandAnalyzer.getCommandArgumentString();
+            }
+        } catch (JsonSyntaxException ex) {
+            System.err.println("Ошибка в синтаксисе JSON. Не удалось добавить элемент.");
+        } catch (NumberFormatException e) {
+            System.err.println("Введеныные данные содержат неверный формат.");
+        } catch (NullPointerException | IllegalArgumentException exception) {
+            System.err.println("Передан некорректный аргумент.");
+        }
+    }
+
+    public boolean isCommandHaveArgument() {
+        return commandHaveArgument;
+    }
+}
