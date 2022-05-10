@@ -49,6 +49,13 @@ public class ClientConnection {
             socketChannel.configureBlocking(false);
             socketChannel.register(selector, SelectionKey.OP_READ);
 
+            // doubled code below, but I don't care
+            commandAnalyzer.analyzeCommand(new String[]{"help"}, false);
+            Request request = new Request(commandAnalyzer);
+            byte[] serializedRequest = Serializer.serializeRequest(request);
+            socketChannel.write(ByteBuffer.wrap(serializedRequest));
+            System.out.println(receiveResponse());
+
             interactiveMode();
         } catch (IOException e) {
             e.printStackTrace();
@@ -59,22 +66,18 @@ public class ClientConnection {
      * Парсит пользовательские команды и осуществляет обмен данными с сервером.
      */
     private void interactiveMode() {
-        try {
-            String command;
-            while (!(command = fromKeyboard.nextLine()).equals("exit")) {
-                String[] parsedCommand = command.trim().split(" ", 2);
-                if ("".equals(parsedCommand[0])) {
-                    System.out.print(Tool.PS2);
-                    continue;
-                }
-                kitchen(parsedCommand, false);
-                System.out.println("Введите команду: ");
+        String command;
+        while (!(command = fromKeyboard.nextLine()).equals("exit")) {
+            String[] parsedCommand = command.trim().split(" ", 2);
+            if ("".equals(parsedCommand[0])) {
                 System.out.print(Tool.PS2);
+                continue;
             }
-            exit();
-        } catch (IllegalArgumentException illegalArgumentException) {
-            System.err.print("Введена некорректная команда. Воспользуйтесь 'help'-инструкцией.\n");
+            kitchen(parsedCommand, false);
+            System.out.println("Введите команду: ");
+            System.out.print(Tool.PS2);
         }
+        exit();
     }
 
     private void executeScript(String scriptPath) {
