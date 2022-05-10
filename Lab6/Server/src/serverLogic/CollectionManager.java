@@ -5,6 +5,8 @@ import data.initial.LabWork;
 
 import java.lang.reflect.Type;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 
@@ -15,6 +17,7 @@ public class CollectionManager {
     private final FileManager fileManager;
     private final LinkedHashSet<LabWork> labWorks;
     private final LocalDate creationTimeOfCollection;
+    public static Long MAX_ID;
 
     /**
      * Предоставляет доступ к коллекции и связанному с ней файлу.
@@ -25,6 +28,7 @@ public class CollectionManager {
     public CollectionManager(String collectionPath) {
         fileManager = new FileManager(collectionPath);
         labWorks = fileManager.getLabWorks();
+        MAX_ID = Collections.max(fileManager.getAddedIDOfLabWorks());
         creationTimeOfCollection = LocalDate.now();
     }
 

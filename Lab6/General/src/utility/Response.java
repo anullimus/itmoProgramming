@@ -9,12 +9,22 @@ import java.util.stream.Collectors;
 public class Response implements Serializable {
     private String serverMessage;
     private LinkedHashSet<LabWork> collection;
+    private long maxIdInCollection;
 
     public Response(String serverMessage) {
         this.serverMessage = serverMessage;
     }
 
-    public Response(LinkedHashSet<LabWork> collection) {
+    public Response(String serverMessage, long maxIdInCollection) {
+        this.serverMessage = serverMessage;
+        this.maxIdInCollection = maxIdInCollection;
+    }
+
+    public long getMaxIdInCollection() {
+        return maxIdInCollection;
+    }
+
+    public Response(LinkedHashSet<LabWork>  collection) {
         this.collection = collection;
     }
 

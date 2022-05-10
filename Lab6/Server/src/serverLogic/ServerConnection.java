@@ -86,7 +86,7 @@ public class ServerConnection {
     public void work() {
         try {
             Response greetingResponse = new Response("Соединение установлено! Вы можете вводить команды!" +
-                    "\nP.s. если не знаете, что вводить, просто введите команду 'help'");
+                    "\nP.s. если не знаете, что вводить, просто введите команду 'help'", CollectionManager.MAX_ID);
             sendToClient.write(Serializer.serializeResponse(greetingResponse));
             sendToClient.flush();
             Command errorCommand = new Command(null) {

@@ -16,6 +16,11 @@ import java.util.*;
 public class FileManager {
     private File jsonCollection;
     private final LinkedHashSet<LabWork> labWorks;
+    private HashSet<Long> addedIDOfLabWorks;
+
+    public HashSet<Long> getAddedIDOfLabWorks() {
+        return addedIDOfLabWorks;
+    }
 
     public FileManager(String collectionPath) {
         System.out.println(collectionPath);
@@ -49,10 +54,10 @@ public class FileManager {
      */
     private void readJsonFile() throws FileNotFoundException {
         ArrayList<Integer> incorrectLinesNumbersInInputFileCollection = new ArrayList<>();
-        ArrayList<Long> addedIDOfLabWorks = new ArrayList<>();
+        addedIDOfLabWorks = new HashSet<>();
         int iteratorForCountTheIncorrectElements = -1;
 
-        LinkedHashSet<LabWork> addedLabWorks = null;
+        LinkedHashSet<LabWork> addedLabWorks;
         try {
             BufferedReader inputStreamReader = new BufferedReader(new InputStreamReader(new FileInputStream(jsonCollection)));
             System.out.println("Попытка загрузки элементов в коллекцию...");

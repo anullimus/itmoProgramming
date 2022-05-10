@@ -53,7 +53,9 @@ public class ClientConnection {
             Request request = new Request(commandAnalyzer);
             byte[] serializedRequest = Serializer.serializeRequest(request);
             socketChannel.write(ByteBuffer.wrap(serializedRequest));
-            System.out.println(receiveResponse());
+            Response response = receiveResponse();
+            System.out.println(response);
+
 
             interactiveMode();
         } catch (IOException e) {
