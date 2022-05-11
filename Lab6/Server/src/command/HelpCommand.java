@@ -21,6 +21,7 @@ public class HelpCommand extends Command {
             result.append(entry.getKey()).append(": ").append(entry.getValue().getDescription()).append("\n");
         }
         result.append("execute_script: Считать и исполнить скрипт из указанного файла\n");
+        result.append("exit: Завершить работу клиентского приложения\n");
         result.append("------------------------------------------");
         return new Response(result.toString());
     }
