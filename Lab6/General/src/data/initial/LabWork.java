@@ -18,7 +18,7 @@ public class LabWork implements Comparable<LabWork>, Serializable {
     private Float minimalPoint;
     private Difficulty difficulty;
     private Person author;
-    public static Long MAX_ID;
+    public static Long MAX_ID = 12345L;
 
     public LabWork(String name, Coordinates coordinates, Float minimalPoint, Difficulty difficulty, Person author) {
         this.id = generateID();
@@ -60,7 +60,8 @@ public class LabWork implements Comparable<LabWork>, Serializable {
      * Changes id of the Lab work.
      */
     public void changeId() {
-        this.id = MAX_ID++;
+        this.id = MAX_ID;
+        MAX_ID++;
     }
 
     /**
@@ -119,8 +120,8 @@ public class LabWork implements Comparable<LabWork>, Serializable {
     }
 
     @Override
-    public int compareTo(LabWork ticketObject) {
-        return creationDate.compareTo(ticketObject.getCreationDate());
+    public int compareTo(LabWork labWork) {
+        return minimalPoint.compareTo(labWork.minimalPoint);
     }
 
     @Override

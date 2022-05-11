@@ -34,7 +34,6 @@ public class FileManager {
                 } else {
                     System.out.println(Tool.PS1 + "У вас нет доступа к файлу.");
                 }
-                System.out.println(Tool.PS1 + "Введите команду 'help' для начала работы.");
             } else {
                 throw new FileNotFoundException();
             }

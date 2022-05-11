@@ -2,6 +2,7 @@ package command;
 
 
 import data.initial.LabWork;
+import data.initial.Location;
 import data.initial.Person;
 import serverLogic.CollectionManager;
 import utility.Request;
@@ -10,6 +11,7 @@ import utility.Response;
 import java.util.LinkedHashSet;
 
 public class CountLessThanAuthorCommand extends Command {
+    private Person author;
 
     public CountLessThanAuthorCommand(CollectionManager manager) {
         super(manager);
@@ -22,7 +24,6 @@ public class CountLessThanAuthorCommand extends Command {
         String inputAuthor = request.getStringArgument();
         if (collection.size() != 0) {
             // создаю объект, тк поиск сначала идет по имени, но потом мы сравниваем другие поля
-            Person author = null;
             for (LabWork lw : collection) {
                 if (lw.getAuthor().getName().equals(inputAuthor)) {
                     author = lw.getAuthor();
@@ -30,17 +31,12 @@ public class CountLessThanAuthorCommand extends Command {
                 }
             }
             if (author != null) {
-                long countOfAuthors = 0;
-                for (LabWork lw : collection) {
-                    if (lw.getAuthor().getBirthday().compareTo(author.getBirthday()) < 0) {
-                        countOfAuthors++;
-                    }
-                }
-                return new Response("Количество лабораторных работ, авторы которых родились раньше введенного автора: "
+                int countOfAuthors = (int) collection.stream().filter(labwork ->
+                        author.getLocation().compareTo(labwork.getAuthor().getLocation()) < 0).count();
+                return new Response("Количество лабораторных работ, локация авторов которых меньше, чем у заданного: "
                         + countOfAuthors);
             } else {
                 return new Response("Автор не найден.");
-
             }
         } else {
             return new Response("Элементу не с чем сравнивать. Коллекция пуста.");

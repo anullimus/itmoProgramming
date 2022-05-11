@@ -5,10 +5,8 @@ import data.initial.LabWork;
 
 import java.lang.reflect.Type;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Collection class manages the elements of collections with lab work{@link LabWork}.
@@ -27,7 +25,8 @@ public class CollectionManager {
 
     public CollectionManager(String collectionPath) {
         fileManager = new FileManager(collectionPath);
-        labWorks = fileManager.getLabWorks();
+        labWorks = fileManager.getLabWorks().stream().sorted(Comparator.comparing(LabWork::getMinimalPoint))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         MAX_ID = Collections.max(fileManager.getAddedIDOfLabWorks());
         creationTimeOfCollection = LocalDate.now();
     }
@@ -36,7 +35,8 @@ public class CollectionManager {
      * Записывает элементы коллекции в файл. Так как необходим нескольким командам, реализован в этом классе.
      */
     public String save() {
-        return fileManager.save(labWorks);
+        return fileManager.save(labWorks.stream().sorted(Comparator.comparing(LabWork::getMinimalPoint))
+                .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
 
     public Type getCollectionType() {

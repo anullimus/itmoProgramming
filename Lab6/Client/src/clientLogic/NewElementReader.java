@@ -2,6 +2,7 @@ package clientLogic;
 
 
 import data.initial.*;
+import exception.ScriptElementReaderException;
 import serverLogic.Tool;
 
 import java.time.DateTimeException;
@@ -46,10 +47,10 @@ public class NewElementReader {
                 value = Integer.parseInt(lineReader());
                 break;
             } catch (NumberFormatException | NullPointerException e) {
-                System.err.print(standardErrorMessage);
                 if (isSriptExecuting) {
-                    System.err.println(standardErrorMessageForScript);
+                    throw new ScriptElementReaderException();
                 }
+                System.err.print(standardErrorMessage);
             }
         }
         return value;
@@ -62,10 +63,10 @@ public class NewElementReader {
                 value = Long.parseLong(lineReader());
                 break;
             } catch (NumberFormatException | NullPointerException e) {
-                System.err.print(standardErrorMessage);
                 if (isSriptExecuting) {
-                    System.err.println(standardErrorMessageForScript);
+                    throw new ScriptElementReaderException();
                 }
+                System.err.print(standardErrorMessage);
             }
         }
         return value;
@@ -78,10 +79,10 @@ public class NewElementReader {
                 value = Double.parseDouble(lineReader());
                 break;
             } catch (NumberFormatException | NullPointerException e) {
-                System.err.print(standardErrorMessage);
                 if (isSriptExecuting) {
-                    System.err.println(standardErrorMessageForScript);
+                    throw new ScriptElementReaderException();
                 }
+                System.err.print(standardErrorMessage);
             }
         }
         return value;
@@ -94,10 +95,10 @@ public class NewElementReader {
                 value = Float.parseFloat(lineReader());
                 break;
             } catch (NumberFormatException | NullPointerException e) {
-                System.err.print(standardErrorMessage);
                 if (isSriptExecuting) {
-                    System.err.println(standardErrorMessageForScript);
+                    throw new ScriptElementReaderException();
                 }
+                System.err.print(standardErrorMessage);
             }
         }
         return value;
@@ -109,7 +110,7 @@ public class NewElementReader {
         while (name.isEmpty()) {
             System.err.print("Поле 'название лабораторной работы' не может быть пустым, повторите попытку: ");
             if (isSriptExecuting) {
-                System.err.println(standardErrorMessageForScript);
+                throw new ScriptElementReaderException();
             }
             name = lineReader().trim();
         }
@@ -143,6 +144,9 @@ public class NewElementReader {
         System.out.println(Tool.PS1 + "Введите минимальный балл, который можно получить за lab work: ");
         float minPoints = readFloat();
         while (minPoints < 0) {
+            if (isSriptExecuting) {
+                throw new ScriptElementReaderException();
+            }
             System.err.println("Неправильный аргумент. Введите положительное число: ");
             minPoints = readFloat();
         }
@@ -155,7 +159,7 @@ public class NewElementReader {
         while (name.isEmpty()) {
             System.err.print("Поле 'имя автора' не может быть пустым, повторите попытку: ");
             if (isSriptExecuting) {
-                System.err.println(standardErrorMessageForScript);
+                throw new ScriptElementReaderException();
             }
             name = lineReader().trim();
         }
@@ -170,10 +174,10 @@ public class NewElementReader {
                 birthday = LocalDate.parse(lineReader().trim());
                 break;
             } catch (DateTimeException | NullPointerException exception) {
-                System.err.println(standardErrorMessage);
                 if (isSriptExecuting) {
-                    System.err.println(standardErrorMessageForScript);
+                    throw new ScriptElementReaderException();
                 }
+                System.err.print(standardErrorMessage);
             }
         }
         return birthday;
@@ -192,10 +196,10 @@ public class NewElementReader {
                     throw new IllegalArgumentException();
                 }
             } catch (IllegalArgumentException illegalArgumentException) {
-                System.err.println(standardErrorMessage);
                 if (isSriptExecuting) {
-                    System.err.println(standardErrorMessageForScript);
+                    throw new ScriptElementReaderException();
                 }
+                System.err.print(standardErrorMessage);
             }
         }
         return Country.valueOf(country);
@@ -214,10 +218,10 @@ public class NewElementReader {
                     throw new IllegalArgumentException();
                 }
             } catch (IllegalArgumentException illegalArgumentException) {
-                System.err.println(standardErrorMessage);
                 if (isSriptExecuting) {
-                    System.err.println(standardErrorMessageForScript);
+                    throw new ScriptElementReaderException();
                 }
+                System.err.print(standardErrorMessage);
             }
         }
         return Difficulty.valueOf(difficulty);
@@ -228,7 +232,10 @@ public class NewElementReader {
             try {
                 iter++;
                 return addDataFromScript[iter];
-            } catch (NoSuchElementException exception) {
+            } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
+                throw new ScriptElementReaderException();
+            }
+            catch (NoSuchElementException exception) {
                 System.err.println("Ошибка при чтении нового элемента из скрипта.");
             }
         }

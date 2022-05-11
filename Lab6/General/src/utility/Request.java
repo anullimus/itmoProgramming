@@ -5,6 +5,7 @@ import clientLogic.NewElementReader;
 import com.google.gson.JsonSyntaxException;
 import data.initial.Difficulty;
 import data.initial.LabWork;
+import exception.ScriptElementReaderException;
 
 import java.io.Serializable;
 import java.util.Locale;
@@ -50,21 +51,16 @@ public class Request implements Serializable {
     }
 
     private void classArgumentDefiner() {
-        try {
-            if (commandAnalyzer.getArgumentClass() == LabWork.class) {
-                labWorkArgument = new NewElementReader(commandAnalyzer.getAddDataFromScript()).readNewLabwork(commandAnalyzer.isScriptExecuting());
-            } else if (commandAnalyzer.getArgumentClass() == Long.class) {
-                longArgument = Long.parseLong(commandAnalyzer.getCommandArgumentString());
-            } else if (commandAnalyzer.getArgumentClass() == Difficulty.class) {
-                difficultyArgument = Difficulty.
-                        valueOf(commandAnalyzer.getCommandArgumentString().toUpperCase(Locale.ROOT));
-            } else {
-                stringArgument = commandAnalyzer.getCommandArgumentString();
-            }
-        } catch (JsonSyntaxException ex) {
-            System.err.println("Ошибка в синтаксисе JSON. Не удалось добавить элемент.");
-        } catch (NumberFormatException e) {
-            System.err.println("Введеныные данные содержат неверный формат.");
+
+        if (commandAnalyzer.getArgumentClass() == LabWork.class) {
+            labWorkArgument = new NewElementReader(commandAnalyzer.getAddDataFromScript()).readNewLabwork(commandAnalyzer.isScriptExecuting());
+        } else if (commandAnalyzer.getArgumentClass() == Long.class) {
+            longArgument = Long.parseLong(commandAnalyzer.getCommandArgumentString());
+        } else if (commandAnalyzer.getArgumentClass() == Difficulty.class) {
+            difficultyArgument = Difficulty.
+                    valueOf(commandAnalyzer.getCommandArgumentString().toUpperCase(Locale.ROOT));
+        } else {
+            stringArgument = commandAnalyzer.getCommandArgumentString();
         }
     }
 

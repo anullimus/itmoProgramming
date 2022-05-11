@@ -22,7 +22,6 @@ public class RemoveGreaterCommand extends Command {
             collection.removeIf(p -> (p != null && p.compareTo(request.getLabWorkArgument()) > 0));
             getCollectionManager().save();
             return new Response("Удалено из коллекции " + (beginSize - collection.size()) + " элементов.");
-
         } else {
             return new Response("Элементу не с чем сравнивать. Коллекция пуста.");
         }

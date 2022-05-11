@@ -5,7 +5,9 @@ import data.initial.LabWork;
 import serverLogic.CollectionManager;
 import utility.Response;
 
+import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.NoSuchElementException;
 
 
 public class MaxByAuthorCommand extends Command {
@@ -19,15 +21,13 @@ public class MaxByAuthorCommand extends Command {
     @Override
     public Response execute() {
         LinkedHashSet<LabWork> collection = getCollectionManager().getLabWorks();
-        LabWork[] arr = new LabWork[collection.size()];
-        arr = collection.toArray(arr);
-        LabWork lwWithOldestAuthor = arr[0];
-        for (LabWork lw : collection) {
-            if (lwWithOldestAuthor.getAuthor().getBirthday().compareTo(lw.getAuthor().getBirthday()) > 0) {
-                lwWithOldestAuthor = lw;
-            }
+        try {
+            LabWork lwWithOldestAuthor = collection.stream().max(Comparator.comparing(LabWork::getAuthor)).
+                    orElseThrow(NoSuchElementException::new);
+            return new Response("Лабораторная работа, написанная самым старым автором:\n"
+                    + lwWithOldestAuthor);
+        } catch (NoSuchElementException noSuchElementException) {
+            return new Response("Коллекция пуста.");
         }
-        return new Response("Лабораторная работа, написанная самым старым автором:\n"
-                + lwWithOldestAuthor);
     }
 }

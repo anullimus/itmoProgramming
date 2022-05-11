@@ -26,15 +26,19 @@ public class AddIfMinCommand extends Command {
         LinkedHashSet<LabWork> collection = getCollectionManager().getLabWorks();
         LabWork inputLabwork = request.getLabWorkArgument();
         if (collection.size() != 0) {
-            if (Collections.min(collection).compareTo(inputLabwork) > 0) {
+            if (collection.stream().allMatch((collectionLabwork) -> Float.compare(inputLabwork.getMinimalPoint(),
+                    collectionLabwork.getMinimalPoint()) < 0)) {
+                inputLabwork.changeId();
                 collection.add(inputLabwork);
                 getCollectionManager().save();
                 return new Response("Элемент успешно добавлен.");
-            } else {
-                return new Response("Ваш элеменет не минимальный.");
-            }
         } else {
-            return new Response("Элемент не с чем сравнивать. Коллекция пуста.");
+            return new Response("Ваш элеменет не минимальный.");
         }
+    } else
+
+    {
+        return new Response("Элемент не с чем сравнивать. Коллекция пуста.");
     }
+}
 }

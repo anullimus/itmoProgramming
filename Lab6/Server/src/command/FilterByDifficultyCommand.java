@@ -8,8 +8,10 @@ import utility.Request;
 import utility.Response;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class FilterByDifficultyCommand extends Command {
 
@@ -21,21 +23,10 @@ public class FilterByDifficultyCommand extends Command {
 
     @Override
     public Response execute(Request request) {
-        boolean wasAtLeastOneThisTypeOfElementInCollection = false;
+        Difficulty difficulty = request.getDifficultyArgument();
         LinkedHashSet<LabWork> collection = getCollectionManager().getLabWorks();
-        StringBuilder result = new StringBuilder();
-        for (LabWork lw : collection) {
-            if (lw.getDifficulty().equals(request.getDifficultyArgument())) {
-                result.append(lw).append("\n\n");
-                wasAtLeastOneThisTypeOfElementInCollection = true;
-            }
-        }
-        if (wasAtLeastOneThisTypeOfElementInCollection) {
-            result.append(Tool.PS1).append("Выведены все лаб. работы типа ");
-            System.out.println(result);
-            return new Response(result.toString());
-        } else {
-            return new Response("В коллекции не нашлось ни одного элемента с заданным типом");
-        }
+        return new Response((LinkedHashSet<LabWork>) collection.stream().
+                filter(labwork -> labwork.getDifficulty().equals(difficulty)).
+                collect(Collectors.toCollection(LinkedHashSet::new)));
     }
 }

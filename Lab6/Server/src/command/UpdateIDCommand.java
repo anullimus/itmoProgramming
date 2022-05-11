@@ -6,6 +6,7 @@ import utility.Request;
 import utility.Response;
 
 import java.util.LinkedHashSet;
+import java.util.NoSuchElementException;
 
 
 /**
@@ -22,14 +23,14 @@ public class UpdateIDCommand extends Command {
     public Response execute(Request request) {
         LinkedHashSet<LabWork> collection = getCollectionManager().getLabWorks();
         long id = request.getLongArgument();
-
-        for (LabWork labWork : collection) {
-            if (labWork.getId() == id) {
-                labWork.changeId();
-                getCollectionManager().save();
-                return new Response("Элемент с id = " + id + " успешно обновлен.");
-            }
+        try {
+            LabWork labWork = collection.stream().filter(collectionLabwork -> collectionLabwork.getId().equals(id))
+                    .findAny().orElseThrow(NoSuchElementException::new);
+            labWork.changeId();
+            getCollectionManager().save();
+            return new Response("Элемент с id = " + id + " успешно обновлен.");
+        }catch (NoSuchElementException noSuchElementException) {
+            return new Response("Here is no lab work find with id=" + id);
         }
-        return new Response("Here is no lab work find with id=" + id);
     }
 }

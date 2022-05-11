@@ -4,10 +4,12 @@ package clientLogic;
 import com.google.gson.JsonSyntaxException;
 import data.initial.LabWork;
 import exception.DeserializeException;
+import exception.ScriptElementReaderException;
 import serverLogic.Tool;
 import utility.*;
 
 import java.io.*;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -43,11 +45,31 @@ public class ClientConnection {
             fromKeyboard = scanner;
 
             selector = Selector.open();
-            socketChannel = SocketChannel.open(socketAddress);
+            while (true)
+                try {
+                    socketChannel = SocketChannel.open(socketAddress);
+                    break;
+                } catch (ConnectException connectException) {
+                    System.err.println("Нет связи с сервером. Подключться ещё раз (введите {да} или {нет})?");
+                    String answer;
+                    while (!(answer = fromKeyboard.nextLine()).equals("да")) {
+                        switch (answer) {
+                            case "":
+                                break;
+                            case "нет":
+                                exit();
+                                break;
+                            default:
+                                System.out.println("Введите корректный ответ.");
+                        }
+                    }
+                    System.out.print("Подключение ...\n");
+                }
 
             socketChannel.finishConnect();
             socketChannel.configureBlocking(false);
             socketChannel.register(selector, SelectionKey.OP_READ);
+
 
             // doubled code below, but I don't care. It's for init with server. Doesn't need response
             commandAnalyzer.analyzeCommand(new String[]{"help"}, false);
@@ -70,14 +92,19 @@ public class ClientConnection {
     private void interactiveMode() {
         String command;
         while (!(command = fromKeyboard.nextLine()).equals("exit")) {
-            String[] parsedCommand = command.trim().split(" ", 2);
-            if ("".equals(parsedCommand[0])) {
+            try {
+                String[] parsedCommand = command.trim().split(" ", 2);
+                if ("".equals(parsedCommand[0])) {
+                    System.out.print(Tool.PS2);
+                    continue;
+                }
+                kitchen(parsedCommand, false);
+                System.out.println(Tool.PS1 + "Введите команду: ");
                 System.out.print(Tool.PS2);
-                continue;
+            } catch (Exception exception) {
+                System.err.println("Видимо пока...");
+                exit();
             }
-            kitchen(parsedCommand, false);
-            System.out.println(Tool.PS1 + "Введите команду: ");
-            System.out.print(Tool.PS2);
         }
         exit();
     }
@@ -137,10 +164,17 @@ public class ClientConnection {
             } else {
                 throw new IllegalArgumentException();
             }
+        } catch (ScriptElementReaderException scriptElementReaderException) {
+            System.err.println("В введенных данных недостаточно аргументов для создания нового элемента.");
+        } catch (JsonSyntaxException ex) {
+            System.err.println("Ошибка в синтаксисе JSON. Не удалось добавить элемент.");
+        } catch (NumberFormatException e) {
+            System.err.println("Введеныные данные содержат неверный формат.");
         } catch (IllegalArgumentException illegalArgumentException) {
-            System.err.print("Введена некорректная команда. Воспользуйтесь 'help'-инструкцией.\n");
+            System.err.println("Введена некорректная команда. Воспользуйтесь 'help'-инструкцией.\n");
         } catch (IOException ioException) {
-            ioException.printStackTrace();  // idk how can it happen
+            System.err.println("Похоже на то, что сервер приостановил свою работу.");
+            exit();
         }
     }
 
@@ -152,21 +186,24 @@ public class ClientConnection {
             Set<SelectionKey> selectedKeys = selector.selectedKeys();
             Iterator<SelectionKey> iter = selectedKeys.iterator();
             SelectionKey key = iter.next();
-
-            if (key.isReadable()) {
-                int bytesRead = socketChannel.read(byteBuffer);
-                if (bytesRead <= 0) {
-                    continue;
+            try {
+                if (key.isReadable()) {
+                    int bytesRead = socketChannel.read(byteBuffer);
+                    if (bytesRead <= 0) {
+                        continue;
+                    }
+                    ((Buffer) byteBuffer).flip();
+                    byte[] serializedResponse = new byte[byteBuffer.remaining()];
+                    byteBuffer.get(serializedResponse);
+                    try {
+                        return Deserializer.deserializeResponse(serializedResponse);
+                    } catch (DeserializeException deserializeException) {
+                        byteBuffer = ByteBuffer.allocate(byteBuffer.capacity() + byteBuffer.capacity() * 2);
+                        byteBuffer.put(serializedResponse);
+                    }
                 }
-                ((Buffer) byteBuffer).flip();
-                byte[] serializedResponse = new byte[byteBuffer.remaining()];
-                byteBuffer.get(serializedResponse);
-                try {
-                    return Deserializer.deserializeResponse(serializedResponse);
-                } catch (DeserializeException deserializeException) {
-                    byteBuffer = ByteBuffer.allocate(byteBuffer.capacity() + byteBuffer.capacity() * 2);
-                    byteBuffer.put(serializedResponse);
-                }
+            } catch (IOException ioException) {
+                new Response("An existing connection was forcibly closed by the remote host");
             }
         }
     }
