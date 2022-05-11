@@ -35,9 +35,6 @@ public class ClientConnection {
 
     }
 
-    /**
-     * Устанавливает активное соединение с сервером.
-     */
     public void work() {
         try (Scanner scanner = new Scanner(System.in)) {
             nameOfFilesThatWasBroughtToExecuteMethod = new HashSet<>();
@@ -86,9 +83,7 @@ public class ClientConnection {
         }
     }
 
-    /**
-     * Парсит пользовательские команды и осуществляет обмен данными с сервером.
-     */
+
     private void interactiveMode() {
         String command;
         while (!(command = fromKeyboard.nextLine()).equals("exit")) {
@@ -208,9 +203,6 @@ public class ClientConnection {
         }
     }
 
-    /**
-     * Завершает работу клиентского приложения.
-     */
     private void exit() {
         System.out.println("Завершение программы.");
         System.exit(0);

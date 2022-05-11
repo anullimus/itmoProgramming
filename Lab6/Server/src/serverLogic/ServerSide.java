@@ -9,11 +9,6 @@ public class ServerSide {
 
     private static final CollectionManager serverCollection = new CollectionManager(System.getenv("VARRY"));
 
-    /**
-     * Точка входа в программу. Управляет подключением к клиентам и созданием потоков для каждого из них.
-     *
-     * @param args массив по умолчанию в основном методе. Не используется здесь.
-     */
     public static void main(String[] args) {
         Socket socket;
         ServerSocket serverSocket;
@@ -33,9 +28,6 @@ public class ServerSide {
         }
     }
 
-    /**
-     * Анимация ожидания соединения с клиентом путем ввода точек в консоль.
-     */
     private static void waitingPointer() {
         Thread pointer = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {

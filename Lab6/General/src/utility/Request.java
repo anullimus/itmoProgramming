@@ -2,10 +2,8 @@ package utility;
 
 
 import clientLogic.NewElementReader;
-import com.google.gson.JsonSyntaxException;
 import data.initial.Difficulty;
 import data.initial.LabWork;
-import exception.ScriptElementReaderException;
 
 import java.io.Serializable;
 import java.util.Locale;

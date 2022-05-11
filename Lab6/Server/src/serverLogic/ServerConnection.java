@@ -12,14 +12,9 @@ import utility.Serializer;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.util.*;
 
-/**
- * Provides the full information of commands that manage the collection{@link CollectionManager} and some else technical
- * elements.
- */
 public class ServerConnection {
     private HashMap<String, Command> availableCommandsWithDescription;
     private ArrayList<String> availableCommands;
@@ -33,12 +28,6 @@ public class ServerConnection {
         fillingSpecialCommandArrays();
     }
 
-    /**
-     * @param serverCollection обеспечивает доступ к коллекции.
-     * @param socket           активное соединение с клиентской программой.
-     *                         Команды, доступные клиенту, являются объектами {@link Command}, хранящимися в
-     *                         {@code HashMap <String, AbstractCommand> availableCommands}.
-     */
     public ServerConnection(CollectionManager serverCollection, Socket socket) throws IOException {
         this.socket = socket;
         this.inputStream = new BufferedInputStream(socket.getInputStream());
@@ -122,7 +111,6 @@ public class ServerConnection {
                 System.out.println("Ответ успешно отправлен.");
             }
         } catch (IOException | SerializeException | DeserializeException e) {
-            //e.printStackTrace();
             System.out.println("Клиент отключился");
 //            ServerLogger.logInfoMessage("Клиент отключился");
             //               todo: логирование

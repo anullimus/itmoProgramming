@@ -30,9 +30,6 @@ public class NewElementReader {
         standardErrorMessageForScript = "+1 ошибка при вводе";
     }
 
-    /**
-     * @return new Lab work read
-     */
     public LabWork readNewLabwork(boolean isSriptExecuting) {
         this.isSriptExecuting = isSriptExecuting;
         Person author = new Person(readNameOfCreator(), readBirthdayOfCreator(), readCountry(), readLocation());
