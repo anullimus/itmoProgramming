@@ -1,7 +1,6 @@
 package utility;
 
 
-import clientLogic.NewElementReader;
 import data.initial.Difficulty;
 import data.initial.LabWork;
 
@@ -49,16 +48,17 @@ public class Request implements Serializable {
     }
 
     private void classArgumentDefiner() {
-
-        if (commandAnalyzer.getArgumentClass() == LabWork.class) {
-            labWorkArgument = new NewElementReader(commandAnalyzer.getAddDataFromScript()).readNewLabwork(commandAnalyzer.isScriptExecuting());
-        } else if (commandAnalyzer.getArgumentClass() == Long.class) {
-            longArgument = Long.parseLong(commandAnalyzer.getCommandArgumentString());
-        } else if (commandAnalyzer.getArgumentClass() == Difficulty.class) {
-            difficultyArgument = Difficulty.
-                    valueOf(commandAnalyzer.getCommandArgumentString().toUpperCase(Locale.ROOT));
-        } else {
-            stringArgument = commandAnalyzer.getCommandArgumentString();
+        if (!commandAnalyzer.getCommandName().equals("technical")) {
+            if (commandAnalyzer.getArgumentClass() == LabWork.class) {
+                labWorkArgument = new NewElementReader(commandAnalyzer.getAddDataFromScript()).readNewLabwork(commandAnalyzer.isScriptExecuting());
+            } else if (commandAnalyzer.getArgumentClass() == Long.class) {
+                longArgument = Long.parseLong(commandAnalyzer.getCommandArgumentString());
+            } else if (commandAnalyzer.getArgumentClass() == Difficulty.class) {
+                difficultyArgument = Difficulty.
+                        valueOf(commandAnalyzer.getCommandArgumentString().toUpperCase(Locale.ROOT));
+            } else {
+                stringArgument = commandAnalyzer.getCommandArgumentString();
+            }
         }
     }
 

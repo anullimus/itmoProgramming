@@ -16,23 +16,23 @@ import java.nio.ByteBuffer;
 import java.util.*;
 
 public class ServerConnection {
-    private HashMap<String, Command> availableCommandsWithDescription;
+    private HashMap<String, AbstractCommand> availableCommandsWithDescription;
     private ArrayList<String> availableCommands;
     private Map<String, Class<?>> commandsNeedArgument;
-    private CollectionManager serverCollection;
-    private BufferedInputStream inputStream;
-    private BufferedOutputStream sendToClient;
-    private Socket socket;
+    private final CollectionManager serverCollection;
+    private final BufferedInputStream inputStream;
+    private final BufferedOutputStream sendToClient;
+    private final Socket socket;
+    private final Scanner serverCommand;
 
-    public ServerConnection() {
-        fillingSpecialCommandArrays();
-    }
 
-    public ServerConnection(CollectionManager serverCollection, Socket socket) throws IOException {
+    public ServerConnection(CollectionManager serverCollection, Socket socket, BufferedInputStream inputStream,
+                            BufferedOutputStream outputStream) throws IOException {
         this.socket = socket;
-        this.inputStream = new BufferedInputStream(socket.getInputStream());
-        this.sendToClient = new BufferedOutputStream(socket.getOutputStream());
+        this.inputStream = inputStream;
+        this.sendToClient = outputStream;
         this.serverCollection = serverCollection;
+        serverCommand = new Scanner(System.in);
         fillingSpecialCommandArrays();
     }
 
@@ -75,10 +75,11 @@ public class ServerConnection {
     public void work() {
         try {
             Response greetingResponse = new Response("Соединение установлено! Вы можете вводить команды!" +
-                    "\nP.s. если не знаете, что вводить, просто введите команду 'help'", CollectionManager.MAX_ID);
+                    "\nP.s. если не знаете, что вводить, просто введите команду 'help'",
+                    CollectionManager.MAX_ID, getAvailableCommands(), getCommandsNeedArgument());
             sendToClient.write(Serializer.serializeResponse(greetingResponse));
             sendToClient.flush();
-            Command errorCommand = new Command(null) {
+            AbstractCommand errorCommand = new AbstractCommand(null) {
                 @Override
                 public Response execute() {
                     return new Response("Неизвестная команда. Введите 'help' для получения списка команд.");
@@ -102,7 +103,6 @@ public class ServerConnection {
                 }
                 //               todo: логирование
 
-
                 byte[] serializedResponse = Serializer.serializeResponse(response);
                 sendToClient.write(serializedResponse);
                 sendToClient.flush();
@@ -122,6 +122,20 @@ public class ServerConnection {
         final int size = 1024;
         byte[] serializedRequest = new byte[size];
         int bytesRead = inputStream.read(serializedRequest);
+//        while (true) {
+//            if (serverCommand.nextLine().trim().equals("save")) {
+//                serverCollection.save();
+//            }
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                System.out.print("\n");
+//                Thread.currentThread().interrupt();
+//            }
+//        }
+
+
+
         if (bytesRead == -1) {
             throw new IOException();
         }

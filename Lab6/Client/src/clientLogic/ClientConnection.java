@@ -5,12 +5,10 @@ import com.google.gson.JsonSyntaxException;
 import data.initial.LabWork;
 import exception.DeserializeException;
 import exception.ScriptElementReaderException;
-import serverLogic.Tool;
+import utility.Tool;
 import utility.*;
 
 import java.io.*;
-import java.net.ConnectException;
-import java.net.InetSocketAddress;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -23,59 +21,33 @@ import java.util.Set;
 
 
 public class ClientConnection {
-    private Selector selector;
-    private static Scanner fromKeyboard;
-    private SocketChannel socketChannel;
-    private final InetSocketAddress socketAddress;
-    private static CommandAnalyzer commandAnalyzer;
-    private HashSet<String> nameOfFilesThatWasBroughtToExecuteMethod;
+    private final Selector selector;
+    private final Scanner fromKeyboard;
+    private final SocketChannel socketChannel;
+    private final CommandAnalyzer commandAnalyzer;
+    private final HashSet<String> nameOfFilesThatWasBroughtToExecuteMethod;
 
-    public ClientConnection(InetSocketAddress socketAddress) {
-        this.socketAddress = socketAddress;
-
+    public ClientConnection(SocketChannel socketChannel, Selector selector, Scanner fromKeyboard) {
+        this.socketChannel = socketChannel;
+        this.selector = selector;
+        this.fromKeyboard = fromKeyboard;
+        nameOfFilesThatWasBroughtToExecuteMethod = new HashSet<>();
+        commandAnalyzer = new CommandAnalyzer();
     }
 
     public void work() {
-        try (Scanner scanner = new Scanner(System.in)) {
-            nameOfFilesThatWasBroughtToExecuteMethod = new HashSet<>();
-            commandAnalyzer = new CommandAnalyzer();
-            fromKeyboard = scanner;
-
-            selector = Selector.open();
-            while (true)
-                try {
-                    socketChannel = SocketChannel.open(socketAddress);
-                    break;
-                } catch (ConnectException connectException) {
-                    System.err.println("Нет связи с сервером. Подключться ещё раз (введите {да} или {нет})?");
-                    String answer;
-                    while (!(answer = fromKeyboard.nextLine()).equals("да")) {
-                        switch (answer) {
-                            case "":
-                                break;
-                            case "нет":
-                                exit();
-                                break;
-                            default:
-                                System.out.println("Введите корректный ответ.");
-                        }
-                    }
-                    System.out.print("Подключение ...\n");
-                }
-
-            socketChannel.finishConnect();
-            socketChannel.configureBlocking(false);
-            socketChannel.register(selector, SelectionKey.OP_READ);
-
-
+        try {
             // doubled code below, but I don't care. It's for init with server. Doesn't need response
-            commandAnalyzer.analyzeCommand(new String[]{"help"}, false);
+            commandAnalyzer.analyzeCommand(new String[]{"technical"}, false);
             Request request = new Request(commandAnalyzer);
             byte[] serializedRequest = Serializer.serializeRequest(request);
             socketChannel.write(ByteBuffer.wrap(serializedRequest));
             Response response = receiveResponse();
             System.out.println(response);
             LabWork.MAX_ID = response.getMaxIdInCollection();
+            commandAnalyzer.setAvailableCommands(response.getAvailableCommands());
+            commandAnalyzer.setCommandsNeedArgument(response.getCommandsNeedArgument());
+
 
             interactiveMode();
         } catch (IOException e) {
@@ -86,8 +58,8 @@ public class ClientConnection {
 
     private void interactiveMode() {
         String command;
-        while (!(command = fromKeyboard.nextLine()).equals("exit")) {
-            try {
+        try {
+            while (!(command = fromKeyboard.nextLine()).equals("exit")) {
                 String[] parsedCommand = command.trim().split(" ", 2);
                 if ("".equals(parsedCommand[0])) {
                     System.out.print(Tool.PS2);
@@ -96,10 +68,11 @@ public class ClientConnection {
                 kitchen(parsedCommand, false);
                 System.out.println(Tool.PS1 + "Введите команду: ");
                 System.out.print(Tool.PS2);
-            } catch (Exception exception) {
-                System.err.println("Видимо пока...");
-                exit();
             }
+        } catch (Exception exception) {
+            System.err.println("Видимо пока...");
+            exit();
+
         }
         exit();
     }
@@ -161,9 +134,9 @@ public class ClientConnection {
             }
         } catch (ScriptElementReaderException scriptElementReaderException) {
             System.err.println("В введенных данных недостаточно аргументов для создания нового элемента.");
-        } catch (JsonSyntaxException ex) {
+        } catch (JsonSyntaxException jsonSyntaxException) {
             System.err.println("Ошибка в синтаксисе JSON. Не удалось добавить элемент.");
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException numberFormatException) {
             System.err.println("Введеныные данные содержат неверный формат.");
         } catch (IllegalArgumentException illegalArgumentException) {
             System.err.println("Введена некорректная команда. Воспользуйтесь 'help'-инструкцией.\n");

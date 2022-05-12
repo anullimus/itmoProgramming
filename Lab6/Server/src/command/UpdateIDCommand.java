@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
 /**
  * Updates id of element from collection.
  */
-public class UpdateIDCommand extends Command {
+public class UpdateIDCommand extends AbstractCommand {
 
     public UpdateIDCommand(CollectionManager manager) {
         super(manager);
@@ -27,7 +27,7 @@ public class UpdateIDCommand extends Command {
             LabWork labWork = collection.stream().filter(collectionLabwork -> collectionLabwork.getId().equals(id))
                     .findAny().orElseThrow(NoSuchElementException::new);
             labWork.changeId();
-            getCollectionManager().save();
+//            getCollectionManager().save();
             return new Response("Элемент с id = " + id + " успешно обновлен.");
         }catch (NoSuchElementException noSuchElementException) {
             return new Response("Here is no lab work find with id=" + id);

@@ -1,12 +1,12 @@
 package command;
 
 import serverLogic.CollectionManager;
-import serverLogic.Tool;
+import utility.Tool;
 import utility.Request;
 import utility.Response;
 
 
-public class AddCommand extends Command {
+public class AddCommand extends AbstractCommand {
 
     public AddCommand(CollectionManager collectionManager) {
         super(collectionManager);
@@ -16,7 +16,7 @@ public class AddCommand extends Command {
     @Override
     public Response execute(Request request) {
         getCollectionManager().getLabWorks().add(request.getLabWorkArgument());
-        getCollectionManager().save();
+//        getCollectionManager().save();
         return new Response("Элемент успешно добавлен.");
     }
 }

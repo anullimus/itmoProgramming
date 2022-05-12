@@ -1,7 +1,6 @@
 package utility;
 
 import data.initial.LabWork;
-import serverLogic.ServerConnection;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,10 +10,18 @@ public class CommandAnalyzer implements Serializable {
     private String commandArgument;
     private  String commandName;
     private boolean commandHaveArgument;
-    private final ArrayList<String> availableCommands;
-    private final Map<String, Class<?>> commandsNeedArgument;
+    private ArrayList<String> availableCommands;
+    private Map<String, Class<?>> commandsNeedArgument;
     private boolean isScriptExecuting;
     private String[] addDataFromScript;
+
+    public void setAvailableCommands(ArrayList<String> availableCommands) {
+        this.availableCommands = availableCommands;
+    }
+
+    public void setCommandsNeedArgument(Map<String, Class<?>> commandsNeedArgument) {
+        this.commandsNeedArgument = commandsNeedArgument;
+    }
 
     public void setAddDataFromScript(String[] addDataFromScript) {
         this.addDataFromScript = addDataFromScript;
@@ -25,9 +32,6 @@ public class CommandAnalyzer implements Serializable {
     }
 
     public CommandAnalyzer() {
-        ServerConnection serverConnection = new ServerConnection();
-        this.availableCommands = serverConnection.getAvailableCommands();
-        this.commandsNeedArgument = serverConnection.getCommandsNeedArgument();
         this.isScriptExecuting = false;
     }
 
@@ -54,7 +58,9 @@ public class CommandAnalyzer implements Serializable {
     public boolean analyzeCommand(String[] inputLineDivided, boolean isScriptExecuting) {
         this.isScriptExecuting = isScriptExecuting;
         commandName = inputLineDivided[0].toLowerCase();
-
+        if (commandName.equals("technical")){
+            return true;
+        }
         if(commandName.equals("execute_script")){
             if(inputLineDivided.length == 1){
                 System.err.println("Укажите путь к скрипту.");

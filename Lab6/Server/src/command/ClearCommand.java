@@ -4,7 +4,7 @@ package command;
 import serverLogic.CollectionManager;
 import utility.Response;
 
-public class ClearCommand extends Command {
+public class ClearCommand extends AbstractCommand {
     public ClearCommand(CollectionManager manager) {
         super(manager);
         setDescription("Очистить коллекцию.");
@@ -13,7 +13,7 @@ public class ClearCommand extends Command {
     @Override
     public Response execute() {
         getCollectionManager().getLabWorks().clear();
-        getCollectionManager().save();
+//        getCollectionManager().save();
         return new Response("Коллекция очищена.");
     }
 }

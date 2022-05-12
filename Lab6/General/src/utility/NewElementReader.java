@@ -1,9 +1,8 @@
-package clientLogic;
+package utility;
 
 
 import data.initial.*;
 import exception.ScriptElementReaderException;
-import serverLogic.Tool;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -43,11 +42,13 @@ public class NewElementReader {
             try {
                 value = Integer.parseInt(lineReader());
                 break;
-            } catch (NumberFormatException | NullPointerException e) {
+            } catch (NumberFormatException | NullPointerException e ) {
                 if (isSriptExecuting) {
                     throw new ScriptElementReaderException();
                 }
                 System.err.print(standardErrorMessage);
+            }catch (IllegalArgumentException exception){
+                System.err.print("Интересная" + standardErrorMessage);
             }
         }
         return value;

@@ -3,17 +3,15 @@ package command;
 
 //import serverLogic.MyValidator;
 
-import com.google.gson.JsonSyntaxException;
 import data.initial.LabWork;
 import serverLogic.CollectionManager;
-import serverLogic.Tool;
+import utility.Tool;
 import utility.Request;
 import utility.Response;
 
-import java.util.Collections;
 import java.util.LinkedHashSet;
 
-public class AddIfMinCommand extends Command {
+public class AddIfMinCommand extends AbstractCommand {
 
     public AddIfMinCommand(CollectionManager collectionManager) {
         super(collectionManager);
@@ -30,15 +28,13 @@ public class AddIfMinCommand extends Command {
                     collectionLabwork.getMinimalPoint()) < 0)) {
                 inputLabwork.changeId();
                 collection.add(inputLabwork);
-                getCollectionManager().save();
+//                getCollectionManager().save();
                 return new Response("Элемент успешно добавлен.");
+            } else {
+                return new Response("Ваш элеменет не минимальный.");
+            }
         } else {
-            return new Response("Ваш элеменет не минимальный.");
+            return new Response("Элемент не с чем сравнивать. Коллекция пуста.");
         }
-    } else
-
-    {
-        return new Response("Элемент не с чем сравнивать. Коллекция пуста.");
     }
-}
 }

@@ -1,4 +1,4 @@
-package serverLogic;
+package utility;
 
 public class Tool {
     public static final String PS1 = "$ ";
