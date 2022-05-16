@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 public class ServerSide {
     private static CollectionManager collectionManager;
@@ -15,12 +17,12 @@ public class ServerSide {
         try {
             collectionManager = new CollectionManager(System.getenv("VARRY"));
         } catch (NullPointerException nullPointerException) {
-            System.err.println("You didn't set any path as argument to environment. So, goodbye.");
-            System.exit(0);
-        }catch (FileNotFoundException fileNotFoundException) {
-            System.err.println("File-collection doesn't exists by inputted path.\n" +
+            ServerLogger.logErrorMessage("You didn't set any path as argument to environment. So, goodbye.");
+            System.exit(1);
+        } catch (FileNotFoundException fileNotFoundException) {
+            ServerLogger.logErrorMessage("File-collection doesn't exists by inputted path.\n" +
                     "The elements wasn't added to the program's collection");
-            System.exit(0);
+            System.exit(1);
         }
         Socket socket;
         try (ServerSocket serverSocket = new ServerSocket(8000)) {
@@ -37,30 +39,48 @@ public class ServerSide {
             });
             pointer.setDaemon(true);
             pointer.start();
+
+            Scanner scanner = new Scanner(System.in);
             while (true) {
-                System.out.println("Sever started listen to clients. " + "\nPort " + serverSocket.getLocalPort() +
-                        " / Adress " + InetAddress.getLocalHost() + ".\nWaiting for client connection.");
+                ServerLogger.logInfoMessage("Server started listen to clients. Port " + serverSocket.getLocalPort() +
+                        " / Address " + InetAddress.getLocalHost());
+                ServerLogger.logInfoMessage("Waiting for client connection.");
                 socket = serverSocket.accept();
                 pointer.interrupt();
 
-                System.out.println(socket + " has connected to server.");
+                ServerLogger.logInfoMessage(socket + " has connected to server.");
                 BufferedInputStream inputStream = new BufferedInputStream(socket.getInputStream());
                 BufferedOutputStream outputStream = new BufferedOutputStream(socket.getOutputStream());
                 ServerConnection serverConnection = new ServerConnection(collectionManager, socket, inputStream, outputStream);
-                serverConnection.work();
+
+                Thread thread = new Thread(serverConnection::work);
+                thread.setDaemon(true);
+                thread.start();
+                while (true) {
+                    if (scanner.nextLine().trim().equals("save")) {
+                        serverConnection.getCollectionManager().save();
+                        ServerLogger.logInfoMessage("Collection successfully has been saved!");
+                    }
+                }
+
 //                Runnable r = new ServerConnection(collectionManager, socket, inputStream, outputStream);
 //                Thread t = new Thread(r);
 //                t.start();
             }
         } catch (IOException ex) {
-            System.err.println(ex.getMessage());
+            ServerLogger.logErrorMessage(ex.getMessage());
             ServerSide.exit();
+        } catch (NoSuchElementException noSuchElementException) {         //  ctrl+D
+            exit();
+        }catch (Exception exception){
+            ServerLogger.logErrorMessage("Handled some unexpected exception");
+            exit();
         }
     }
 
     private static void exit() {
-        System.out.println(collectionManager.save());
-        System.out.println("Finishing the server's work...");
-        System.exit(0);
+        ServerLogger.logInfoMessage(collectionManager.save());
+        ServerLogger.logInfoMessage("Finishing the server's work...");
+        System.exit(1);
     }
 }

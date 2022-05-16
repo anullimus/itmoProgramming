@@ -5,15 +5,14 @@ import data.initial.Difficulty;
 import data.initial.LabWork;
 import exception.DeserializeException;
 import exception.SerializeException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import utility.Deserializer;
 import utility.Request;
 import utility.Response;
 import utility.Serializer;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -25,36 +24,41 @@ public class ServerConnection {
     private HashMap<String, AbstractCommand> availableCommandsWithDescription;
     private ArrayList<String> availableCommands;
     private Map<String, Class<?>> commandsNeedArgument;
-    private final CollectionManager serverCollection;
+    private final CollectionManager collectionManager;
     private final BufferedInputStream inputStream;
     private final BufferedOutputStream sendToClient;
     private final Socket socket;
+    private final BufferedReader reader;
 
+    public CollectionManager getCollectionManager() {
+        return collectionManager;
+    }
 
-    public ServerConnection(CollectionManager serverCollection, Socket socket, BufferedInputStream inputStream,
+    public ServerConnection(CollectionManager collectionManager, Socket socket, BufferedInputStream inputStream,
                             BufferedOutputStream outputStream) throws IOException {
         this.socket = socket;
         this.inputStream = inputStream;
         this.sendToClient = outputStream;
-        this.serverCollection = serverCollection;
+        this.collectionManager = collectionManager;
+        this.reader = new BufferedReader(new InputStreamReader(System.in));
         fillingSpecialCommandArrays();
     }
 
     private void fillingSpecialCommandArrays() {
         availableCommandsWithDescription = new HashMap<>();
         commandsNeedArgument = new HashMap<>();
-        availableCommandsWithDescription.put("info", new InfoCommand(serverCollection));
-        availableCommandsWithDescription.put("show", new ShowCommand(serverCollection));
-        availableCommandsWithDescription.put("add", new AddCommand(serverCollection));
-        availableCommandsWithDescription.put("update_id", new UpdateIDCommand(serverCollection));
-        availableCommandsWithDescription.put("remove_by_id", new RemoveByIDCommand(serverCollection));
-        availableCommandsWithDescription.put("add_if_min", new AddIfMinCommand(serverCollection));
-        availableCommandsWithDescription.put("remove_greater", new RemoveGreaterCommand(serverCollection));
-        availableCommandsWithDescription.put("remove_lower", new RemoveLowerCommand(serverCollection));
-        availableCommandsWithDescription.put("max_by_author", new MaxByAuthorCommand(serverCollection));
-        availableCommandsWithDescription.put("count_less_than_author", new CountLessThanAuthorCommand(serverCollection));
-        availableCommandsWithDescription.put("filter_by_difficulty", new FilterByDifficultyCommand(serverCollection));
-        availableCommandsWithDescription.put("help", new HelpCommand(serverCollection, availableCommandsWithDescription));
+        availableCommandsWithDescription.put("info", new InfoCommand(collectionManager));
+        availableCommandsWithDescription.put("show", new ShowCommand(collectionManager));
+        availableCommandsWithDescription.put("add", new AddCommand(collectionManager));
+        availableCommandsWithDescription.put("update_id", new UpdateIDCommand(collectionManager));
+        availableCommandsWithDescription.put("remove_by_id", new RemoveByIDCommand(collectionManager));
+        availableCommandsWithDescription.put("add_if_min", new AddIfMinCommand(collectionManager));
+        availableCommandsWithDescription.put("remove_greater", new RemoveGreaterCommand(collectionManager));
+        availableCommandsWithDescription.put("remove_lower", new RemoveLowerCommand(collectionManager));
+        availableCommandsWithDescription.put("max_by_author", new MaxByAuthorCommand(collectionManager));
+        availableCommandsWithDescription.put("count_less_than_author", new CountLessThanAuthorCommand(collectionManager));
+        availableCommandsWithDescription.put("filter_by_difficulty", new FilterByDifficultyCommand(collectionManager));
+        availableCommandsWithDescription.put("help", new HelpCommand(collectionManager, availableCommandsWithDescription));
 
         commandsNeedArgument.put("add", LabWork.class);
         commandsNeedArgument.put("add_if_min", LabWork.class);
@@ -95,8 +99,8 @@ public class ServerConnection {
             while (true) {
 
                 requestFromClient = receiveRequest();
-                System.out.print("Client: " + socket + " sent the request: "
-                        + requestFromClient.getCommandName() + ". ");
+                ServerLogger.logInfoMessage("Client: " + socket + " sent request: "
+                        + requestFromClient.getCommandName());
 
                 if (requestFromClient.isCommandHaveArgument()) {
                     response = availableCommandsWithDescription.
@@ -106,13 +110,15 @@ public class ServerConnection {
                     response = availableCommandsWithDescription.
                             getOrDefault(requestFromClient.getCommandName(), errorCommand).execute();
                 }
+//                ServerLogger.logInfoMessage("Result of executing the program: {}", response);
+
                 byte[] serializedResponse = Serializer.serializeResponse(response);
                 sendToClient.write(serializedResponse);
                 sendToClient.flush();
-                System.out.println("Answer was successfully sent.");
+                ServerLogger.logInfoMessage("Answer was successfully sent." + "\n");
             }
         } catch (IOException | SerializeException | DeserializeException e) {
-            System.out.println("Client has disconnected");
+            ServerLogger.logInfoMessage("Client has disconnected");
         }
     }
 
@@ -121,14 +127,10 @@ public class ServerConnection {
         byte[] serializedRequest = new byte[size];
         int bytesRead = inputStream.read(serializedRequest);
 
-//            if (scanner.nextLine().trim().equals("save")) {
-//                serverCollection.save();
-//            }
-
         if (bytesRead == -1) {
             throw new IOException();
         }
-//        System.out.println("Were written {} bytes" + bytesRead);
+        ServerLogger.logDebugMessage("Need to read {} bytes", bytesRead);
 
         try {
             return Deserializer.deserializeRequest(serializedRequest);
@@ -137,7 +139,7 @@ public class ServerConnection {
             int len = bytesRead;
             List<ByteBuffer> list = new ArrayList<>();
             while (last > 0) {
-//                System.out.println("Stayed to read {} bytes" + last);
+                ServerLogger.logDebugMessage("Stayed to read {} bytes", last);
 
                 byte[] arr = new byte[last];
                 int bytes = inputStream.read(arr);
@@ -146,7 +148,7 @@ public class ServerConnection {
                     throw new IOException();
                 }
                 list.add(ByteBuffer.wrap(arr));
-//                System.out.println("Read {} bytes" + bytes);
+                ServerLogger.logDebugMessage("Read {} bytes", bytes);
                 last = inputStream.available();
             }
             ByteBuffer byteBuffer = ByteBuffer.allocate(len);

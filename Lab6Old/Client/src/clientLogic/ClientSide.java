@@ -38,7 +38,7 @@ public class ClientSide {
                         case "":
                             break;
                         case "нет":
-                            System.exit(1);
+                            System.exit(0);
                             break;
                         default:
                             System.out.println("Введите корректный ответ.");

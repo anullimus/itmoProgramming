@@ -15,7 +15,6 @@ import java.util.Scanner;
 public class NewElementReader {
     private final Scanner scanner;
     private final String standardErrorMessage;
-    private final String standardErrorMessageForScript;
     private boolean isSriptExecuting;
     private final String[] addDataFromScript;
     private int iter;
@@ -26,7 +25,6 @@ public class NewElementReader {
         this.isSriptExecuting = false;
         iter = -1;
         standardErrorMessage = "Ошибка при вводе, повторите попытку: ";
-        standardErrorMessageForScript = "+1 ошибка при вводе";
     }
 
     public LabWork readNewLabwork(boolean isSriptExecuting) {

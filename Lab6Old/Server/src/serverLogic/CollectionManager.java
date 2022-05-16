@@ -5,7 +5,7 @@ import data.initial.LabWork;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class CollectionManager {
     private final FileManager fileManager;
     private final LinkedHashSet<LabWork> labWorks;
-    private final LocalDateTime creationTimeOfCollection;
+    private final LocalDate creationTimeOfCollection;
     public static Long MAX_ID;
 
     /**
@@ -33,7 +33,7 @@ public class CollectionManager {
             labWorks = fileManager.getLabWorks().stream().sorted(Comparator.comparing(LabWork::getMinimalPoint))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
             MAX_ID = Collections.max(fileManager.getAddedIDOfLabWorks());
-            creationTimeOfCollection = LocalDateTime.now();
+            creationTimeOfCollection = LocalDate.now();
         } catch (NullPointerException nullPointerException) {
             throw new NullPointerException();
         } catch (FileNotFoundException fileNotFoundException) {
@@ -51,11 +51,6 @@ public class CollectionManager {
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
 
-    public Type getCollectionType() {
-        return new TypeToken<LinkedHashSet<LabWork>>() {
-        }.getType();
-    }
-
     /**
      * @return collection
      */
@@ -66,7 +61,7 @@ public class CollectionManager {
     /**
      * @return collection creation date
      */
-    public LocalDateTime getCreationDate() {
+    public LocalDate getCreationDate() {
         return creationTimeOfCollection;
     }
 

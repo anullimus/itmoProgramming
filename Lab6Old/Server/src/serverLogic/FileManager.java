@@ -63,7 +63,7 @@ public class FileManager {
         LinkedHashSet<LabWork> addedLabWorks;
         try {
             BufferedReader inputStreamReader = new BufferedReader(new InputStreamReader(new FileInputStream(jsonCollection)));
-            System.out.println("Try to load the elements to the program's collection...");
+            ServerLogger.logInfoMessage("Try to load the elements to the program's collection...");
             String nextLine;
             StringBuilder dataString = new StringBuilder();
             while ((nextLine = inputStreamReader.readLine()) != null) {
@@ -112,23 +112,23 @@ public class FileManager {
                 throw new NullPointerException();
             }
             if (incorrectLinesNumbersInInputFileCollection.size() == 0) {
-                System.out.println("File-collection was successfully loaded.");
+                ServerLogger.logInfoMessage("File-collection was successfully loaded.");
             } else {
                 throw new IllegalArgumentException();
             }
         } catch (NullPointerException nullPointerException) {
-            System.err.println("File is empty.");
+            ServerLogger.logErrorMessage("File is empty.");
         } catch (IllegalArgumentException illegalArgumentException) {
-            System.err.println("File-collection was loaded.\n" +
+            ServerLogger.logInfoMessage("File-collection was loaded.\n" +
                     "Attention! Not all elements from the file were added to the collection, because some of them are" +
                     "not correct. Line numbers with invalid elements: " + incorrectLinesNumbersInInputFileCollection);
         } catch (JsonSyntaxException jsonSyntaxException) {
-            System.err.println("The file contains gross violations of the Json format. For this reason, labworks" +
+            ServerLogger.logErrorMessage("The file contains gross violations of the Json format. For this reason, labworks" +
                     "cannot be uploaded to the program's collection.");
         } catch (FileNotFoundException fileNotFoundException) {
-            System.err.println("File-collection wasn't found by inputted path.");
+            ServerLogger.logErrorMessage("File-collection wasn't found by inputted path.");
         } catch (IOException ioException) {
-            System.err.println("An unexpected error occurred while reading the file. Check the correctness of the data " +
+            ServerLogger.logErrorMessage("An unexpected error occurred while reading the file. Check the correctness of the data " +
                     "and/or report the problem to the admin.");
         }
     }
@@ -152,9 +152,9 @@ public class FileManager {
             }).create();
             br.write(gsonWithRewritedMethodForLocalDate.toJson(collection).getBytes(StandardCharsets.UTF_8));
             br.close();
-            return Tool.PS1 + "The collection was successfully saved to file.";
+            return "The collection was successfully saved to file.";
         } catch (FileNotFoundException exception) {
-            return Tool.PS1 + "File-collection wasn't found.";
+            return "File-collection wasn't found.";
         } catch (IOException e) {
             return "An unexpected error has occurred. The collection could not be saved.";
         }

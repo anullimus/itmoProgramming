@@ -19,6 +19,18 @@ public class Response implements Serializable {
         this.serverMessage = serverMessage;
     }
 
+    public Response(LinkedHashSet<LabWork> collection) {
+        this.collection = collection;
+    }
+    public ArrayList<String> getAvailableCommands() {
+        return availableCommands;
+    }
+
+    public Map<String, Class<?>> getCommandsNeedArgument() {
+        return commandsNeedArgument;
+    }
+
+    // below methods are for first init with connection
     public Response(String serverMessage, long maxIdInCollection, ArrayList<String> availableCommands,
                     Map<String, Class<?>> commandsNeedArgument) {
         this.availableCommands = availableCommands;
@@ -29,18 +41,6 @@ public class Response implements Serializable {
 
     public long getMaxIdInCollection() {
         return maxIdInCollection;
-    }
-
-    public ArrayList<String> getAvailableCommands() {
-        return availableCommands;
-    }
-
-    public Map<String, Class<?>> getCommandsNeedArgument() {
-        return commandsNeedArgument;
-    }
-
-    public Response(LinkedHashSet<LabWork>  collection) {
-        this.collection = collection;
     }
 
     @Override
