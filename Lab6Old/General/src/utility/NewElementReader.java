@@ -137,7 +137,7 @@ public class NewElementReader {
     private Float readMinPoints() {
         System.out.println(Tool.PS1 + "Введите минимальный балл, который можно получить за lab work: ");
         float minPoints = readFloat();
-        while (minPoints < 0) {
+        while (minPoints <= 0) {
             if (isSriptExecuting) {
                 throw new ScriptElementReaderException();
             }

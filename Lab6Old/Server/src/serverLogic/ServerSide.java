@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.BufferOverflowException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -53,15 +54,25 @@ public class ServerSide {
                 BufferedOutputStream outputStream = new BufferedOutputStream(socket.getOutputStream());
                 ServerConnection serverConnection = new ServerConnection(collectionManager, socket, inputStream, outputStream);
 
-                Thread thread = new Thread(serverConnection::work);
+                Thread thread = new Thread(() -> {
+                    try {
+                        while (true) {
+                            if (scanner.nextLine().trim().equals("save")) {
+                                serverConnection.getCollectionManager().save();
+                                ServerLogger.logInfoMessage("Collection successfully has been saved!");
+                            }
+                        }
+                    }catch (BufferOverflowException | IndexOutOfBoundsException exception){
+                        ServerLogger.logErrorMessage("Find some not serious problems. Please try again.");
+                    }catch (NoSuchElementException noSuchElementException) {         //  ctrl+D
+                        exit();
+                    }catch (Exception exception){
+                        ServerLogger.logErrorMessage("Find some strange problems. Please try again.");
+                    }
+                    });
                 thread.setDaemon(true);
                 thread.start();
-                while (true) {
-                    if (scanner.nextLine().trim().equals("save")) {
-                        serverConnection.getCollectionManager().save();
-                        ServerLogger.logInfoMessage("Collection successfully has been saved!");
-                    }
-                }
+                serverConnection.work();
 
 //                Runnable r = new ServerConnection(collectionManager, socket, inputStream, outputStream);
 //                Thread t = new Thread(r);

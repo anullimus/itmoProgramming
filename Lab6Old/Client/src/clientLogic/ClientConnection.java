@@ -77,8 +77,6 @@ public class ClientConnection {
             throw new IOException();
         } catch (Exception exception) {
             System.err.println("Видимо пока...");
-            exit();
-
         }
         exit();
     }

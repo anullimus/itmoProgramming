@@ -8,6 +8,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.UnresolvedAddressException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class ClientSide {
@@ -31,20 +32,25 @@ public class ClientSide {
                 clientConnection.work();
 
             } catch (IOException ioException) {
-                System.err.println("Нет связи с сервером. Подключться ещё раз (введите {да} или {нет})?");
-                String answer;
-                while (!(answer = fromKeyboard.nextLine()).equals("да")) {
-                    switch (answer) {
-                        case "":
-                            break;
-                        case "нет":
-                            System.exit(0);
-                            break;
-                        default:
-                            System.out.println("Введите корректный ответ.");
+                try {
+                    System.err.println("Нет связи с сервером. Подключться ещё раз (введите {да} или {нет})?");
+                    String answer;
+                    while (!(answer = fromKeyboard.nextLine()).equals("да")) {
+                        switch (answer) {
+                            case "":
+                                break;
+                            case "нет":
+                                System.exit(0);
+                                break;
+                            default:
+                                System.out.println("Введите корректный ответ.");
+                        }
                     }
+                    System.out.print("Подключение ...\n");
+                }catch (NoSuchElementException noSuchElementException) {         //  ctrl+D
+                    System.err.println("Видимо пока...");
+                    System.exit(1);;
                 }
-                System.out.print("Подключение ...\n");
             } catch (UnresolvedAddressException e) {
                 System.out.println("Сервер с данным адресом недоступен");
             }
