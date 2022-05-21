@@ -1,11 +1,13 @@
 package serverLogic;
 
-import com.google.gson.reflect.TypeToken;
 import data.initial.LabWork;
 
-import java.lang.reflect.Type;
-import java.time.LocalDateTime ;
-import java.util.*;
+import java.io.FileNotFoundException;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -14,7 +16,7 @@ import java.util.stream.Collectors;
 public class CollectionManager {
     private final FileManager fileManager;
     private final LinkedHashSet<LabWork> labWorks;
-    private final LocalDateTime creationTimeOfCollection;
+    private final LocalDate creationTimeOfCollection;
     public static Long MAX_ID;
 
     /**
@@ -23,24 +25,28 @@ public class CollectionManager {
      * @param collectionPath путь к файлу коллекции в файловой системе.
      */
 
-    public CollectionManager(String collectionPath) {
-        fileManager = new FileManager(collectionPath);
-        labWorks = fileManager.getLabWorks().stream().sorted(Comparator.comparing(LabWork::getMinimalPoint))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-        MAX_ID = Collections.max(fileManager.getAddedIDOfLabWorks());
-        creationTimeOfCollection = LocalDateTime.now();
+    public CollectionManager(String collectionPath) throws FileNotFoundException {
+        try {
+            fileManager = new FileManager(collectionPath);
+            labWorks = fileManager.getLabWorks().stream().sorted(Comparator.comparing(LabWork::getMinimalPoint))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+            MAX_ID = Collections.max(fileManager.getAddedIDOfLabWorks());
+            creationTimeOfCollection = LocalDate.now();
+        } catch (NullPointerException nullPointerException) {
+            throw new NullPointerException();
+        } catch (FileNotFoundException fileNotFoundException) {
+            throw new FileNotFoundException();
+        }
     }
 
     /**
      * Записывает элементы коллекции в файл. Так как необходим нескольким командам, реализован в этом классе.
+     *
+     * @return Message of result of save the collection
      */
     public String save() {
         return fileManager.save(labWorks.stream().sorted(Comparator.comparing(LabWork::getMinimalPoint))
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
-    }
-
-    public Type getCollectionType() {
-        return new TypeToken<LinkedHashSet<LabWork>>() {}.getType();
     }
 
     /**
@@ -53,7 +59,7 @@ public class CollectionManager {
     /**
      * @return collection creation date
      */
-    public LocalDateTime  getCreationDate() {
+    public LocalDate getCreationDate() {
         return creationTimeOfCollection;
     }
 

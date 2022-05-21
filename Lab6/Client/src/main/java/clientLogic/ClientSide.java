@@ -1,9 +1,7 @@
 package clientLogic;
 
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -12,12 +10,11 @@ import java.util.Scanner;
 
 public class ClientSide {
 
-    public static void main(String[] args) throws UnknownHostException {
+    public static void main(String[] args) {
         Scanner fromKeyboard = new Scanner(System.in);
         System.out.println("Запуск клиентского модуля.\nПодключение к серверу ...");
 
 //        System.out.println(InetAddress.getLocalHost());
-
 
         InetSocketAddress socketAddress = new InetSocketAddress("localhost", 8000);
         while (true) {
@@ -31,7 +28,7 @@ public class ClientSide {
                 ClientConnection clientConnection = new ClientConnection(socketChannel, selector, fromKeyboard);
                 clientConnection.work();
 
-            } catch (ConnectException connectException) {
+            } catch (IOException ioException) {
                 System.err.println("Нет связи с сервером. Подключться ещё раз (введите {да} или {нет})?");
                 String answer;
                 while (!(answer = fromKeyboard.nextLine()).equals("да")) {
@@ -46,8 +43,6 @@ public class ClientSide {
                     }
                 }
                 System.out.print("Подключение ...\n");
-            } catch (IOException e) {
-                System.out.println("Сервер отдыхает");
             } catch (UnresolvedAddressException e) {
                 System.out.println("Сервер с данным адресом недоступен");
             }

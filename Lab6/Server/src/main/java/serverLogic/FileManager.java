@@ -3,13 +3,15 @@ package serverLogic;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import data.initial.LabWork;
-import utility.Tool;
 
 import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 
 /**
  * Provides the main file managing commands.
@@ -23,27 +25,27 @@ public class FileManager {
         return addedIDOfLabWorks;
     }
 
-    public FileManager(String collectionPath) {
-        System.out.println(collectionPath);
+    public FileManager(String collectionPath) throws FileNotFoundException {
         this.labWorks = new LinkedHashSet<>();
         try {
+            if (collectionPath == null) {
+                throw new NullPointerException();
+            }
             File file = new File(collectionPath);
             if (file.exists()) {
                 if (file.canRead()) {
                     jsonCollection = new File(collectionPath);
                     readJsonFile();
                 } else {
-                    System.out.println(Tool.PS1 + "У вас нет доступа к файлу.");
+                    System.err.println("You don't have the permit to file.");
                 }
             } else {
                 throw new FileNotFoundException();
             }
-        } catch (NullPointerException exception) {
-            System.out.println("Системе не удалось найти файл!(была передана null строка)");
-        } catch (FileNotFoundException ex) {
-            System.out.println(Tool.PS1 + "Файл-коллекция по указанному пути не существует.\n" +
-                    "Элементы не добавлены в коллекцию программы.");
-            System.out.println(Tool.PS1 + "Введите команду 'help' для начала работы.");
+        } catch (NullPointerException nullPointerException) {
+            throw new NullPointerException();
+        } catch (FileNotFoundException fileNotFoundException) {
+            throw new FileNotFoundException();
         }
     }
 
@@ -60,7 +62,7 @@ public class FileManager {
         LinkedHashSet<LabWork> addedLabWorks;
         try {
             BufferedReader inputStreamReader = new BufferedReader(new InputStreamReader(new FileInputStream(jsonCollection)));
-            System.out.println("Попытка загрузки элементов в коллекцию...");
+            ServerLogger.logInfoMessage("Try to load the elements to the program's collection...");
             String nextLine;
             StringBuilder dataString = new StringBuilder();
             while ((nextLine = inputStreamReader.readLine()) != null) {
@@ -92,7 +94,7 @@ public class FileManager {
                         if (labObj.getName() != null && !labObj.getName().isEmpty() && labObj.getCoordinates().getX() > 0 &&
                                 labObj.getCoordinates().getY() > 0 && labObj.getCoordinates() != null &&
                                 labObj.getCreationDate() != null && labObj.getMinimalPoint() > 0 &&
-                                labObj.getDifficulty() != null  &&
+                                labObj.getDifficulty() != null &&
                                 labObj.getAuthor().getName() != null && !labObj.getAuthor().getName().isEmpty() &&
                                 labObj.getAuthor().getBirthday() != null && labObj.getAuthor().getNationality() != null &&
                                 labObj.getAuthor().getLocation().getX() > 0 && labObj.getAuthor().getLocation().getY() > 0 &&
@@ -109,30 +111,32 @@ public class FileManager {
                 throw new NullPointerException();
             }
             if (incorrectLinesNumbersInInputFileCollection.size() == 0) {
-                System.out.println(Tool.PS1 + "Файл-коллекция успешно загружен на сервер.");
+                ServerLogger.logInfoMessage("File-collection was successfully loaded.");
             } else {
                 throw new IllegalArgumentException();
             }
-        } catch (NullPointerException exception) {
-            System.out.println("Файл пуст.");
-        } catch (IllegalArgumentException exception) {
-            System.out.println("Файл-коллекция загружен на сервер.\n" +
-                    "Внимание! В коллекцию добавлены не все элементы из файла, так как в нем содержатся некорректные " +
-                    "элементы. Номера строк с некорректными элементами: " + incorrectLinesNumbersInInputFileCollection);
-        } catch (JsonSyntaxException ex) {
-            System.out.println("В файле имеются грубые нарушения формата Json. По этой причине лабораторные " +
-                    "работы не могут быть загружены в коллекцию программы.");
-        } catch (FileNotFoundException exception) {
-            System.out.println("Файл-коллекция по указанному пути не найден.");
-        } catch (IOException e) {
-            System.out.println("Возникла непредвиденная ошибка при чтении файла. Проверьте корректность данных и/или " +
-                    "сообщите проблему админу.");
+        } catch (NullPointerException nullPointerException) {
+            ServerLogger.logErrorMessage("File is empty.");
+        } catch (IllegalArgumentException illegalArgumentException) {
+            ServerLogger.logInfoMessage("File-collection was loaded.\n" +
+                    "Attention! Not all elements from the file were added to the collection, because some of them are" +
+                    "not correct. Line numbers with invalid elements: " + incorrectLinesNumbersInInputFileCollection);
+        } catch (JsonSyntaxException jsonSyntaxException) {
+            ServerLogger.logErrorMessage("The file contains gross violations of the Json format. For this reason, labworks" +
+                    "cannot be uploaded to the program's collection.");
+        } catch (FileNotFoundException fileNotFoundException) {
+            ServerLogger.logErrorMessage("File-collection wasn't found by inputted path.");
+        } catch (IOException ioException) {
+            ServerLogger.logErrorMessage("An unexpected error occurred while reading the file. Check the correctness of the data " +
+                    "and/or report the problem to the admin.");
         }
     }
 
     /**
      * Saves the elements to collection{@link CollectionManager}.
-     * @param collection  is actual collection
+     *
+     * @param collection is actual collection
+     * @return Message of result of save the collection
      */
     public String save(LinkedHashSet<LabWork> collection) {
         try {
@@ -147,11 +151,11 @@ public class FileManager {
             }).create();
             br.write(gsonWithRewritedMethodForLocalDate.toJson(collection).getBytes(StandardCharsets.UTF_8));
             br.close();
-            return Tool.PS1 + "Коллекция успешно сохранена в файл.";
+            return "The collection was successfully saved to file.";
         } catch (FileNotFoundException exception) {
-            return Tool.PS1 + "Файл-коллекция не найден.";
+            return "File-collection wasn't found.";
         } catch (IOException e) {
-            return "Возникла непредвиденная ошибка. Коллекция не может быть сохранена.";
+            return "An unexpected error has occurred. The collection could not be saved.";
         }
     }
 

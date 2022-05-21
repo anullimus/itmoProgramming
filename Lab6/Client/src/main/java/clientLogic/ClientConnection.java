@@ -5,18 +5,20 @@ import com.google.gson.JsonSyntaxException;
 import data.initial.LabWork;
 import exception.DeserializeException;
 import exception.ScriptElementReaderException;
-import utility.Tool;
 import utility.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Scanner;
-import java.nio.channels.Selector;
 import java.util.Set;
 
 
@@ -35,7 +37,7 @@ public class ClientConnection {
         commandAnalyzer = new CommandAnalyzer();
     }
 
-    public void work() {
+    public void work() throws IOException {
         try {
             // doubled code below, but I don't care. It's for init with server. Doesn't need response
             commandAnalyzer.analyzeCommand(new String[]{"technical"}, false);
@@ -50,13 +52,14 @@ public class ClientConnection {
 
 
             interactiveMode();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ioException) {
+            System.err.print("Кажется сервер решил отдохнуть. ");
+            throw new IOException();
         }
     }
 
 
-    private void interactiveMode() {
+    private void interactiveMode() throws IOException {
         String command;
         try {
             while (!(command = fromKeyboard.nextLine()).equals("exit")) {
@@ -69,6 +72,9 @@ public class ClientConnection {
                 System.out.println(Tool.PS1 + "Введите команду: ");
                 System.out.print(Tool.PS2);
             }
+
+        } catch (IOException ioException) {
+            throw new IOException();
         } catch (Exception exception) {
             System.err.println("Видимо пока...");
             exit();
@@ -77,7 +83,7 @@ public class ClientConnection {
         exit();
     }
 
-    private void executeScript(String scriptPath) {
+    private void executeScript(String scriptPath) throws IOException {
         if (nameOfFilesThatWasBroughtToExecuteMethod.contains(scriptPath)) {
             System.out.println("В файле присутствует конструкция, которая приводит к рекурсии!\n" +
                     "Выполнение скрипта приостановлено");
@@ -114,11 +120,13 @@ public class ClientConnection {
                 System.err.println("Ошибка в синтаксисе JSON. Не удалось добавить элемент.");
             } catch (IllegalArgumentException illegalArgumentException) {
                 System.err.println("+1 некорректная команда.");
+            } catch (IOException ioException) {
+                throw new IOException();
             }
         }
     }
 
-    private void kitchen(String[] command, boolean isScriptExecuting) {
+    private void kitchen(String[] command, boolean isScriptExecuting) throws IOException {
         try {
             if (commandAnalyzer.analyzeCommand(command, isScriptExecuting)) {
                 if (commandAnalyzer.getCommandName().equals("execute_script")) {
@@ -141,8 +149,7 @@ public class ClientConnection {
         } catch (IllegalArgumentException illegalArgumentException) {
             System.err.println("Введена некорректная команда. Воспользуйтесь 'help'-инструкцией.\n");
         } catch (IOException ioException) {
-            System.err.println("Похоже на то, что сервер приостановил свою работу.");
-            exit();
+            throw new IOException();
         }
     }
 
