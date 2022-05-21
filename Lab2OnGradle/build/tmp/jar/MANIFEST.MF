@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: com.company.labs.lab2.BattleFight
-Class-Path: ../../lib/Pokemon.jar
-
