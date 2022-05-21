@@ -19,7 +19,7 @@ public class ClientSide {
 
 //        System.out.println(InetAddress.getLocalHost());
 
-        InetSocketAddress socketAddress = new InetSocketAddress("localhost", 8000);
+        InetSocketAddress socketAddress = new InetSocketAddress("localhost", 7878);
         while (true) {
             try (Selector selector = Selector.open();
                  SocketChannel socketChannel = SocketChannel.open(socketAddress)) {

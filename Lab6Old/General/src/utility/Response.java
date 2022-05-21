@@ -1,16 +1,11 @@
 package utility;
 
-import data.initial.LabWork;
-
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class Response implements Serializable {
-    private String serverMessage;
-    private LinkedHashSet<LabWork> collection;
+    private final String serverMessage;
     private long maxIdInCollection;
     private ArrayList<String> availableCommands;
     private Map<String, Class<?>> commandsNeedArgument;
@@ -19,9 +14,6 @@ public class Response implements Serializable {
         this.serverMessage = serverMessage;
     }
 
-    public Response(LinkedHashSet<LabWork> collection) {
-        this.collection = collection;
-    }
     public ArrayList<String> getAvailableCommands() {
         return availableCommands;
     }
@@ -30,7 +22,7 @@ public class Response implements Serializable {
         return commandsNeedArgument;
     }
 
-    // below methods are for first init with connection
+    // below 2 methods are for first init with connection
     public Response(String serverMessage, long maxIdInCollection, ArrayList<String> availableCommands,
                     Map<String, Class<?>> commandsNeedArgument) {
         this.availableCommands = availableCommands;
@@ -45,7 +37,6 @@ public class Response implements Serializable {
 
     @Override
     public String toString() {
-        return (collection == null ? serverMessage : collection.stream().map(LabWork::toString)
-                .collect(Collectors.joining("\n")));
+        return serverMessage;
     }
 }

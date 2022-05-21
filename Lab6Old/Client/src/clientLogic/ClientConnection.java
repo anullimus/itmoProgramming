@@ -37,24 +37,25 @@ public class ClientConnection {
         commandAnalyzer = new CommandAnalyzer();
     }
 
-    public void work() throws IOException {
+    private void init() throws IOException {
         try {
-            // doubled code below, but I don't care. It's for init with server. Doesn't need response
-            commandAnalyzer.analyzeCommand(new String[]{"technical"}, false);
-            Request request = new Request(commandAnalyzer);
-            byte[] serializedRequest = Serializer.serializeRequest(request);
-            socketChannel.write(ByteBuffer.wrap(serializedRequest));
-            Response response = receiveResponse();
+            Response response = kitchen(new String[]{"technical"}, false);
             System.out.println(response);
             LabWork.MAX_ID = response.getMaxIdInCollection();
             commandAnalyzer.setAvailableCommands(response.getAvailableCommands());
             commandAnalyzer.setCommandsNeedArgument(response.getCommandsNeedArgument());
-
-
-            interactiveMode();
         } catch (IOException ioException) {
             System.err.print("Кажется сервер решил отдохнуть. ");
             throw new IOException();
+        }
+    }
+    public void work() throws IOException {
+        try {
+            init();
+
+            interactiveMode();
+        } catch (NullPointerException nullPointerException) {
+            System.err.println("Solve the problem from work() method, buddy");
         }
     }
 
@@ -68,7 +69,11 @@ public class ClientConnection {
                     System.out.print(Tool.PS2);
                     continue;
                 }
-                kitchen(parsedCommand, false);
+                try {
+                    System.out.println(kitchen(parsedCommand, false));
+                }catch (IllegalArgumentException illegalArgumentException) {
+                    System.err.println("Введена некорректная команда. Воспользуйтесь 'help'-инструкцией.\n");
+                }
                 System.out.println(Tool.PS1 + "Введите команду: ");
                 System.out.print(Tool.PS2);
             }
@@ -83,14 +88,14 @@ public class ClientConnection {
 
     private void executeScript(String scriptPath) throws IOException {
         if (nameOfFilesThatWasBroughtToExecuteMethod.contains(scriptPath)) {
-            System.out.println("В файле присутствует конструкция, которая приводит к рекурсии!\n" +
+            System.err.println("В файле присутствует конструкция, которая приводит к рекурсии!\n" +
                     "Выполнение скрипта приостановлено");
         } else {
             nameOfFilesThatWasBroughtToExecuteMethod.add(scriptPath);
             try {
                 File scriptFile = new File(scriptPath);
                 if (scriptFile.canRead()) {
-                    String[] elementLine = {};
+                    String[] elementLine;
                     Scanner fromScript = new Scanner(new FileReader(scriptPath));
                     while (fromScript.hasNextLine()) {
                         String[] parsedCommand = fromScript.nextLine().trim().split(" ", 2);
@@ -124,7 +129,7 @@ public class ClientConnection {
         }
     }
 
-    private void kitchen(String[] command, boolean isScriptExecuting) throws IOException {
+    private Response kitchen(String[] command, boolean isScriptExecuting) throws IOException {
         try {
             if (commandAnalyzer.analyzeCommand(command, isScriptExecuting)) {
                 if (commandAnalyzer.getCommandName().equals("execute_script")) {
@@ -133,7 +138,7 @@ public class ClientConnection {
                     Request request = new Request(commandAnalyzer);
                     byte[] serializedRequest = Serializer.serializeRequest(request);
                     socketChannel.write(ByteBuffer.wrap(serializedRequest));    // свернули в буффер и записали в канал
-                    System.out.println(receiveResponse());
+                    return receiveResponse();
                 }
             } else {
                 throw new IllegalArgumentException();
@@ -144,11 +149,8 @@ public class ClientConnection {
             System.err.println("Ошибка в синтаксисе JSON. Не удалось добавить элемент.");
         } catch (NumberFormatException numberFormatException) {
             System.err.println("Введеныные данные содержат неверный формат.");
-        } catch (IllegalArgumentException illegalArgumentException) {
-            System.err.println("Введена некорректная команда. Воспользуйтесь 'help'-инструкцией.\n");
-        } catch (IOException ioException) {
-            throw new IOException();
         }
+        throw new IllegalArgumentException();
     }
 
     private Response receiveResponse() throws IOException {
@@ -165,7 +167,7 @@ public class ClientConnection {
                     if (bytesRead <= 0) {
                         continue;
                     }
-                    ((Buffer) byteBuffer).flip();
+                    byteBuffer.flip();
                     byte[] serializedResponse = new byte[byteBuffer.remaining()];
                     byteBuffer.get(serializedResponse);
                     try {

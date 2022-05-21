@@ -26,7 +26,7 @@ public class ServerSide {
             System.exit(1);
         }
         Socket socket;
-        try (ServerSocket serverSocket = new ServerSocket(8000)) {
+        try (ServerSocket serverSocket = new ServerSocket(7878)) {
             Thread pointer = new Thread(() -> {
                 while (!Thread.currentThread().isInterrupted()) {
                     System.out.print(".");
@@ -72,6 +72,7 @@ public class ServerSide {
                     });
                 thread.setDaemon(true);
                 thread.start();
+
                 serverConnection.work();
 
 //                Runnable r = new ServerConnection(collectionManager, socket, inputStream, outputStream);

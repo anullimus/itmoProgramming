@@ -32,9 +32,6 @@ public class CommandAnalyzer implements Serializable {
     }
 
     public CommandAnalyzer() {
-//        ServerConnection serverConnection = new ServerConnection();
-//        this.availableCommands = serverConnection.getAvailableCommands();
-//        this.commandsNeedArgument = serverConnection.getCommandsNeedArgument();
         this.isScriptExecuting = false;
     }
 

@@ -1,8 +1,11 @@
 package command;
 
 
+import data.initial.LabWork;
 import serverLogic.CollectionManager;
 import utility.Response;
+
+import java.util.stream.Collectors;
 
 
 /**
@@ -17,6 +20,7 @@ public class ShowCommand extends AbstractCommand {
 
     @Override
     public Response execute() {
-        return new Response(getCollectionManager().getLabWorks());
+        return new Response(getCollectionManager().getLabWorks().stream().map(LabWork::toString)
+                .collect(Collectors.joining("\n")));
     }
 }

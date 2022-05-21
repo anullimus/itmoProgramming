@@ -1,6 +1,24 @@
-2022-05-17 04:39:51.330 [main] INFO  serverLogic.ServerLogger - Try to load the elements to the program's collection...
-2022-05-17 04:39:51.390 [main] INFO  serverLogic.ServerLogger - File-collection was successfully loaded.
-2022-05-17 04:39:51.405 [main] INFO  serverLogic.ServerLogger - Server started listen to clients. Port 8000 / Address DESKTOP-JF35HRR/172.28.17.207
-2022-05-17 04:39:51.406 [main] INFO  serverLogic.ServerLogger - Waiting for client connection.
-2022-05-17 04:39:55.934 [main] INFO  serverLogic.ServerLogger - Socket[addr=/127.0.0.1,port=55548,localport=8000] has connected to server.
-2022-05-17 04:39:55.958 [main] DEBUG serverLogic.ServerLogger - Need to read 566 bytes
+2022-05-21 04:02:13.730 [main] INFO  serverLogic.ServerLogger - Try to load the elements to the program's collection...
+2022-05-21 04:02:13.789 [main] INFO  serverLogic.ServerLogger - File-collection was successfully loaded.
+2022-05-21 04:02:13.806 [main] INFO  serverLogic.ServerLogger - Server started listen to clients. Port 7878 / Address DESKTOP-JF35HRR/172.28.17.207
+2022-05-21 04:02:13.806 [main] INFO  serverLogic.ServerLogger - Waiting for client connection.
+2022-05-21 04:02:16.294 [main] INFO  serverLogic.ServerLogger - Socket[addr=/127.0.0.1,port=54729,localport=7878] has connected to server.
+2022-05-21 04:02:16.319 [main] DEBUG serverLogic.ServerLogger - Need to read 566 bytes
+2022-05-21 04:02:18.678 [main] DEBUG serverLogic.ServerLogger - Need to read 1024 bytes
+2022-05-21 04:02:18.679 [main] DEBUG serverLogic.ServerLogger - Stayed to read 347 bytes
+2022-05-21 04:02:18.679 [main] DEBUG serverLogic.ServerLogger - Read 347 bytes
+2022-05-21 04:02:18.681 [main] INFO  serverLogic.ServerLogger - Client: Socket[addr=/127.0.0.1,port=54729,localport=7878] sent request: info
+2022-05-21 04:02:18.682 [main] INFO  serverLogic.ServerLogger - Answer was successfully sent.
+
+2022-05-21 04:02:23.404 [main] INFO  serverLogic.ServerLogger - Client has disconnected
+2022-05-21 04:02:23.405 [main] INFO  serverLogic.ServerLogger - Server started listen to clients. Port 7878 / Address DESKTOP-JF35HRR/172.28.17.207
+2022-05-21 04:02:23.405 [main] INFO  serverLogic.ServerLogger - Waiting for client connection.
+2022-05-21 04:02:31.913 [main] INFO  serverLogic.ServerLogger - Socket[addr=/127.0.0.1,port=54738,localport=7878] has connected to server.
+2022-05-21 04:02:31.929 [main] DEBUG serverLogic.ServerLogger - Need to read 566 bytes
+2022-05-21 04:02:38.481 [main] DEBUG serverLogic.ServerLogger - Need to read 1024 bytes
+2022-05-21 04:02:38.482 [main] DEBUG serverLogic.ServerLogger - Stayed to read 347 bytes
+2022-05-21 04:02:38.482 [main] DEBUG serverLogic.ServerLogger - Read 347 bytes
+2022-05-21 04:02:38.483 [main] INFO  serverLogic.ServerLogger - Client: Socket[addr=/127.0.0.1,port=54738,localport=7878] sent request: info
+2022-05-21 04:02:38.483 [main] INFO  serverLogic.ServerLogger - Answer was successfully sent.
+
+2022-05-21 04:02:43.319 [Thread-2] ERROR serverLogic.ServerLogger - Find some not serious problems. Please try again.

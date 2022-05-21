@@ -22,8 +22,8 @@ public class FilterByDifficultyCommand extends AbstractCommand {
     public Response execute(Request request) {
         Difficulty difficulty = request.getDifficultyArgument();
         LinkedHashSet<LabWork> collection = getCollectionManager().getLabWorks();
-        return new Response((LinkedHashSet<LabWork>) collection.stream().
+        return new Response(collection.stream().
                 filter(labwork -> labwork.getDifficulty().equals(difficulty)).
-                collect(Collectors.toCollection(LinkedHashSet::new)));
+                collect(Collectors.toCollection(LinkedHashSet::new)).toString());
     }
 }

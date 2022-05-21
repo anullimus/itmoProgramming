@@ -28,7 +28,6 @@ public class ServerConnection {
     private final BufferedInputStream inputStream;
     private final BufferedOutputStream sendToClient;
     private final Socket socket;
-    private final BufferedReader reader;
 
     public CollectionManager getCollectionManager() {
         return collectionManager;
@@ -40,7 +39,6 @@ public class ServerConnection {
         this.inputStream = inputStream;
         this.sendToClient = outputStream;
         this.collectionManager = collectionManager;
-        this.reader = new BufferedReader(new InputStreamReader(System.in));
         fillingSpecialCommandArrays();
     }
 
@@ -80,20 +78,25 @@ public class ServerConnection {
         return commandsNeedArgument;
     }
 
+    private void init() throws IOException {
+        Response greetingResponse = new Response("Соединение установлено! Вы можете вводить команды!",
+                CollectionManager.MAX_ID, getAvailableCommands(), getCommandsNeedArgument());
+        sendToClient.write(Serializer.serializeResponse(greetingResponse));
+        sendToClient.flush();
+
+        receiveRequest(); // for init connect with client
+    }
+
     public void work() {
         try {
-            Response greetingResponse = new Response("Соединение установлено! Вы можете вводить команды!" +
-                    "\nP.s. если не знаете, что вводить, просто введите команду 'help'",
-                    CollectionManager.MAX_ID, getAvailableCommands(), getCommandsNeedArgument());
-            sendToClient.write(Serializer.serializeResponse(greetingResponse));
-            sendToClient.flush();
+            init();
+
             AbstractCommand errorCommand = new AbstractCommand(null) {
                 @Override
                 public Response execute() {
                     return new Response("Неизвестная команда. Введите 'help' для получения списка команд.");
                 }
             };
-            receiveRequest();   // оставляем, чтобы инициализировать успешное соединение
             Request requestFromClient;
             Response response;
             while (true) {
