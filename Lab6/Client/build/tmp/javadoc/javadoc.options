@@ -1,9 +1,0 @@
--classpath 'C:\\Users\\amirh\\IdeaProjects\\itmoProgramming\\Lab6\\Client\\build\\classes\\java\\main;C:\\Users\\amirh\\IdeaProjects\\itmoProgramming\\Lab6\\Client\\build\\resources\\main;C:\\Users\\amirh\\.gradle\\caches\\modules-2\\files-2.1\\com.google.code.gson\\gson\\2.7\\751f548c85fa49f330cecbb1875893f971b33c4e\\gson-2.7.jar;C:\\Users\\amirh\\IdeaProjects\\itmoProgramming\\Lab6\\General\\build\\libs\\General-2.1.jar'
--d 'C:\\Users\\amirh\\IdeaProjects\\itmoProgramming\\Lab6\\Client\\build\\docs\\javadoc'
--doctitle 'Client 2.1 API'
--encoding 'UTF-8'
--notimestamp 
--quiet 
--windowtitle 'Client 2.1 API'
-'C:\\Users\\amirh\\IdeaProjects\\itmoProgramming\\Lab6\\Client\\src\\main\\java\\clientLogic\\ClientConnection.java'
-'C:\\Users\\amirh\\IdeaProjects\\itmoProgramming\\Lab6\\Client\\src\\main\\java\\clientLogic\\ClientSide.java'
