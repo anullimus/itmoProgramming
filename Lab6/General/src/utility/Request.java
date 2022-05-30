@@ -10,6 +10,7 @@ import java.util.Locale;
 public class Request implements Serializable {
 
     // heer should be sent a labwork and other not big info from client to server
+    private static final long serialVersionUID = 1325084203608236803L;
     private final String commandName;
     private final boolean commandHaveArgument;
     private final CommandAnalyzer commandAnalyzer;

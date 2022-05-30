@@ -4,6 +4,7 @@ import command.*;
 import data.initial.Difficulty;
 import data.initial.LabWork;
 import exception.DeserializeException;
+import exception.ExitException;
 import exception.SerializeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -121,7 +122,7 @@ public class ServerConnection {
                 ServerLogger.logInfoMessage("Answer was successfully sent." + "\n");
             }
         } catch (IOException | SerializeException | DeserializeException e) {
-            ServerLogger.logInfoMessage("Client has disconnected");
+            throw new ExitException(socket.toString());
         }
     }
 
