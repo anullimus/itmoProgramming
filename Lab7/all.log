@@ -1,0 +1,6 @@
+2022-06-12 14:19:24.847 [main] INFO  serverLogic.ServerLogger - Try to load the elements to the program's collection...
+2022-06-12 14:19:24.950 [main] INFO  serverLogic.ServerLogger - File-collection was successfully loaded.
+2022-06-12 14:19:24.974 [main] INFO  serverLogic.ServerLogger - Server started listen to clients. Port 7878 / Address DESKTOP-JF35HRR/172.28.19.224
+2022-06-12 14:19:24.974 [main] INFO  serverLogic.ServerLogger - Waiting for client connection.
+2022-06-12 14:19:33.419 [main] INFO  serverLogic.ServerLogger - Socket[addr=/127.0.0.1,port=58823,localport=7878] has connected to server.
+2022-06-12 14:19:33.470 [main] DEBUG serverLogic.ServerLogger - Need to read 566 bytes
