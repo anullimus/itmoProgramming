@@ -16,17 +16,19 @@ public class NewElementReader {
     private final Scanner scanner;
     private final String standardErrorMessage;
     private boolean isSriptExecuting;
-    private final String[] addDataFromScript;
+    private String[] addDataFromScript;
     private int iter;
 
-    public NewElementReader(String[] addDataFromScript) {
-        this.addDataFromScript = addDataFromScript;
+    public NewElementReader() {
         this.scanner = new Scanner(System.in);
         this.isSriptExecuting = false;
         iter = -1;
         standardErrorMessage = "Ошибка при вводе, повторите попытку: ";
     }
 
+    public void injectAddInfoFromScript(String[] addDataFromScript){
+        this.addDataFromScript = addDataFromScript;
+    }
     public LabWork readNewLabwork(boolean isSriptExecuting) {
         this.isSriptExecuting = isSriptExecuting;
         Person author = new Person(readNameOfCreator(), readBirthdayOfCreator(), readCountry(), readLocation());

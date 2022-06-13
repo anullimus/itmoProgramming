@@ -3,34 +3,24 @@ package clientLogic;
 
 import com.google.gson.JsonSyntaxException;
 import data.initial.LabWork;
-import exception.DeserializeException;
 import exception.ScriptElementReaderException;
 import utility.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.SocketChannel;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 
 public class ClientConnection {
-    private final Selector selector;
+    private final OutputStream outputStream;
+    private final InputStream inputStream;
     private final Scanner fromKeyboard;
-    private final SocketChannel socketChannel;
     private final CommandAnalyzer commandAnalyzer;
     private final HashSet<String> nameOfFilesThatWasBroughtToExecuteMethod;
 
-    public ClientConnection(SocketChannel socketChannel, Selector selector, Scanner fromKeyboard) {
-        this.socketChannel = socketChannel;
-        this.selector = selector;
+    public ClientConnection(Scanner fromKeyboard, InputStream inputStream, OutputStream outputStream) {
+        this.inputStream = inputStream;
+        this.outputStream = outputStream;
         this.fromKeyboard = fromKeyboard;
         nameOfFilesThatWasBroughtToExecuteMethod = new HashSet<>();
         commandAnalyzer = new CommandAnalyzer();
@@ -38,16 +28,18 @@ public class ClientConnection {
 
     private void init() throws IOException {
         try {
-            Response response = kitchen(new String[]{"technical"}, false);
+            Serializable response = executeCommand(new String[]{"technical"}, false, new NewElementReader());
             System.out.println(response);
-            LabWork.MAX_ID = response.getMaxIdInCollection();
-            commandAnalyzer.setAvailableCommands(response.getAvailableCommands());
-            commandAnalyzer.setCommandsNeedArgument(response.getCommandsNeedArgument());
+            RudimentClass rudimentClass = new RudimentClass();
+            LabWork.MAX_ID = rudimentClass.getMaxId();
+            commandAnalyzer.setAvailableCommands(rudimentClass.getAvailableCommands());
+            commandAnalyzer.setCommandsNeedArgument(rudimentClass.getCommandsNeedArgument());
         } catch (IOException ioException) {
             System.err.print("Кажется сервер решил отдохнуть. ");
             throw new IOException();
         }
     }
+
     public void work() throws IOException {
         try {
             init();
@@ -60,8 +52,22 @@ public class ClientConnection {
 
 
     private void interactiveMode() throws IOException {
+        NewElementReader newElementReader = new NewElementReader();
         String command;
         try {
+            while (true) {
+                System.out.print("Вы хотите зарегистрироваться (1) или войти под существующим пользователем (2) ?: ");
+                String answer = fromKeyboard.nextLine();
+                if ("1".equals(answer)) {
+                    dbRequest("register_user");
+                    break;
+                }
+                if ("2".equals(answer)) {
+                    dbRequest("connect_user");
+                    break;
+                }
+            }
+
             while (!(command = fromKeyboard.nextLine()).equals("exit")) {
                 String[] parsedCommand = command.trim().split(" ", 2);
                 if ("".equals(parsedCommand[0])) {
@@ -69,8 +75,8 @@ public class ClientConnection {
                     continue;
                 }
                 try {
-                    System.out.println(kitchen(parsedCommand, false));
-                }catch (IllegalArgumentException illegalArgumentException) {
+                    System.out.println(executeCommand(parsedCommand, false, newElementReader));
+                } catch (IllegalArgumentException illegalArgumentException) {
                     System.err.println("Введена некорректная команда. Воспользуйтесь 'help'-инструкцией.\n");
                 }
                 System.out.println(Tool.PS1 + "Введите команду: ");
@@ -106,7 +112,7 @@ public class ClientConnection {
                             }
                             commandAnalyzer.setAddDataFromScript(elementLine);
                         }
-                        kitchen(parsedCommand, true);
+                        executeCommand(parsedCommand, true, new NewElementReader());
                     }
                     nameOfFilesThatWasBroughtToExecuteMethod.remove(scriptPath);
                     System.out.println("Исполнение скрипта завершено.");
@@ -128,15 +134,17 @@ public class ClientConnection {
         }
     }
 
-    private Response kitchen(String[] command, boolean isScriptExecuting) throws IOException {
+    private Serializable executeCommand(String[] command, boolean isScriptExecuting, NewElementReader newElementReader) throws IOException {
+        CommandAnalyzer commandAnalyzer = new CommandAnalyzer();
         try {
             if (commandAnalyzer.analyzeCommand(command, isScriptExecuting)) {
-                if (commandAnalyzer.getCommandName().equals("execute_script")) {
+                if (commandAnalyzer.isDBCommand()) {
+                    dbRequest(commandAnalyzer.getCommandName());
+                } else if (commandAnalyzer.getCommandName().equals("execute_script")) {
                     executeScript(commandAnalyzer.getCommandArgumentString());
                 } else {
-                    Request request = new Request(commandAnalyzer);
-                    byte[] serializedRequest = Serializer.serializeRequest(request);
-                    socketChannel.write(ByteBuffer.wrap(serializedRequest));    // свернули в буффер и записали в канал
+
+                    sendRequest(RequestCreator.createRequest(command, newElementReader, isScriptExecuting));
                     return receiveResponse();
                 }
             } else {
@@ -152,32 +160,80 @@ public class ClientConnection {
         throw new IllegalArgumentException();
     }
 
-    private Response receiveResponse() throws IOException {
-        final int bufferSize = 1024;
-        ByteBuffer byteBuffer = ByteBuffer.allocate(bufferSize);
+    private void dbRequest(String dbRequestName) throws IOException {
+        commandAnalyzer.setCommandName(dbRequestName);
+        boolean clientConnected = false;
+        do {
+            System.out.print("Введите имя пользователя: ");
+            String clientName = fromKeyboard.nextLine();
+            if (clientName.isEmpty()) {
+                System.out.println("Имя клиента не может быть пустым");
+                continue;
+            }
+            System.out.print("Введите пароль: ");
+            String clientPassword = fromKeyboard.nextLine();
+            if (clientPassword.isEmpty()) {
+                System.out.println("Пароль не может быть пустым");
+                continue;
+            }
+            Request request = new Request(commandAnalyzer, clientName, clientPassword);
+            sendRequest(request);
+            ConnectResponse response = (ConnectResponse) receiveResponse();
+            if (response.isClientConnected()) {
+                clientConnected = true;
+                RequestCreator.setClientName(clientName);
+                RequestCreator.setClientPassword(clientPassword);
+            }
+            System.out.println(response.getConnectMessage());
+        } while (!clientConnected);
+    }
+
+    private void sendRequest(Request request) throws IOException{
+        Serializer serializer = new Serializer(request);
+        if (serializer.possibleToSerialize()) {
+            outputStream.write(serializer.serialize());
+        } else {
+            System.out.println("Невозможно сериализовать запрос");
+        }
+    }
+
+    private Serializable receiveResponse() throws IOException {
+        final int startBufferSize = 1024;
+        ByteBuffer mainBuffer = ByteBuffer.allocate(0);
         while (true) {
-            selector.select();
-            Set<SelectionKey> selectedKeys = selector.selectedKeys();
-            Iterator<SelectionKey> iter = selectedKeys.iterator();
-            SelectionKey key = iter.next();
-            try {
-                if (key.isReadable()) {
-                    int bytesRead = socketChannel.read(byteBuffer);
-                    if (bytesRead <= 0) {
-                        continue;
+            byte[] bytesToDeserialize = new byte[startBufferSize];
+            BufferedInputStream bis = new BufferedInputStream(inputStream);
+            int bytesCount = bis.read(bytesToDeserialize);
+            ByteBuffer newBuffer = ByteBuffer.allocate(mainBuffer.capacity() + bytesCount);
+            newBuffer.put(mainBuffer);
+            newBuffer.put(ByteBuffer.wrap(bytesToDeserialize, 0, bytesCount));
+            mainBuffer = ByteBuffer.wrap(newBuffer.array());
+
+            Deserializer deserializer = new Deserializer(mainBuffer.array());
+            if (deserializer.possibleToDeserialize()) {
+                return deserializer.deserialize();
+            } else {
+                List<ByteBuffer> buffers = new ArrayList<>();
+                int bytesLeft = bis.available();
+                int len = bytesLeft;
+                while (bytesLeft > 0) {
+                    byte[] leftBytesToSerialize = new byte[bytesLeft];
+                    if (bis.read(leftBytesToSerialize) == -1) {
+                        throw new IOException("Сервер не работает");
                     }
-                    byteBuffer.flip();
-                    byte[] serializedResponse = new byte[byteBuffer.remaining()];
-                    byteBuffer.get(serializedResponse);
-                    try {
-                        return Deserializer.deserializeResponse(serializedResponse);
-                    } catch (DeserializeException deserializeException) {
-                        byteBuffer = ByteBuffer.allocate(byteBuffer.capacity() + byteBuffer.capacity() * 2);
-                        byteBuffer.put(serializedResponse);
-                    }
+                    buffers.add(ByteBuffer.wrap(leftBytesToSerialize));
+                    bytesLeft = bis.available();
+                    len += bytesLeft;
                 }
-            } catch (IOException ioException) {
-                new Response("An existing connection was forcibly closed by the remote host");
+                newBuffer = ByteBuffer.allocate(len + mainBuffer.capacity());
+                newBuffer.put(mainBuffer);
+                buffers.forEach(newBuffer::put);
+                mainBuffer = ByteBuffer.wrap(newBuffer.array());
+
+                deserializer = new Deserializer(mainBuffer.array());
+                if (deserializer.possibleToDeserialize()) {
+                    return deserializer.deserialize();
+                }
             }
         }
     }

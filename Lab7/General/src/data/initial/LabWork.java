@@ -14,12 +14,15 @@ public class LabWork implements Comparable<LabWork>, Serializable {
     private Long id;
     private String name;
     private Coordinates coordinates;
-    private final LocalDate creationDate;
+    private LocalDate creationDate;
     private Float minimalPoint;
     private Difficulty difficulty;
     private Person author;
     public static Long MAX_ID = 12345L;
 
+    public LabWork(){
+
+    }
     public LabWork(String name, Coordinates coordinates, Float minimalPoint, Difficulty difficulty, Person author) {
         this.id = generateID();
         this.creationDate = LocalDate.now();
@@ -44,17 +47,66 @@ public class LabWork implements Comparable<LabWork>, Serializable {
         return MAX_ID++;
     }
 
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    public LocalDate getClientBirthday(){
+        return author.getBirthday();
+    }
+    public Country getClientCountry(){
+        return author.getNationality();
+    }
+    public Location getClientLocation(){
+        return author.getLocation();
+    }
+    public void setClientBirthday(LocalDate birthday) {
+        author.setBirthday(birthday);
+    }
+
+    public void setClientCountry(Country nationality) {
+        author.setNationality(nationality);
+    }
+
+    public void setClientLocation(Location location) {
+        author.setLocation(location);
+    }
+
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public void setMinimalPoint(Float minimalPoint) {
+        this.minimalPoint = minimalPoint;
+    }
+
+    public void setDifficulty(Difficulty difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public static void setMaxId(Long maxId) {
+        MAX_ID = maxId;
+    }
+
     /**
      * @return Id of the Lab work.
      */
     public Long getId() {
         return id;
     }
-
-//    // need from class FileLogic when adding labWork to collection
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public void setClientName(String name){
+        author.setName(name);
+    }
+    public String getClientName(){
+        return author.getName();
+    }
 
     /**
      * Changes id of the Lab work.

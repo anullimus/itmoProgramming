@@ -2,6 +2,7 @@ package clientLogic;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -17,16 +18,12 @@ public class ClientSide {
 
 //        System.out.println(InetAddress.getLocalHost());
 
-        InetSocketAddress socketAddress = new InetSocketAddress("localhost", 7878);
+
         while (true) {
-            try (Selector selector = Selector.open();
-                 SocketChannel socketChannel = SocketChannel.open(socketAddress)) {
+            try (Socket socket = new Socket("localhost", 7878)) {
 
-                socketChannel.finishConnect();
-                socketChannel.configureBlocking(false);
-                socketChannel.register(selector, SelectionKey.OP_READ);
-
-                ClientConnection clientConnection = new ClientConnection(socketChannel, selector, fromKeyboard);
+                ClientConnection clientConnection = new ClientConnection(fromKeyboard, socket.getInputStream(),
+                        socket.getOutputStream());
                 clientConnection.work();
 
             } catch (IOException ioException) {

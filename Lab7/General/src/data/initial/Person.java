@@ -35,6 +35,10 @@ public class Person implements Comparable<Person>, Serializable {
         }
     }
 
+    public Person() {
+
+    }
+
     /**
      * @return Name of the person.
      */
@@ -54,6 +58,22 @@ public class Person implements Comparable<Person>, Serializable {
      */
     public Country getNationality() {
         return nationality;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
+    }
+
+    public void setNationality(Country nationality) {
+        this.nationality = nationality;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     /**

@@ -1,58 +1,62 @@
 package serverLogic;
 
 import data.initial.LabWork;
+import database.DBManager;
 
 import java.io.FileNotFoundException;
+import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Collection class manages the elements of collections with lab work{@link LabWork}.
  */
 public class CollectionManager {
-    private final FileManager fileManager;
-    private final LinkedHashSet<LabWork> labWorks;
-    private final LocalDate creationTimeOfCollection;
+    private Set<LabWork> labWorks;
+    private LocalDate creationTimeOfCollection;
+    private DBManager dbManager;
     public static Long MAX_ID;
 
     /**
      * Предоставляет доступ к коллекции и связанному с ней файлу.
-     *
-     * @param collectionPath путь к файлу коллекции в файловой системе.
      */
 
-    public CollectionManager(String collectionPath) throws FileNotFoundException {
+    public CollectionManager(DBManager dbManager){
         try {
-            fileManager = new FileManager(collectionPath);
-            labWorks = fileManager.getLabWorks().stream().sorted(Comparator.comparing(LabWork::getMinimalPoint))
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-            MAX_ID = Collections.max(fileManager.getAddedIDOfLabWorks());
+            this.dbManager = dbManager;
+            this.labWorks = Collections.synchronizedSet(new LinkedHashSet<>());
+            this.labWorks.addAll(dbManager.readElementsFromDB());
             creationTimeOfCollection = LocalDate.now();
+
+
+//            MAX_ID = Collections.max(fileManager.getAddedIDOfLabWorks());
+            MAX_ID = 2000L;
         } catch (NullPointerException nullPointerException) {
             throw new NullPointerException();
-        } catch (FileNotFoundException fileNotFoundException) {
-            throw new FileNotFoundException();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            ServerLogger.logErrorMessage(e.getMessage());
         }
     }
 
-    /**
-     * Записывает элементы коллекции в файл. Так как необходим нескольким командам, реализован в этом классе.
-     *
-     * @return Message of result of save the collection
-     */
-    public String save() {
-        return fileManager.save(labWorks.stream().sorted(Comparator.comparing(LabWork::getMinimalPoint))
-                .collect(Collectors.toCollection(LinkedHashSet::new)));
+    public DBManager getDbManager() {
+        return dbManager;
     }
+    //    /**
+//     * Записывает элементы коллекции в файл. Так как необходим нескольким командам, реализован в этом классе.
+//     *
+//     * @return Message of result of save the collection
+//     */
+//    public String save() {
+//        return fileManager.save(labWorks.stream().sorted(Comparator.comparing(LabWork::getMinimalPoint))
+//                .collect(Collectors.toCollection(LinkedHashSet::new)));
+//    }
 
     /**
      * @return collection
      */
-    public LinkedHashSet<LabWork> getLabWorks() {
+    public Set<LabWork> getLabWorks() {
         return labWorks;
     }
 
