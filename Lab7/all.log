@@ -1,10 +1,4 @@
-2022-06-12 15:04:03.821 [main] INFO  serverLogic.ServerLogger - Try to load the elements to the program's collection...
-2022-06-12 15:04:03.908 [main] INFO  serverLogic.ServerLogger - File-collection was successfully loaded.
-2022-06-12 15:04:03.930 [main] INFO  serverLogic.ServerLogger - Server started listen to clients. Port 7878 / Address DESKTOP-JF35HRR/172.28.19.224
-2022-06-12 15:04:03.930 [main] INFO  serverLogic.ServerLogger - Waiting for client connection.
-2022-06-12 15:04:07.933 [main] INFO  serverLogic.ServerLogger - Socket[addr=/127.0.0.1,port=59464,localport=7878] has connected to server.
-2022-06-12 15:04:07.950 [main] INFO  serverLogic.ServerLogger - Server started listen to clients. Port 7878 / Address DESKTOP-JF35HRR/172.28.19.224
-2022-06-12 15:04:07.950 [main] INFO  serverLogic.ServerLogger - Waiting for client connection.
-2022-06-12 15:04:07.973 [Thread-2] DEBUG serverLogic.ServerLogger - Need to read 566 bytes
-2022-06-12 15:04:10.690 [Thread-2] INFO  serverLogic.ServerLogger - Client {Socket[addr=/127.0.0.1,port=59464,localport=7878]} has disconnected.
-
+2022-06-23 18:44:30.448 [main] INFO  serverLogic.ServerLogger - Try to load the elements to the program's collection...
+2022-06-23 18:44:30.542 [main] INFO  serverLogic.ServerLogger - File-collection was successfully loaded.
+2022-06-23 18:44:30.567 [main] INFO  serverLogic.ServerLogger - Server started listen to clients. Port 7878 / Address DESKTOP-JF35HRR/172.28.28.33
+2022-06-23 18:44:30.567 [main] INFO  serverLogic.ServerLogger - Waiting for client connection.

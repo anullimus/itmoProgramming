@@ -1,42 +1,57 @@
 package serverLogic;
 
-import database.DBManager;
-import encryption.IEncryptor;
-import encryption.MD2Encryptor;
+import db.DatabaseHandler;
+import db.encription.MD2Encryptor;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.BufferOverflowException;
-import java.sql.SQLException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class ServerSide {
     private static CollectionManager collectionManager;
 
-    private ServerSide() {
-        throw new UnsupportedOperationException("This is an utility class and can not be instantiated");
-    }
-
     public static void main(String[] args) {
+        Scanner credentials = null;
+        String jdbcURL;
+        DatabaseHandler databaseHandler;
+        String username = null;
+        String password = null;
         try {
-            IEncryptor encryptor = new MD2Encryptor();
-            DBManager dbManager = new DBManager(System.getenv("DB_URL"), System.getenv("DB_USERNAME"),
-                    System.getenv("DB_PASSWORD"), encryptor);
-            collectionManager = new CollectionManager(dbManager);
+            credentials = new Scanner(new FileReader("credentials.txt"));
+        } catch (FileNotFoundException fileNotFoundException) {
+            System.err.println("Не найден credentials.txt с данными для входа в базу данных.");
+            System.exit(-1);
+        }
+        try {
+            username = credentials.nextLine().trim();
+            password = credentials.nextLine().trim();
+        } catch (NoSuchElementException noSuchElementException) {
+            System.err.println("В файле не найдены данные для входа. Завершение работы.");
+            System.exit(-1);
+        }
 
-            ServerLogger.logInfoMessage("Подключение к базе данных установлено, ожидание подключений клиентов");
+        jdbcURL = "jdbc:postgresql://localhost:9999/studs";
+        databaseHandler = new DatabaseHandler(jdbcURL, username, password, new MD2Encryptor());
+
+
+
+
+
+
+
+        try {
+            collectionManager = new CollectionManager(System.getenv("VARRY"));
         } catch (NullPointerException nullPointerException) {
             ServerLogger.logErrorMessage("You didn't set any path as argument to environment / or file is empty. So, goodbye.");
             System.exit(1);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            ServerLogger.logErrorMessage(e.getMessage());
+        } catch (FileNotFoundException fileNotFoundException) {
+            ServerLogger.logErrorMessage("File-collection doesn't exists by inputted path.\n" +
+                    "The elements wasn't added to the program's collection");
+            System.exit(1);
         }
         Socket socket;
         try (ServerSocket serverSocket = new ServerSocket(7878)) {
@@ -47,24 +62,27 @@ public class ServerSide {
                         " / Address " + InetAddress.getLocalHost());
                 ServerLogger.logInfoMessage("Waiting for client connection.");
 
-//                Pointer pointer = new Pointer();
-//                pointer.start();
+                Pointer pointer = new Pointer();
+                pointer.start();
                 socket = serverSocket.accept();
-//                pointer.finish();
+                pointer.finish();
 
                 ServerLogger.logInfoMessage(socket + " has connected to server.");
                 BufferedInputStream inputStream = new BufferedInputStream(socket.getInputStream());
                 BufferedOutputStream outputStream = new BufferedOutputStream(socket.getOutputStream());
                 ServerConnection serverConnection = new ServerConnection(collectionManager, socket, inputStream, outputStream);
 
-                ServerCommands saver = new ServerCommands();
+                Saver saver = new Saver();
                 saver.save(scanner, serverConnection);
 
-//              serverConnection.work();
+//                try {
+//                    serverConnection.work();
+//                } catch (ExitException exitException) {
+//                    ServerLogger.logErrorMessage(exitException.getMessage());
+//                }
                 Runnable r = new ServerConnection(collectionManager, socket, inputStream, outputStream);
                 Thread t = new Thread(r);
                 t.start();
-
             }
         } catch (IOException ioException) {
             ServerLogger.logErrorMessage(ioException.getMessage());
@@ -78,8 +96,8 @@ public class ServerSide {
     }
 
     public static void exit() {
-//        ServerLogger.logInfoMessage(collectionManager.save());
-        ServerLogger.logInfoMessage("Server work has been stopped.");
+        ServerLogger.logInfoMessage(collectionManager.save());
+        ServerLogger.logInfoMessage("Finishing the server's work...");
         System.exit(1);
     }
 }
@@ -113,16 +131,14 @@ class Pointer {
 /**
  * class for realisation of server's single command save()
  */
-class ServerCommands {
+class Saver {
     void save(Scanner scanner, ServerConnection serverConnection) {
         Thread thread = new Thread(() -> {
             try {
                 while (true) {
                     if (scanner.nextLine().trim().equals("save")) {
-//                        serverConnection.getCollectionManager().save();
-                        ServerLogger.logInfoMessage("The collection saves automatically to DB.");
-                    } else if (scanner.nextLine().trim().equals("exit")) {
-                        ServerSide.exit();
+                        serverConnection.getCollectionManager().save();
+                        ServerLogger.logInfoMessage("Collection successfully has been saved!");
                     }
                 }
             } catch (BufferOverflowException | IndexOutOfBoundsException exception) {

@@ -14,12 +14,7 @@ public class CommandAnalyzer implements Serializable {
     private Map<String, Class<?>> commandsNeedArgument;
     private boolean isScriptExecuting;
     private String[] addDataFromScript;
-    private boolean dbCommand;
 
-    public CommandAnalyzer(){
-        isScriptExecuting = false;
-        dbCommand = false;
-    }
     public void setAvailableCommands(ArrayList<String> availableCommands) {
         this.availableCommands = availableCommands;
     }
@@ -36,6 +31,9 @@ public class CommandAnalyzer implements Serializable {
         return addDataFromScript;
     }
 
+    public CommandAnalyzer() {
+        this.isScriptExecuting = false;
+    }
 
     public boolean isCommandHaveArgument() {
         return commandHaveArgument;
@@ -57,18 +55,11 @@ public class CommandAnalyzer implements Serializable {
         return commandsNeedArgument.get(commandName);
     }
 
-    public void setCommandName(String commandName) {
-        this.commandName = commandName;
-    }
-
     public boolean analyzeCommand(String[] inputLineDivided, boolean isScriptExecuting) {
         this.isScriptExecuting = isScriptExecuting;
         commandName = inputLineDivided[0].toLowerCase();
         if (commandName.equals("technical")){
             return true;
-        }
-        if ("connect_user".equals(commandName) || "register_user".equals(commandName)) {
-            dbCommand = true;
         }
         if(commandName.equals("execute_script")){
             if(inputLineDivided.length == 1){
@@ -100,8 +91,5 @@ public class CommandAnalyzer implements Serializable {
             }
         }
         return true;
-    }
-    public boolean isDBCommand() {
-        return dbCommand;
     }
 }

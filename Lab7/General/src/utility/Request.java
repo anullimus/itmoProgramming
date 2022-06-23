@@ -14,38 +14,19 @@ public class Request implements Serializable {
     private final String commandName;
     private final boolean commandHaveArgument;
     private final CommandAnalyzer commandAnalyzer;
-    private final String clientName;
-    private final String clientPassword;
 
     private LabWork labWorkArgument;
     private Long longArgument;
     private String stringArgument;
     private Difficulty difficultyArgument;
 
-    public Request(CommandAnalyzer commandAnalyzer, String clientName, String clientPassword) {
+    public Request(CommandAnalyzer commandAnalyzer) {
         this.commandAnalyzer = commandAnalyzer;
         this.commandName = commandAnalyzer.getCommandName();
         this.commandHaveArgument = commandAnalyzer.isCommandHaveArgument();
-        this.clientName = clientName;
-        this.clientPassword = clientPassword;
         classArgumentDefiner();
     }
 
-    public String getClientName() {
-        return clientName;
-    }
-
-    public String getClientPassword() {
-        return clientPassword;
-    }
-
-    public void setLabWorkArgument(LabWork labWorkArgument) {
-        this.labWorkArgument = labWorkArgument;
-    }
-
-    public void setStringArgument(String stringArgument) {
-        this.stringArgument = stringArgument;
-    }
 
     public String getCommandName() {
         return commandName;
@@ -70,9 +51,7 @@ public class Request implements Serializable {
     private void classArgumentDefiner() {
         if (!commandAnalyzer.getCommandName().equals("technical")) {
             if (commandAnalyzer.getArgumentClass() == LabWork.class) {
-                NewElementReader newElementReader = new NewElementReader();
-                newElementReader.injectAddInfoFromScript(commandAnalyzer.getAddDataFromScript());
-                labWorkArgument = newElementReader.readNewLabwork(commandAnalyzer.isScriptExecuting());
+                labWorkArgument = new NewElementReader(commandAnalyzer.getAddDataFromScript()).readNewLabwork(commandAnalyzer.isScriptExecuting());
             } else if (commandAnalyzer.getArgumentClass() == Long.class) {
                 longArgument = Long.parseLong(commandAnalyzer.getCommandArgumentString());
             } else if (commandAnalyzer.getArgumentClass() == Difficulty.class) {

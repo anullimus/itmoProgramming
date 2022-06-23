@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class CommandManager {
     private HashMap<String, AbstractCommand> availableCommandsWithDescription;
-    private final CollectionManager collectionManager;
+    private CollectionManager collectionManager;
     private ArrayList<String> availableCommands;
     private Map<String, Class<?>> commandsNeedArgument;
     public CommandManager(CollectionManager collectionManager){
@@ -57,7 +57,5 @@ public class CommandManager {
     public Map<String, Class<?>> getCommandsNeedArgument() {
         return commandsNeedArgument;
     }
-    public AbstractCommand getCommandByName(String name) {
-        return availableCommandsWithDescription.get(name);
-    }
+
 }

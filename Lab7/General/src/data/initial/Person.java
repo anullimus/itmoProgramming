@@ -35,10 +35,6 @@ public class Person implements Comparable<Person>, Serializable {
         }
     }
 
-    public Person() {
-
-    }
-
     /**
      * @return Name of the person.
      */
@@ -60,6 +56,13 @@ public class Person implements Comparable<Person>, Serializable {
         return nationality;
     }
 
+    /**
+     * @return Current location of the person.
+     */
+    public Location getLocation() {
+        return location;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -75,14 +78,6 @@ public class Person implements Comparable<Person>, Serializable {
     public void setLocation(Location location) {
         this.location = location;
     }
-
-    /**
-     * @return Current location of the person.
-     */
-    public Location getLocation() {
-        return location;
-    }
-
 
     @Override
     public int compareTo(Person otherPerson) {

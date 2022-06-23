@@ -2,20 +2,17 @@ package command;
 
 
 import serverLogic.CollectionManager;
-import utility.IResponse;
 import utility.Request;
 import utility.Response;
 
 import java.io.Serializable;
 
-public abstract class AbstractCommand implements Command, Serializable {
+public class AbstractCommand implements Command, Serializable {
     private CollectionManager collectionManager; //Позволяет изменить коллекцию.
     private String description; //Содержит краткое руководство к команде.
-    private final boolean needCheckAuthentication;
 
-    public AbstractCommand(CollectionManager manager, boolean needCheckAuthentication) {
+    public AbstractCommand(CollectionManager manager) {
         this.collectionManager = manager;
-        this.needCheckAuthentication = needCheckAuthentication;
     }
 
     /**
@@ -25,10 +22,9 @@ public abstract class AbstractCommand implements Command, Serializable {
     public Response execute(){
         return new Response("Отсутствует аргумент.");
     }
-//    public Response execute(Request request) {
-//        return execute();
-//    }
-    public abstract IResponse execute(Request request);
+    public Response execute(Request request) {
+        return execute();
+    }
 
     public void setCollectionManager(CollectionManager collectionManager) {
         this.collectionManager = collectionManager;
@@ -45,10 +41,5 @@ public abstract class AbstractCommand implements Command, Serializable {
     public String getDescription() {
         return description;
     }
-    public boolean needCheckAuthentication() {
-        return needCheckAuthentication;
-    }
-
-
 
 }

@@ -20,9 +20,6 @@ public class LabWork implements Comparable<LabWork>, Serializable {
     private Person author;
     public static Long MAX_ID = 12345L;
 
-    public LabWork(){
-
-    }
     public LabWork(String name, Coordinates coordinates, Float minimalPoint, Difficulty difficulty, Person author) {
         this.id = generateID();
         this.creationDate = LocalDate.now();
@@ -43,53 +40,13 @@ public class LabWork implements Comparable<LabWork>, Serializable {
             System.exit(0);
         }
     }
+
+    public LabWork() {
+
+    }
+
     private long generateID(){
         return MAX_ID++;
-    }
-
-
-    public void setName(String name) {
-        this.name = name;
-    }
-    public LocalDate getClientBirthday(){
-        return author.getBirthday();
-    }
-    public Country getClientCountry(){
-        return author.getNationality();
-    }
-    public Location getClientLocation(){
-        return author.getLocation();
-    }
-    public void setClientBirthday(LocalDate birthday) {
-        author.setBirthday(birthday);
-    }
-
-    public void setClientCountry(Country nationality) {
-        author.setNationality(nationality);
-    }
-
-    public void setClientLocation(Location location) {
-        author.setLocation(location);
-    }
-
-    public void setCoordinates(Coordinates coordinates) {
-        this.coordinates = coordinates;
-    }
-
-    public void setCreationDate(LocalDate creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public void setMinimalPoint(Float minimalPoint) {
-        this.minimalPoint = minimalPoint;
-    }
-
-    public void setDifficulty(Difficulty difficulty) {
-        this.difficulty = difficulty;
-    }
-
-    public static void setMaxId(Long maxId) {
-        MAX_ID = maxId;
     }
 
     /**
@@ -98,15 +55,11 @@ public class LabWork implements Comparable<LabWork>, Serializable {
     public Long getId() {
         return id;
     }
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public void setClientName(String name){
-        author.setName(name);
-    }
-    public String getClientName(){
-        return author.getName();
-    }
+
+//    // need from class FileLogic when adding labWork to collection
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     /**
      * Changes id of the Lab work.
@@ -158,6 +111,34 @@ public class LabWork implements Comparable<LabWork>, Serializable {
         return author;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public void setMinimalPoint(Float minimalPoint) {
+        this.minimalPoint = minimalPoint;
+    }
+
+    public void setDifficulty(Difficulty difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public void setAuthor(Person author) {
+        this.author = author;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(id);
@@ -191,4 +172,5 @@ public class LabWork implements Comparable<LabWork>, Serializable {
                 append("\n Местоположение(x|y|z): ").append(author.getLocation());
         return details.toString();
     }
+
 }

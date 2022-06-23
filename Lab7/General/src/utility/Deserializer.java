@@ -5,63 +5,26 @@ import exception.DeserializeException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.Serializable;
 
 public final class Deserializer {
-
-    private final byte[] serializedObject;
-    private Serializable deserializedObject;
-    private boolean alreadyDeserialized;
-
-    public Deserializer(byte[] serializedObject) {
-        this.serializedObject = serializedObject;
-        alreadyDeserialized = false;
+    private Deserializer() {
     }
 
-    public Serializable deserialize() {
-        if (alreadyDeserialized) {
-            return deserializedObject;
-        }
+    public static Response deserializeResponse(byte[] serializedObject) {
         try (ByteArrayInputStream arrayInputStream = new ByteArrayInputStream(serializedObject);
              ObjectInputStream objectInputStream = new ObjectInputStream(arrayInputStream)) {
-            deserializedObject = (Serializable) objectInputStream.readObject();
-            alreadyDeserialized = true;
-            return deserializedObject;
+            return (Response) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new DeserializeException("Невозможно десериализовать объект");
         }
     }
 
-    public boolean possibleToDeserialize() {
-        if (alreadyDeserialized) {
-            return true;
-        }
-        try {
-            deserialize();
-            return true;
-        } catch (DeserializeException e) {
-            return false;
+    public static Request deserializeRequest(byte[] serializedObject) {
+        try (ByteArrayInputStream arrayInputStream = new ByteArrayInputStream(serializedObject);
+             ObjectInputStream objectInputStream = new ObjectInputStream(arrayInputStream)) {
+            return (Request) objectInputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new DeserializeException("Невозможно десериализовать объект");
         }
     }
-//
-//    private Deserializer() {
-//    }
-//
-//    public static Response deserializeResponse(byte[] serializedObject) {
-//        try (ByteArrayInputStream arrayInputStream = new ByteArrayInputStream(serializedObject);
-//             ObjectInputStream objectInputStream = new ObjectInputStream(arrayInputStream)) {
-//            return (Response) objectInputStream.readObject();
-//        } catch (IOException | ClassNotFoundException e) {
-//            throw new DeserializeException("Невозможно десериализовать объект");
-//        }
-//    }
-//
-//    public static Request deserializeRequest(byte[] serializedObject) {
-//        try (ByteArrayInputStream arrayInputStream = new ByteArrayInputStream(serializedObject);
-//             ObjectInputStream objectInputStream = new ObjectInputStream(arrayInputStream)) {
-//            return (Request) objectInputStream.readObject();
-//        } catch (IOException | ClassNotFoundException e) {
-//            throw new DeserializeException("Невозможно десериализовать объект");
-//        }
-//    }
 }
