@@ -1,1 +1,2 @@
-2022-06-24 20:00:43.846 [main] ERROR serverLogic.ServerLogger - You didn't set any path as argument to environment / or file is empty. So, goodbye.
+2022-06-24 20:31:08.558 [main] INFO  serverLogic.ServerLogger - Server started listen to clients. Port 7878 / Address DESKTOP-JF35HRR/172.28.28.33
+2022-06-24 20:31:08.565 [main] INFO  serverLogic.ServerLogger - Waiting for client connection.

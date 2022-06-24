@@ -58,8 +58,15 @@ public class DatabaseHandler {
      * Чтение объектов ЛабРабот из базы данных
      */
     public LinkedHashSet<LabWork> readElementsFromDB() throws SQLException {
+
         LinkedHashSet<LabWork> set = new LinkedHashSet<>();
+
+
+
         PreparedStatement statement = connection.prepareStatement(DBRequest.GET_All_LABWORKS.getRequest());
+
+
+
         ResultSet resultSet = statement.executeQuery();
         while (resultSet.next()) {
             LabWork labWork = new LabWork();

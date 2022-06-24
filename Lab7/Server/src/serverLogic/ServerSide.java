@@ -23,26 +23,30 @@ public class ServerSide {
         String password;
         jdbcURL = "jdbc:postgresql://localhost:9999/studs";
         try {
-            credentials = new Scanner(new FileReader("C:\\Users\\amirh\\IdeaProjects\\itmoProgramming\\Lab7\\General\\src\\data\\credentials.txt"));
+            credentials = new Scanner(new FileReader(System.getenv("credentials")));
 
             username = credentials.nextLine().trim();
             password = credentials.nextLine().trim();
             databaseHandler = new DatabaseHandler(jdbcURL, username, password, new MD2Encryptor());
             collectionManager = new CollectionManager(databaseHandler.readElementsFromDB());
+            databaseHandler.connectToDatabase();
         } catch (FileNotFoundException fileNotFoundException) {
             System.err.println("Не найден credentials.txt с данными для входа в базу данных.");
             System.exit(-1);
         } catch (NoSuchElementException noSuchElementException) {
             System.err.println("В файле не найдены данные для входа. Завершение работы.");
             System.exit(-1);
-        }catch (SQLException e) {
+        } catch (NullPointerException nullPointerException) {
+            System.err.println("Почему-то что-то не найдено");
+            nullPointerException.printStackTrace();
+            System.exit(-1);
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
         Socket socket;
         try (ServerSocket serverSocket = new ServerSocket(7878)) {
 
-            Scanner scanner = new Scanner(System.in);
             while (true) {
                 ServerLogger.logInfoMessage("Server started listen to clients. Port " + serverSocket.getLocalPort() +
                         " / Address " + InetAddress.getLocalHost());
@@ -56,16 +60,6 @@ public class ServerSide {
                 ServerLogger.logInfoMessage(socket + " has connected to server.");
                 BufferedInputStream inputStream = new BufferedInputStream(socket.getInputStream());
                 BufferedOutputStream outputStream = new BufferedOutputStream(socket.getOutputStream());
-//                ServerConnection serverConnection = new ServerConnection(databaseHandler, collectionManager, socket, inputStream, outputStream);
-
-//                Saver saver = new Saver();
-//                saver.save(scanner, serverConnection);
-
-//                try {
-//                    serverConnection.work();
-//                } catch (ExitException exitException) {
-//                    ServerLogger.logErrorMessage(exitException.getMessage());
-//                }
 
                 Runnable r = new ServerConnection(databaseHandler, collectionManager, socket, inputStream, outputStream);
                 Thread t = new Thread(r);
