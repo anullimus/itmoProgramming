@@ -1,6 +1,5 @@
 package clientLogic;
 
-import data.initial.LabWork;
 import exception.DeserializeException;
 import exception.ScriptElementReaderException;
 import utility.*;
@@ -25,13 +24,11 @@ public class ClientConnection {
     private final SocketChannel socketChannel;
     private final CommandAnalyzer commandAnalyzer;
     private final HashSet<String> nameOfFilesThatWasBroughtToExecuteMethod;
-    private final String clientName;
-    private final String clientPassword;
+    private String clientName;
+    private String clientPassword;
 
-    public ClientConnection(SocketChannel socketChannel, Selector selector, Scanner fromKeyboard,
-                            String clientName, String clientPassword) {
-        this.clientName = clientName;
-        this.clientPassword = clientPassword;
+    public ClientConnection(SocketChannel socketChannel, Selector selector, Scanner fromKeyboard) {
+
         this.socketChannel = socketChannel;
         this.selector = selector;
         this.fromKeyboard = fromKeyboard;
@@ -68,11 +65,13 @@ public class ClientConnection {
             System.out.print("Вы хотите зарегистрироваться (0) или войти под существующим пользователем (1) ?: ");
             String answer = fromKeyboard.nextLine();
             if ("0".equals(answer)) {
-                dbRequest("register_user");
+                commandAnalyzer.analyzeCommand(new String[]{"register_user"}, false);
+                dbRequest(commandAnalyzer);
                 break;
             }
             if ("1".equals(answer)) {
-                dbRequest("connect_user");
+                commandAnalyzer.analyzeCommand(new String[]{"connect_user"}, false);
+                dbRequest(commandAnalyzer);
                 break;
             }
         }
@@ -149,7 +148,7 @@ public class ClientConnection {
                 if (commandAnalyzer.getCommandName().equals("execute_script")) {
                     executeScript(commandAnalyzer.getCommandArgumentString());
                 } else if (commandAnalyzer.isDBCommand()) {
-                    dbRequest(commandAnalyzer.getCommandName());
+                    dbRequest(commandAnalyzer);
                 } else {
                     Request request = new Request(commandAnalyzer, clientName, clientPassword);
                     byte[] serializedRequest = Serializer.serializeRequest(request);
@@ -167,17 +166,17 @@ public class ClientConnection {
         throw new IllegalArgumentException();
     }
 
-    private void dbRequest(String dbRequestName) throws IOException {
+    private void dbRequest(CommandAnalyzer commandAnalyzer) throws IOException {
         boolean clientConnected = false;
         do {
             System.out.print("Введите имя пользователя: ");
-            String clientName = fromKeyboard.nextLine();
+            clientName = fromKeyboard.nextLine();
             if (clientName.isEmpty()) {
                 System.out.println("Имя клиента не может быть пустым");
                 continue;
             }
             System.out.print("Введите пароль: ");
-            String clientPassword = fromKeyboard.nextLine();
+            clientPassword = fromKeyboard.nextLine();
             if (clientPassword.isEmpty()) {
                 System.out.println("Пароль не может быть пустым");
                 continue;
@@ -188,22 +187,13 @@ public class ClientConnection {
 
             Response response = receiveResponse();
 
-
-
-
-
             if (response.isClientConnected()) {
                 clientConnected = true;
-                RequestCreator.setClientName(clientName);
-                RequestCreator.setClientPassword(clientPassword);
+                request.setClientName(clientName);
+                request.setClientPassword(clientPassword);
             }
             System.out.println(response.getConnectMessage());
         } while (!clientConnected);
-
-
-
-
-
     }
 
     private Response receiveResponse() throws IOException {

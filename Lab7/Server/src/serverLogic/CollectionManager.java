@@ -14,29 +14,16 @@ import java.util.stream.Collectors;
  * Collection class manages the elements of collections with lab work{@link LabWork}.
  */
 public class CollectionManager {
-    private final FileManager fileManager;
     private final LinkedHashSet<LabWork> labWorks;
     private final LocalDate creationTimeOfCollection;
-    public static Long MAX_ID;
 
     /**
      * Предоставляет доступ к коллекции и связанному с ней файлу.
-     *
-     * @param collectionPath путь к файлу коллекции в файловой системе.
      */
 
-    public CollectionManager(String collectionPath) throws FileNotFoundException {
-        try {
-            fileManager = new FileManager(collectionPath);
-            labWorks = fileManager.getLabWorks().stream().sorted(Comparator.comparing(LabWork::getMinimalPoint))
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-            MAX_ID = Collections.max(fileManager.getAddedIDOfLabWorks());
-            creationTimeOfCollection = LocalDate.now();
-        } catch (NullPointerException nullPointerException) {
-            throw new NullPointerException();
-        } catch (FileNotFoundException fileNotFoundException) {
-            throw new FileNotFoundException();
-        }
+    public CollectionManager(LinkedHashSet<LabWork> labWorks) {
+        this.labWorks = labWorks;
+        creationTimeOfCollection = LocalDate.now();
     }
 
     /**
@@ -44,10 +31,7 @@ public class CollectionManager {
      *
      * @return Message of result of save the collection
      */
-    public String save() {
-        return fileManager.save(labWorks.stream().sorted(Comparator.comparing(LabWork::getMinimalPoint))
-                .collect(Collectors.toCollection(LinkedHashSet::new)));
-    }
+
 
     /**
      * @return collection

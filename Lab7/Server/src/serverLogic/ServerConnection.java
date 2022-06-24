@@ -47,7 +47,7 @@ public class ServerConnection implements Runnable{
 
     private void init() throws IOException {
         Response greetingResponse = new Response("Соединение установлено! Вы можете вводить команды!",
-                CollectionManager.MAX_ID, commandManager.getAvailableCommands(), commandManager.getCommandsNeedArgument());
+                commandManager.getAvailableCommands(), commandManager.getCommandsNeedArgument());
         sendToClient.write(Serializer.serializeResponse(greetingResponse));
         sendToClient.flush();
 

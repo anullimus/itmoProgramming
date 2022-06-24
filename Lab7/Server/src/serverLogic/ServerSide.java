@@ -1,13 +1,14 @@
 package serverLogic;
 
 import db.DatabaseHandler;
+import db.encription.IEncryptor;
 import db.encription.MD2Encryptor;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.BufferOverflowException;
+import java.sql.SQLException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -15,44 +16,29 @@ public class ServerSide {
     private static CollectionManager collectionManager;
 
     public static void main(String[] args) {
-        Scanner credentials = null;
+        DatabaseHandler databaseHandler = null;
+        Scanner credentials;
         String jdbcURL;
-        DatabaseHandler databaseHandler;
-        String username = null;
-        String password = null;
+        String username;
+        String password;
+        jdbcURL = "jdbc:postgresql://localhost:9999/studs";
         try {
-            credentials = new Scanner(new FileReader("credentials.txt"));
+            credentials = new Scanner(new FileReader("C:\\Users\\amirh\\IdeaProjects\\itmoProgramming\\Lab7\\General\\src\\data\\credentials.txt"));
+
+            username = credentials.nextLine().trim();
+            password = credentials.nextLine().trim();
+            databaseHandler = new DatabaseHandler(jdbcURL, username, password, new MD2Encryptor());
+            collectionManager = new CollectionManager(databaseHandler.readElementsFromDB());
         } catch (FileNotFoundException fileNotFoundException) {
             System.err.println("Не найден credentials.txt с данными для входа в базу данных.");
             System.exit(-1);
-        }
-        try {
-            username = credentials.nextLine().trim();
-            password = credentials.nextLine().trim();
         } catch (NoSuchElementException noSuchElementException) {
             System.err.println("В файле не найдены данные для входа. Завершение работы.");
             System.exit(-1);
+        }catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        jdbcURL = "jdbc:postgresql://localhost:9999/studs";
-        databaseHandler = new DatabaseHandler(jdbcURL, username, password, new MD2Encryptor());
-
-
-
-
-
-
-
-        try {
-            collectionManager = new CollectionManager(System.getenv("VARRY"));
-        } catch (NullPointerException nullPointerException) {
-            ServerLogger.logErrorMessage("You didn't set any path as argument to environment / or file is empty. So, goodbye.");
-            System.exit(1);
-        } catch (FileNotFoundException fileNotFoundException) {
-            ServerLogger.logErrorMessage("File-collection doesn't exists by inputted path.\n" +
-                    "The elements wasn't added to the program's collection");
-            System.exit(1);
-        }
         Socket socket;
         try (ServerSocket serverSocket = new ServerSocket(7878)) {
 
@@ -70,16 +56,17 @@ public class ServerSide {
                 ServerLogger.logInfoMessage(socket + " has connected to server.");
                 BufferedInputStream inputStream = new BufferedInputStream(socket.getInputStream());
                 BufferedOutputStream outputStream = new BufferedOutputStream(socket.getOutputStream());
-                ServerConnection serverConnection = new ServerConnection(databaseHandler, collectionManager, socket, inputStream, outputStream);
+//                ServerConnection serverConnection = new ServerConnection(databaseHandler, collectionManager, socket, inputStream, outputStream);
 
-                Saver saver = new Saver();
-                saver.save(scanner, serverConnection);
+//                Saver saver = new Saver();
+//                saver.save(scanner, serverConnection);
 
 //                try {
 //                    serverConnection.work();
 //                } catch (ExitException exitException) {
 //                    ServerLogger.logErrorMessage(exitException.getMessage());
 //                }
+
                 Runnable r = new ServerConnection(databaseHandler, collectionManager, socket, inputStream, outputStream);
                 Thread t = new Thread(r);
                 t.start();
@@ -96,7 +83,7 @@ public class ServerSide {
     }
 
     public static void exit() {
-        ServerLogger.logInfoMessage(collectionManager.save());
+//        ServerLogger.logInfoMessage(collectionManager.save());
         ServerLogger.logInfoMessage("Finishing the server's work...");
         System.exit(1);
     }
@@ -131,25 +118,25 @@ class Pointer {
 /**
  * class for realisation of server's single command save()
  */
-class Saver {
-    void save(Scanner scanner, ServerConnection serverConnection) {
-        Thread thread = new Thread(() -> {
-            try {
-                while (true) {
-                    if (scanner.nextLine().trim().equals("save")) {
-                        serverConnection.getCollectionManager().save();
-                        ServerLogger.logInfoMessage("Collection successfully has been saved!");
-                    }
-                }
-            } catch (BufferOverflowException | IndexOutOfBoundsException exception) {
-                ServerLogger.logErrorMessage("Find some not serious problems. Please try again.");
-            } catch (NoSuchElementException noSuchElementException) {         //  ctrl+D
-                ServerSide.exit();
-            } catch (Exception exception) {
-                ServerLogger.logErrorMessage("Find some strange problems. Please try again.");
-            }
-        });
-        thread.setDaemon(true);
-        thread.start();
-    }
-}
+//class Saver {
+//    void save(Scanner scanner, ServerConnection serverConnection) {
+//        Thread thread = new Thread(() -> {
+//            try {
+//                while (true) {
+//                    if (scanner.nextLine().trim().equals("save")) {
+//                        serverConnection.getCollectionManager().save();
+//                        ServerLogger.logInfoMessage("Collection successfully has been saved!");
+//                    }
+//                }
+//            } catch (BufferOverflowException | IndexOutOfBoundsException exception) {
+//                ServerLogger.logErrorMessage("Find some not serious problems. Please try again.");
+//            } catch (NoSuchElementException noSuchElementException) {         //  ctrl+D
+//                ServerSide.exit();
+//            } catch (Exception exception) {
+//                ServerLogger.logErrorMessage("Find some strange problems. Please try again.");
+//            }
+//        });
+//        thread.setDaemon(true);
+//        thread.start();
+//    }
+//}

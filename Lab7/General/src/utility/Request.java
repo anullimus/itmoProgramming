@@ -22,8 +22,8 @@ public class Request implements Serializable {
     private String stringArgument;
     private Difficulty difficultyArgument;
 
-    private final String clientName;
-    private final String clientPassword;
+    private String clientName;
+    private String clientPassword;
 
     public Request(CommandAnalyzer commandAnalyzer, String clientName, String clientPassword) {
         this.clientName = clientName;
@@ -32,6 +32,14 @@ public class Request implements Serializable {
         this.commandName = commandAnalyzer.getCommandName();
         this.commandHaveArgument = commandAnalyzer.isCommandHaveArgument();
         classArgumentDefiner();
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
+    public void setClientPassword(String clientPassword) {
+        this.clientPassword = clientPassword;
     }
 
     public Float getFloatArgument() {

@@ -6,12 +6,27 @@ import java.util.Map;
 
 public class Response implements Serializable {
     private static final long serialVersionUID = 3324532584203608458L;
-    private final String serverMessage;
+    private String serverMessage;
     private ArrayList<String> availableCommands;
     private Map<String, Class<?>> commandsNeedArgument;
 
+    private String connectMessage;
+    private boolean clientConnected;
+
     public Response(String serverMessage) {
         this.serverMessage = serverMessage;
+    }
+
+    public Response(String connectMessage, boolean clientConnected) {
+        this.connectMessage = connectMessage;
+        this.clientConnected = clientConnected;
+    }
+    public String getConnectMessage() {
+        return connectMessage;
+    }
+
+    public boolean isClientConnected() {
+        return clientConnected;
     }
 
     public ArrayList<String> getAvailableCommands() {
