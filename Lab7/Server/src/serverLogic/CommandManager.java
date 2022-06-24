@@ -19,6 +19,7 @@ public class CommandManager {
     public CommandManager(DatabaseHandler databaseHandler, CollectionManager collectionManager){
         this.collectionManager = collectionManager;
         this.databaseHandler = databaseHandler;
+        availableCommands = new ArrayList<>();
         fillingSpecialCommandArrays();
     }
     private void fillingSpecialCommandArrays() {
@@ -37,6 +38,9 @@ public class CommandManager {
         availableCommandsWithDescription.put("count_less_than_author", new CountLessThanAuthorCommand(collectionManager));
         availableCommandsWithDescription.put("filter_by_difficulty", new FilterByDifficultyCommand(collectionManager));
         availableCommandsWithDescription.put("help", new HelpCommand(collectionManager, availableCommandsWithDescription));
+        availableCommandsWithDescription.put("connect_user", new ConnectUserCommand(databaseHandler, collectionManager));
+        availableCommandsWithDescription.put("register_user", new RegisterUserCommand(databaseHandler, collectionManager));
+
         availableCommands.add("register_user");
         availableCommands.add("connect_user");
         availableCommands.addAll(availableCommandsWithDescription.keySet());
@@ -56,6 +60,9 @@ public class CommandManager {
         return availableCommandsWithDescription;
     }
 
+    public AbstractCommand getCommandByName(String name){
+        return availableCommandsWithDescription.get(name);
+    }
     public ArrayList<String> getAvailableCommands() {
         return availableCommands;
     }

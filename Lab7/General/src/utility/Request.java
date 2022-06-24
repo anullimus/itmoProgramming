@@ -50,6 +50,14 @@ public class Request implements Serializable {
         return clientName;
     }
 
+    public String getClientPassword() {
+        return clientPassword;
+    }
+
+    public CommandAnalyzer getCommandAnalyzer() {
+        return commandAnalyzer;
+    }
+
     public String getCommandName() {
         return commandName;
     }

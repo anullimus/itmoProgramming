@@ -12,16 +12,23 @@ public class AbstractCommand implements Command, Serializable {
     private CollectionManager collectionManager; //Позволяет изменить коллекцию.
     private String description; //Содержит краткое руководство к команде.
     private DatabaseHandler databaseHandler;
+    private final boolean needCheckAuthentication;
 
     public AbstractCommand(DatabaseHandler databaseHandler, CollectionManager manager) {
         this.collectionManager = manager;
         this.databaseHandler = databaseHandler;
+        needCheckAuthentication = true;
     }
     /**
      * Для команд, которым не нужно взаимодействие с базой данных
      */
     public AbstractCommand(CollectionManager manager) {
         this.collectionManager = manager;
+        needCheckAuthentication = false;
+    }
+
+    public boolean isNeedCheckAuthentication() {
+        return needCheckAuthentication;
     }
 
     /**

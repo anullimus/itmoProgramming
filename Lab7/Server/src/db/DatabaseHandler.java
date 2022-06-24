@@ -2,6 +2,7 @@ package db;
 
 import data.initial.*;
 import db.encription.IEncryptor;
+import org.postgresql.util.PSQLException;
 import serverLogic.ServerLogger;
 import utility.Request;
 
@@ -60,34 +61,33 @@ public class DatabaseHandler {
     public LinkedHashSet<LabWork> readElementsFromDB() throws SQLException {
 
         LinkedHashSet<LabWork> set = new LinkedHashSet<>();
-
-
-
         PreparedStatement statement = connection.prepareStatement(DBRequest.GET_All_LABWORKS.getRequest());
 
 
+        try {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                LabWork labWork = new LabWork();
+                int columnIndex = 1;
+                labWork.setId(resultSet.getLong(columnIndex++));
+                Location location = new Location(resultSet.getInt(columnIndex++), resultSet.getDouble(columnIndex++),
+                        resultSet.getInt(columnIndex++));
+                labWork.setAuthor(new Person(resultSet.getString(columnIndex++),
+                        LocalDate.parse(resultSet.getString(columnIndex++)),
+                        Country.valueOf(resultSet.getString(columnIndex++)),
+                        location));
 
-        ResultSet resultSet = statement.executeQuery();
-        while (resultSet.next()) {
-            LabWork labWork = new LabWork();
-            int columnIndex = 1;
-            labWork.setId(resultSet.getLong(columnIndex++));
-            Location location = new Location(resultSet.getInt(columnIndex++), resultSet.getDouble(columnIndex++),
-                    resultSet.getInt(columnIndex++));
-            labWork.setAuthor(new Person(resultSet.getString(columnIndex++),
-                    LocalDate.parse(resultSet.getString(columnIndex++)),
-                    Country.valueOf(resultSet.getString(columnIndex++)),
-                    location));
+                labWork.setName(resultSet.getString(columnIndex++));
+                labWork.setCoordinates(new Coordinates((long) resultSet.getInt(columnIndex++),
+                        resultSet.getInt(columnIndex++)));
+                labWork.setMinimalPoint(resultSet.getFloat(columnIndex++));
+                labWork.setDifficulty(Difficulty.valueOf(resultSet.getString(columnIndex)));
 
-            labWork.setName(resultSet.getString(columnIndex++));
-            labWork.setCoordinates(new Coordinates((long) resultSet.getInt(columnIndex++),
-                    resultSet.getInt(columnIndex++)));
-            labWork.setMinimalPoint(resultSet.getFloat(columnIndex++));
-            labWork.setDifficulty(Difficulty.valueOf(resultSet.getString(columnIndex)));
-
-            set.add(labWork);
-        }
-        return set;
+                set.add(labWork);
+            }
+        }catch (SQLException sqlException){
+            System.err.println("Таблица labworks еще не создана, но это из-за того, что нет клиентов и тд.");
+        } return set;
     }
 
     // Далее нужно создать методы для работы с коллекцией в базе данных

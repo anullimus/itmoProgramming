@@ -19,16 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServerConnection implements Runnable{
-//    private HashMap<String, AbstractCommand> availableCommandsWithDescription;
-//    private ArrayList<String> availableCommands;
-//    private Map<String, Class<?>> commandsNeedArgument;
+
     private final CollectionManager collectionManager;
     private final DatabaseHandler databaseHandler;
     private final BufferedInputStream inputStream;
     private final BufferedOutputStream sendToClient;
     private final Socket socket;
     private final CommandManager commandManager;
-//    private final Scanner scanner;
 
     public CollectionManager getCollectionManager() {
         return collectionManager;
@@ -82,7 +79,13 @@ public class ServerConnection implements Runnable{
                             getOrDefault(requestFromClient.getCommandName(), errorCommand).execute();
                 }
 //                ServerLogger.logInfoMessage("Result of executing the program: {}", response);
-
+                AbstractCommand command = commandManager.getCommandByName(requestFromClient.getCommandName());
+                if (command.isNeedCheckAuthentication()) {
+                    if (!command.getDatabaseHandler().checkIfUserConnect(requestFromClient.getClientName(),
+                            requestFromClient.getClientPassword())) {
+                        response =  new Response("Вы не авторизованы");
+                    }
+                }
                 byte[] serializedResponse = Serializer.serializeResponse(response);
                 sendToClient.write(serializedResponse);
                 sendToClient.flush();
@@ -128,22 +131,5 @@ public class ServerConnection implements Runnable{
             return Deserializer.deserializeRequest(byteBuffer.array());
         }
     }
-//    public void checkCommands() throws IOException {
-//        if (System.in.available() > 0) {
-//            String line = "";
-//            try {
-//                line = scanner.nextLine();
-//            } catch (NoSuchElementException noSuchElementException) {
-//                line = "exit";
-//            }
-//            if ("save".equals(line)) {
-//                collectionManager.save();
-//                ServerLogger.logInfoMessage("Collection successfully has been saved!");
-//            }
-//            if ("exit".equals(line)) {
-//                ServerLogger.logInfoMessage("Server finished working");
-//            }
-//        }
-//    }
 }
 

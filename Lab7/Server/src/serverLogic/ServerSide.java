@@ -28,8 +28,10 @@ public class ServerSide {
             username = credentials.nextLine().trim();
             password = credentials.nextLine().trim();
             databaseHandler = new DatabaseHandler(jdbcURL, username, password, new MD2Encryptor());
-            collectionManager = new CollectionManager(databaseHandler.readElementsFromDB());
             databaseHandler.connectToDatabase();
+
+
+            collectionManager = new CollectionManager(databaseHandler.readElementsFromDB());
         } catch (FileNotFoundException fileNotFoundException) {
             System.err.println("Не найден credentials.txt с данными для входа в базу данных.");
             System.exit(-1);
@@ -52,10 +54,10 @@ public class ServerSide {
                         " / Address " + InetAddress.getLocalHost());
                 ServerLogger.logInfoMessage("Waiting for client connection.");
 
-                Pointer pointer = new Pointer();
-                pointer.start();
+//                Pointer pointer = new Pointer();
+//                pointer.start();
                 socket = serverSocket.accept();
-                pointer.finish();
+//                pointer.finish();
 
                 ServerLogger.logInfoMessage(socket + " has connected to server.");
                 BufferedInputStream inputStream = new BufferedInputStream(socket.getInputStream());
@@ -71,8 +73,7 @@ public class ServerSide {
         } catch (NoSuchElementException noSuchElementException) {         //  ctrl+D
             exit();
         } catch (Exception exception) {
-            ServerLogger.logErrorMessage("Handled some unexpected exception");
-            exit();
+            exception.printStackTrace();
         }
     }
 
