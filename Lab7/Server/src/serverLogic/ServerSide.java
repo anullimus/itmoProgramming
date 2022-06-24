@@ -70,7 +70,7 @@ public class ServerSide {
                 ServerLogger.logInfoMessage(socket + " has connected to server.");
                 BufferedInputStream inputStream = new BufferedInputStream(socket.getInputStream());
                 BufferedOutputStream outputStream = new BufferedOutputStream(socket.getOutputStream());
-                ServerConnection serverConnection = new ServerConnection(collectionManager, socket, inputStream, outputStream);
+                ServerConnection serverConnection = new ServerConnection(databaseHandler, collectionManager, socket, inputStream, outputStream);
 
                 Saver saver = new Saver();
                 saver.save(scanner, serverConnection);
@@ -80,7 +80,7 @@ public class ServerSide {
 //                } catch (ExitException exitException) {
 //                    ServerLogger.logErrorMessage(exitException.getMessage());
 //                }
-                Runnable r = new ServerConnection(collectionManager, socket, inputStream, outputStream);
+                Runnable r = new ServerConnection(databaseHandler, collectionManager, socket, inputStream, outputStream);
                 Thread t = new Thread(r);
                 t.start();
             }

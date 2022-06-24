@@ -15,25 +15,39 @@ public class Request implements Serializable {
     private final boolean commandHaveArgument;
     private final CommandAnalyzer commandAnalyzer;
 
-    private LabWork labWorkArgument;
+
+    private LabWork labWork;
+    private Float floatArgument;
     private Long longArgument;
     private String stringArgument;
     private Difficulty difficultyArgument;
 
-    public Request(CommandAnalyzer commandAnalyzer) {
+    private final String clientName;
+    private final String clientPassword;
+
+    public Request(CommandAnalyzer commandAnalyzer, String clientName, String clientPassword) {
+        this.clientName = clientName;
+        this.clientPassword = clientPassword;
         this.commandAnalyzer = commandAnalyzer;
         this.commandName = commandAnalyzer.getCommandName();
         this.commandHaveArgument = commandAnalyzer.isCommandHaveArgument();
         classArgumentDefiner();
     }
 
+    public Float getFloatArgument() {
+        return floatArgument;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
 
     public String getCommandName() {
         return commandName;
     }
 
-    public LabWork getLabWorkArgument() {
-        return labWorkArgument;
+    public LabWork getLabWork() {
+        return labWork;
     }
 
     public Long getLongArgument() {
@@ -51,9 +65,12 @@ public class Request implements Serializable {
     private void classArgumentDefiner() {
         if (!commandAnalyzer.getCommandName().equals("technical")) {
             if (commandAnalyzer.getArgumentClass() == LabWork.class) {
-                labWorkArgument = new NewElementReader(commandAnalyzer.getAddDataFromScript()).readNewLabwork(commandAnalyzer.isScriptExecuting());
+                labWork = new NewElementReader(commandAnalyzer.getAddDataFromScript()).readNewLabwork(commandAnalyzer.isScriptExecuting());
             } else if (commandAnalyzer.getArgumentClass() == Long.class) {
                 longArgument = Long.parseLong(commandAnalyzer.getCommandArgumentString());
+
+            } else if (commandAnalyzer.getArgumentClass() == Float.class) {
+                floatArgument = Float.parseFloat(commandAnalyzer.getCommandArgumentString());
             } else if (commandAnalyzer.getArgumentClass() == Difficulty.class) {
                 difficultyArgument = Difficulty.
                         valueOf(commandAnalyzer.getCommandArgumentString().toUpperCase(Locale.ROOT));

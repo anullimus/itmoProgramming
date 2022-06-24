@@ -25,8 +25,13 @@ public class ClientConnection {
     private final SocketChannel socketChannel;
     private final CommandAnalyzer commandAnalyzer;
     private final HashSet<String> nameOfFilesThatWasBroughtToExecuteMethod;
+    private final String clientName;
+    private final String clientPassword;
 
-    public ClientConnection(SocketChannel socketChannel, Selector selector, Scanner fromKeyboard) {
+    public ClientConnection(SocketChannel socketChannel, Selector selector, Scanner fromKeyboard,
+                            String clientName, String clientPassword) {
+        this.clientName = clientName;
+        this.clientPassword = clientPassword;
         this.socketChannel = socketChannel;
         this.selector = selector;
         this.fromKeyboard = fromKeyboard;
@@ -36,9 +41,8 @@ public class ClientConnection {
 
     private void init() throws IOException {
         try {
-            Response response = kitchen(new String[]{"technical"}, false);
+            Response response = executeCommand(new String[]{"technical"}, false);
             System.out.println(response);
-            LabWork.MAX_ID = response.getMaxIdInCollection();
             commandAnalyzer.setAvailableCommands(response.getAvailableCommands());
             commandAnalyzer.setCommandsNeedArgument(response.getCommandsNeedArgument());
         } catch (IOException ioException) {
@@ -46,6 +50,7 @@ public class ClientConnection {
             throw new IOException();
         }
     }
+
     public void work() throws IOException {
         try {
             init();
@@ -58,6 +63,20 @@ public class ClientConnection {
 
 
     private void interactiveMode() throws IOException {
+
+        while (true) {
+            System.out.print("Вы хотите зарегистрироваться (0) или войти под существующим пользователем (1) ?: ");
+            String answer = fromKeyboard.nextLine();
+            if ("0".equals(answer)) {
+                dbRequest("register_user");
+                break;
+            }
+            if ("1".equals(answer)) {
+                dbRequest("connect_user");
+                break;
+            }
+        }
+
         String command;
         try {
             while (!(command = fromKeyboard.nextLine()).equals("exit")) {
@@ -67,8 +86,8 @@ public class ClientConnection {
                     continue;
                 }
                 try {
-                    System.out.println(kitchen(parsedCommand, false));
-                }catch (IllegalArgumentException illegalArgumentException) {
+                    System.out.println(executeCommand(parsedCommand, false));
+                } catch (IllegalArgumentException illegalArgumentException) {
                     System.err.println("Введена некорректная команда. Воспользуйтесь 'help'-инструкцией.\n");
                 }
                 System.out.println(Tool.PS1 + "Введите команду: ");
@@ -104,7 +123,7 @@ public class ClientConnection {
                             }
                             commandAnalyzer.setAddDataFromScript(elementLine);
                         }
-                        kitchen(parsedCommand, true);
+                        executeCommand(parsedCommand, true);
                     }
                     nameOfFilesThatWasBroughtToExecuteMethod.remove(scriptPath);
                     System.out.println("Исполнение скрипта завершено.");
@@ -124,13 +143,15 @@ public class ClientConnection {
         }
     }
 
-    private Response kitchen(String[] command, boolean isScriptExecuting) throws IOException {
+    private Response executeCommand(String[] command, boolean isScriptExecuting) throws IOException {
         try {
             if (commandAnalyzer.analyzeCommand(command, isScriptExecuting)) {
                 if (commandAnalyzer.getCommandName().equals("execute_script")) {
                     executeScript(commandAnalyzer.getCommandArgumentString());
+                } else if (commandAnalyzer.isDBCommand()) {
+                    dbRequest(commandAnalyzer.getCommandName());
                 } else {
-                    Request request = new Request(commandAnalyzer);
+                    Request request = new Request(commandAnalyzer, clientName, clientPassword);
                     byte[] serializedRequest = Serializer.serializeRequest(request);
                     socketChannel.write(ByteBuffer.wrap(serializedRequest));    // свернули в буффер и записали в канал
                     return receiveResponse();
@@ -144,6 +165,45 @@ public class ClientConnection {
             System.err.println("Введеныные данные содержат неверный формат.");
         }
         throw new IllegalArgumentException();
+    }
+
+    private void dbRequest(String dbRequestName) throws IOException {
+        boolean clientConnected = false;
+        do {
+            System.out.print("Введите имя пользователя: ");
+            String clientName = fromKeyboard.nextLine();
+            if (clientName.isEmpty()) {
+                System.out.println("Имя клиента не может быть пустым");
+                continue;
+            }
+            System.out.print("Введите пароль: ");
+            String clientPassword = fromKeyboard.nextLine();
+            if (clientPassword.isEmpty()) {
+                System.out.println("Пароль не может быть пустым");
+                continue;
+            }
+            Request request = new Request(commandAnalyzer, clientName, clientPassword);
+            byte[] serializedRequest = Serializer.serializeRequest(request);
+            socketChannel.write(ByteBuffer.wrap(serializedRequest));    // свернули в буффер и записали в канал
+
+            Response response = receiveResponse();
+
+
+
+
+
+            if (response.isClientConnected()) {
+                clientConnected = true;
+                RequestCreator.setClientName(clientName);
+                RequestCreator.setClientPassword(clientPassword);
+            }
+            System.out.println(response.getConnectMessage());
+        } while (!clientConnected);
+
+
+
+
+
     }
 
     private Response receiveResponse() throws IOException {

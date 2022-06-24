@@ -8,12 +8,24 @@ import java.util.Map;
 
 public class CommandAnalyzer implements Serializable {
     private String commandArgument;
-    private  String commandName;
+    private String commandName;
     private boolean commandHaveArgument;
     private ArrayList<String> availableCommands;
     private Map<String, Class<?>> commandsNeedArgument;
-    private boolean isScriptExecuting;
+    private boolean ScriptExecuting;
     private String[] addDataFromScript;
+    private boolean DBCommand;
+
+    //    public CommandAnalyzer(String[] parsedCommand, boolean ScriptExecuting) {
+//        commandHaveArgument = false;
+//        this.ScriptExecuting = ScriptExecuting;
+//        DBCommand = false;
+//
+//        analyzeCommand(parsedCommand, ScriptExecuting);
+//    }
+    public boolean isDBCommand() {
+        return DBCommand;
+    }
 
     public void setAvailableCommands(ArrayList<String> availableCommands) {
         this.availableCommands = availableCommands;
@@ -32,14 +44,14 @@ public class CommandAnalyzer implements Serializable {
     }
 
     public CommandAnalyzer() {
-        this.isScriptExecuting = false;
+        this.ScriptExecuting = false;
     }
 
     public boolean isCommandHaveArgument() {
         return commandHaveArgument;
     }
 
-    public String getCommandName(){
+    public String getCommandName() {
         return commandName;
     }
 
@@ -48,46 +60,47 @@ public class CommandAnalyzer implements Serializable {
     }
 
     public boolean isScriptExecuting() {
-        return isScriptExecuting;
+        return ScriptExecuting;
     }
 
-    public Class<?> getArgumentClass(){
+    public Class<?> getArgumentClass() {
         return commandsNeedArgument.get(commandName);
     }
 
-    public boolean analyzeCommand(String[] inputLineDivided, boolean isScriptExecuting) {
-        this.isScriptExecuting = isScriptExecuting;
-        commandName = inputLineDivided[0].toLowerCase();
-        if (commandName.equals("technical")){
+    public boolean analyzeCommand(String[] parsedCommand, boolean ScriptExecuting) {
+        this.ScriptExecuting = ScriptExecuting;
+        commandName = parsedCommand[0].toLowerCase();
+        if (commandName.equals("technical")) {
             return true;
         }
-        if(commandName.equals("execute_script")){
-            if(inputLineDivided.length == 1){
+        DBCommand = "connect_user".equals(commandName) || "register_user".equals(commandName);
+        if (commandName.equals("execute_script")) {
+            if (parsedCommand.length == 1) {
                 System.err.println("Укажите путь к скрипту.");
-            }else {
+            } else {
                 commandHaveArgument = true;
-                commandArgument = inputLineDivided[1];
+                commandArgument = parsedCommand[1];
                 return true;
             }
         }
         if (!availableCommands.contains(commandName)) {
             return false;
         }
-        if (commandsNeedArgument.containsKey(commandName) && inputLineDivided.length == 1 &&
+        if (commandsNeedArgument.containsKey(commandName) && parsedCommand.length == 1 &&
                 commandsNeedArgument.get(commandName) != LabWork.class) {
 //            System.err.println("Аргумент не указан"); //defined in Abstract Command
             return false;
         }
-        if (!commandsNeedArgument.containsKey(commandName) && inputLineDivided.length > 1) {
+        if (!commandsNeedArgument.containsKey(commandName) && parsedCommand.length > 1) {
             System.err.println("Аргумент не должен быть указан");
             return false;
         }
         commandHaveArgument = false; // для execute_script, если не войдет в тело условки ниже, то значит false
-        if (commandsNeedArgument.containsKey(commandName) && (inputLineDivided.length > 1
+        if (commandsNeedArgument.containsKey(commandName) && (parsedCommand.length > 1
                 || commandsNeedArgument.get(commandName) == LabWork.class)) {
             commandHaveArgument = true;
-            if(commandsNeedArgument.get(commandName) != LabWork.class){
-                commandArgument = inputLineDivided[1];
+            if (commandsNeedArgument.get(commandName) != LabWork.class) {
+                commandArgument = parsedCommand[1];
             }
         }
         return true;

@@ -1,6 +1,7 @@
 package serverLogic;
 
 import command.AbstractCommand;
+import db.DatabaseHandler;
 import exception.DeserializeException;
 import exception.ExitException;
 import exception.SerializeException;
@@ -22,6 +23,7 @@ public class ServerConnection implements Runnable{
 //    private ArrayList<String> availableCommands;
 //    private Map<String, Class<?>> commandsNeedArgument;
     private final CollectionManager collectionManager;
+    private final DatabaseHandler databaseHandler;
     private final BufferedInputStream inputStream;
     private final BufferedOutputStream sendToClient;
     private final Socket socket;
@@ -32,13 +34,14 @@ public class ServerConnection implements Runnable{
         return collectionManager;
     }
 
-    public ServerConnection(CollectionManager collectionManager, Socket socket, BufferedInputStream inputStream,
+    public ServerConnection(DatabaseHandler databaseHandler, CollectionManager collectionManager, Socket socket, BufferedInputStream inputStream,
                             BufferedOutputStream outputStream) throws IOException {
         this.socket = socket;
         this.inputStream = inputStream;
         this.sendToClient = outputStream;
         this.collectionManager = collectionManager;
-        this.commandManager = new CommandManager(collectionManager);
+        this.databaseHandler = databaseHandler;
+        this.commandManager = new CommandManager(databaseHandler, collectionManager);
     }
 
 
@@ -55,7 +58,7 @@ public class ServerConnection implements Runnable{
         try {
             init();
 
-            AbstractCommand errorCommand = new AbstractCommand(null) {
+            AbstractCommand errorCommand = new AbstractCommand(null,null) {
                 @Override
                 public Response execute() {
                     return new Response("Неизвестная команда. Введите 'help' для получения списка команд.");
