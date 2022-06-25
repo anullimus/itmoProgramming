@@ -8,18 +8,13 @@ import util.DataCantBeSentException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.function.Function;
-import java.util.function.Predicate;
+
 
 public final class Client {
-    private static final BufferedReader BUFFERED_READER = new BufferedReader(new InputStreamReader(System.in));
     private static final OutputManager OUTPUT_MANAGER = new OutputManager(System.out);
-    private static final int MAX_PORT = 65635;
-    private static final int MIN_PORT = 1024;
     private static final Collection<String> LIST_OF_COMMANDS = new HashSet<>();
     private static int serverPort;
     private static int clientPort;
@@ -84,37 +79,4 @@ public final class Client {
         clientIp = "localhost";
     }
 
-    private static <T> T ask(Predicate<T> predicate,
-                             String askMessage,
-                             String errorMessage,
-                             String wrongValueMessage,
-                             Function<String, T> converter
-    ) throws IOException {
-        OUTPUT_MANAGER.println(askMessage);
-        String input;
-        T value;
-        do {
-            try {
-                input = BUFFERED_READER.readLine();
-                value = converter.apply(input);
-            } catch (IllegalArgumentException e) {
-                OUTPUT_MANAGER.println(errorMessage);
-                continue;
-            }
-            if (predicate.test(value)) {
-                return value;
-            } else {
-                OUTPUT_MANAGER.println(wrongValueMessage);
-            }
-        } while (true);
-    }
-
-    private static String ask(
-            String askMessage
-    ) throws IOException {
-        OUTPUT_MANAGER.println(askMessage);
-        String input;
-        input = BUFFERED_READER.readLine();
-        return input;
-    }
 }

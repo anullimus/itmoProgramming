@@ -43,7 +43,7 @@ public class Console {
     public void start() throws ClassNotFoundException, IOException, DataCantBeSentException, UnresolvedAddressException {
         initUsernameAndPassword();
         DataObjectsMaker dataObjectsMaker = new DataObjectsMaker(inputManager, outputManager, username);
-        System.out.println("Successful enter. You can start enter command with command \"help\"");
+        System.out.println("Try the work with the command \"help\".");
         String input;
         do {
             input = readNextCommand();

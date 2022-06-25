@@ -25,8 +25,7 @@ public final class Server {
     private static final Scanner BUFFERED_READER = new Scanner(System.in);
     private static int serverPort;
     private static String serverIp;
-    private static final int MAX_PORT = 65535;
-    private static final int MIN_PORT = 1024;
+
     private static String dbHost;
     private static String dbName;
     private static String username;
@@ -86,41 +85,6 @@ public final class Server {
         System.out.println("Enter password");
         password = BUFFERED_READER.nextLine();
     }
-
-//    private static <T> T ask(
-//            Predicate<T> predicate,
-//            String askMessage,
-//            String errorMessage,
-//            String wrongValueMessage,
-//            Function<String, T> converter
-//    ) throws IOException {
-//        LOGGER.info(askMessage);
-//        String input;
-//        T value;
-//        do {
-//            try {
-//                input = BUFFERED_READER.readLine();
-//                value = converter.apply(input);
-//            } catch (IllegalArgumentException e) {
-//                LOGGER.error(errorMessage);
-//                continue;
-//            }
-//            if (predicate.test(value)) {
-//                return value;
-//            } else {
-//                LOGGER.error(wrongValueMessage);
-//            }
-//        } while (true);
-//    }
-//
-//    private static String ask(
-//            String askMessage
-//    ) throws IOException {
-//        LOGGER.info(askMessage);
-//        String input;
-//        input = BUFFERED_READER.readLine();
-//        return input;
-//    }
 }
 
 
