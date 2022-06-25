@@ -4,7 +4,7 @@ import clientLogic.connection.ConnectionManager;
 import clientLogic.logic.Console;
 import clientLogic.util.InputManager;
 import clientLogic.util.OutputManager;
-import util.DataCantBeSentException;
+import myException.DataCantBeSentException;
 
 import java.io.IOException;
 import java.nio.channels.UnresolvedAddressException;

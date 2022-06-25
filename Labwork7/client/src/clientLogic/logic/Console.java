@@ -9,7 +9,7 @@ import commands.*;
 import data.StudyGroup;
 import dto.CommandFromClientDto;
 import dto.CommandResultDto;
-import util.DataCantBeSentException;
+import myException.DataCantBeSentException;
 
 import java.io.IOException;
 import java.io.Serializable;

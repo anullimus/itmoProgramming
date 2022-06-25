@@ -4,7 +4,7 @@ package clientLogic.connection;
 import clientLogic.util.OutputManager;
 import dto.CommandFromClientDto;
 import dto.CommandResultDto;
-import util.DataCantBeSentException;
+import myException.DataCantBeSentException;
 import util.Pair;
 
 import java.io.*;

@@ -41,7 +41,6 @@ public final class Server {
             connection = DriverManager.getConnection(URL, username, password);
 
             ServerLogger.logInfoMessage("Successfully made a connection with the database");
-            System.out.println("Successfully made a connection with the database");
             State<Boolean> serverIsWorkingState = new State<>(true);
             Database database = new Database(connection);
             DataManager dataManager = new DataManagerImpl(database);
@@ -55,7 +54,7 @@ public final class Server {
             CACHED_THREAD_POOL.submit(console::start);
             serverApp.start(serverIsWorkingState);
         } catch (SQLException sqlException) {
-            ServerLogger.logErrorMessage("Couldn't connect to the server. Please check if your login and password were correct.");
+            ServerLogger.logErrorMessage("Couldn't connect to the server - check it's work. Please check if your login and password were correct.");
             sqlException.printStackTrace();
 
         } catch (IOException e) {
