@@ -2,6 +2,7 @@ package serverLogic.connection;
 
 
 import dto.CommandFromClientDto;
+import serverLogic.executing.ServerLogger;
 import util.Pair;
 import util.State;
 
@@ -21,10 +22,8 @@ public class ClientDataReceiver {
     private static final int HEADER_LENGTH = 4;
     private static final int TIMEOUT_MILLS = 5;
     private final Queue<Pair<CommandFromClientDto, SocketAddress>> queueToBeExecuted;
-    private final Logger logger;
 
-    public ClientDataReceiver(Logger logger, Queue<Pair<CommandFromClientDto, SocketAddress>> queueToBeExecuted) {
-        this.logger = logger;
+    public ClientDataReceiver(Queue<Pair<CommandFromClientDto, SocketAddress>> queueToBeExecuted) {
         this.queueToBeExecuted = queueToBeExecuted;
     }
 
@@ -55,7 +54,7 @@ public class ClientDataReceiver {
                 try {
                     clientSocketAddress = receiveWithTimeout(datagramChannel, dataByteBuffer, TIMEOUT_MILLS);
                 } catch (TimeoutException e) {
-                    logger.error("Could not receive correct information from client");
+                    ServerLogger.logErrorMessage("Could not receive correct information from client");
                 }
                 CommandFromClientDto receivedCommand = null;
                 try {
@@ -63,9 +62,9 @@ public class ClientDataReceiver {
                     Pair<CommandFromClientDto, SocketAddress> pairToBeExecuted = new Pair<>(receivedCommand, clientSocketAddress);
                     queueToBeExecuted.add(pairToBeExecuted);
 
-                    logger.info("Received a full request from a client, added it to an executing queue:\n" + pairToBeExecuted);
+                    ServerLogger.logInfoMessage("Received a full request from a client, added it to an executing queue:\n" + pairToBeExecuted);
                 } catch (ClassNotFoundException e) {
-                    logger.error("Found incorrect data from client. Ignoring it");
+                    ServerLogger.logErrorMessage("Found incorrect data from client. Ignoring it");
                 }
 
             }
@@ -82,7 +81,7 @@ public class ClientDataReceiver {
         while (amountToWait > 0) {
             receivedSocketAddress = datagramChannel.receive(byteBuffer);
             if (Objects.nonNull(receivedSocketAddress)) {
-                logger.info("Received a new client request 2/2");
+                ServerLogger.logInfoMessage("Received a new client request 2/2");
                 return receivedSocketAddress;
             } else {
                 Thread.sleep(1);
@@ -100,7 +99,7 @@ public class ClientDataReceiver {
         while (isWorking.getValue()) {
             SocketAddress receivedSocketAddress = datagramChannel.receive(byteBuffer);
             if (Objects.nonNull(receivedSocketAddress)) {
-                logger.info("Received a new client request 1/2");
+                ServerLogger.logInfoMessage("Received a new client request 1/2");
                 return receivedSocketAddress;
             }
         }

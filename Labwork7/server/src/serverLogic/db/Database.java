@@ -11,12 +11,11 @@ import org.apache.logging.log4j.Logger;
 public class Database {
     private final UsersTable usersTable;
     private final StudyGroupTable studyGroupTable;
-    private final Logger logger;
 
-    public Database(Connection connection, Logger logger) {
+
+    public Database(Connection connection) {
         this.studyGroupTable = new StudyGroupTable(connection);
         this.usersTable = new UsersTable(connection);
-        this.logger = logger;
 
         try {
             initTables();

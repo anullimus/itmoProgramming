@@ -5,16 +5,13 @@ import util.State;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import org.apache.logging.log4j.Logger;
 
 public class Console {
     private final State<Boolean> serverIsRunningState;
-    private final Logger logger;
     private final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
-    public Console(State<Boolean> serverIsRunningState, Logger logger) {
+    public Console(State<Boolean> serverIsRunningState) {
         this.serverIsRunningState = serverIsRunningState;
-        this.logger = logger;
     }
 
     public void start() {
@@ -23,13 +20,13 @@ public class Console {
             try {
                 input = bufferedReader.readLine();
             } catch (IOException e) {
-                logger.error("An unexpected IO exception occurred");
+                ServerLogger.logErrorMessage("An unexpected IO exception occurred");
                 serverIsRunningState.setValue(false);
                 break;
             }
             if ("exit".equals(input)) {
                 serverIsRunningState.setValue(false);
-                logger.info("Closing server...");
+                ServerLogger.logInfoMessage("Closing server...");
             }
         }
     }

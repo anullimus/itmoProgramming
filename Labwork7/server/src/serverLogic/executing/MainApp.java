@@ -24,7 +24,6 @@ import org.apache.logging.log4j.Logger;
 public class MainApp {
     private final Queue<Pair<CommandFromClientDto, SocketAddress>> queueToBeExecuted;
     private final Queue<Pair<CommandResultDto, SocketAddress>> queueToBeSent;
-    private final Logger logger;
     private final int port;
     private final String ip;
     private final CommandHandler commandHandler;
@@ -34,20 +33,18 @@ public class MainApp {
     private final DataManager dataManager;
 
     public MainApp(
-            Logger logger,
             int port,
             String ip,
             ExecutorService threadPool,
             ForkJoinPool forkJoinPool,
             DataManager dataManager
     ) {
-        this.logger = logger;
         this.ip = ip;
         this.port = port;
         queueToBeExecuted = new LinkedBlockingQueue<>();
         queueToBeSent = new LinkedBlockingQueue<>();
-        this.commandHandler = new CommandHandler(queueToBeExecuted, queueToBeSent, logger, dataManager, new HistoryManagerImpl());
-        this.clientDataReceiver = new ClientDataReceiver(logger, queueToBeExecuted);
+        this.commandHandler = new CommandHandler(queueToBeExecuted, queueToBeSent, dataManager, new HistoryManagerImpl());
+        this.clientDataReceiver = new ClientDataReceiver(queueToBeExecuted);
         this.threadPool = threadPool;
         this.forkJoinPool = forkJoinPool;
         this.dataManager = dataManager;
@@ -78,12 +75,13 @@ public class MainApp {
             while (isWorking.getValue()) {
                 if (!queueToBeSent.isEmpty()) {
                     Pair<CommandResultDto, SocketAddress> commandResultDtoAndSocketAddress = queueToBeSent.poll();
-                    forkJoinPool.invoke(new ClientDataSender(commandResultDtoAndSocketAddress.getFirst(), datagramChannel, commandResultDtoAndSocketAddress.getSecond(), logger));
+                    forkJoinPool.invoke(new ClientDataSender(commandResultDtoAndSocketAddress.getFirst(), datagramChannel,
+                            commandResultDtoAndSocketAddress.getSecond()));
                 }
             }
 
         } catch (BindException e) {
-            logger.error("Could not start the server, bind exception. Please, use another port.");
+            ServerLogger.logErrorMessage("Could not start the server, bind exception. Please, use another port.");
             isWorking.setValue(false);
         }
     }

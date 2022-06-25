@@ -4,6 +4,7 @@ import commands.InfoCommand;
 import data.Semester;
 import data.StudyGroup;
 import data.User;
+import serverLogic.executing.ServerLogger;
 import util.DataManager;
 import util.Encryptor;
 
@@ -22,15 +23,11 @@ public class DataManagerImpl implements DataManager {
     private final Database database;
     private TreeSet<StudyGroup> mainData = new TreeSet<>();
     private TreeSet<User> users = new TreeSet<>();
-    private final Logger logger;
     private final ReadWriteLock lock = new ReentrantReadWriteLock(true);
 
 
-    public DataManagerImpl(Database database, Logger logger) {
+    public DataManagerImpl(Database database) {
         this.database = database;
-        this.logger = logger;
-
-
     }
 
     @Override
@@ -51,7 +48,7 @@ public class DataManagerImpl implements DataManager {
             encryptedUser.setId(generatedId);
             users.add(encryptedUser);
 
-            logger.info("Successfully registered a new user: " + encryptedUser);
+            ServerLogger.logInfoMessage("Successfully registered a new user: " + encryptedUser);
         } finally {
             writeLock.unlock();
         }
@@ -65,7 +62,7 @@ public class DataManagerImpl implements DataManager {
             final int generatedId = database.getStudyGroupTable().add(studyGroup);
             studyGroup.setId(generatedId);
             mainData.add(studyGroup);
-            logger.info("Successfully added a study group: " + studyGroup);
+            ServerLogger.logInfoMessage("Successfully added a study group: " + studyGroup);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -268,7 +265,7 @@ public class DataManagerImpl implements DataManager {
         try {
             this.mainData = database.getStudyGroupTable().getCollection();
             this.users = database.getUsersTable().getCollection();
-            logger.info("Made a data manager with initialised collections:\n"
+            ServerLogger.logInfoMessage("Made a data manager with initialised collections:\n"
                     + mainData + "\n\n" + users);
         } catch (SQLException e) {
             throw new RuntimeException(e);

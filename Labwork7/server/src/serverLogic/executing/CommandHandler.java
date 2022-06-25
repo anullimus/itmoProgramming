@@ -18,19 +18,16 @@ import org.apache.logging.log4j.Logger;
 public class CommandHandler {
     private final Queue<Pair<CommandFromClientDto, SocketAddress>> queueToBeExecuted;
     private final Queue<Pair<CommandResultDto, SocketAddress>> queueToBeSent;
-    private final Logger logger;
     private final DataManager dataManager;
     private final HistoryManager historyManager;
 
     public CommandHandler(
             Queue<Pair<CommandFromClientDto, SocketAddress>> queueToBeExecuted,
             Queue<Pair<CommandResultDto, SocketAddress>> queueToBeSent,
-            Logger logger,
             DataManager dataManager,
             HistoryManager historyManager) {
         this.queueToBeExecuted = queueToBeExecuted;
         this.queueToBeSent = queueToBeSent;
-        this.logger = logger;
         this.dataManager = dataManager;
         this.historyManager = historyManager;
     }
@@ -48,7 +45,7 @@ public class CommandHandler {
                         Runnable executeFirstCommandTack = new Runnable() {
                             @Override
                             public void run() {
-                                logger.info("Starting to execute a new command");
+                                ServerLogger.logInfoMessage("Starting to execute a new command");
                                 assert pairOfCommandAndClientAddress != null;
                                 CommandFromClientDto commandFromClientDto = pairOfCommandAndClientAddress.getFirst();
                                 SocketAddress clientAddress = pairOfCommandAndClientAddress.getSecond();
@@ -56,10 +53,10 @@ public class CommandHandler {
 
                                     executeWithValidation(commandFromClientDto, clientAddress);
                                 } catch (Exception e) {
-                                    logger.error(e.getMessage());
+                                    ServerLogger.logErrorMessage(e.getMessage());
                                 }
 
-                                logger.info("Successfully executed the command command");
+                                ServerLogger.logInfoMessage("Successfully executed the command command");
 
 
                             }

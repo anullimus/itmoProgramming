@@ -6,7 +6,6 @@ import clientLogic.util.InputManager;
 import clientLogic.util.OutputManager;
 import util.DataCantBeSentException;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.Collection;
@@ -71,11 +70,8 @@ public final class Client {
 
     private static void initMainInfoForConnection() throws IOException {
         serverPort = 7878;
-
         serverIp = "localhost";
-
         clientPort = 9999;
-
         clientIp = "localhost";
     }
 

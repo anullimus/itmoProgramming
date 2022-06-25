@@ -1,11 +1,10 @@
 package serverLogic;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import serverLogic.executing.Console;
 import serverLogic.executing.MainApp;
 import serverLogic.db.DataManagerImpl;
 import serverLogic.db.Database;
+import serverLogic.executing.ServerLogger;
 import util.DataManager;
 import util.State;
 
@@ -21,13 +20,10 @@ import java.util.concurrent.ForkJoinPool;
 
 
 public final class Server {
-    private static final Logger LOGGER = LogManager.getLogger(Server.class);
-    private static final Scanner BUFFERED_READER = new Scanner(System.in);
+    private static final Scanner SCANNER = new Scanner(System.in);
     private static int serverPort;
     private static String serverIp;
 
-    private static String dbHost;
-    private static String dbName;
     private static String username;
     private static String password;
     private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool();
@@ -44,15 +40,14 @@ public final class Server {
             Connection connection;
             connection = DriverManager.getConnection(URL, username, password);
 
-//            LOGGER.info("Successfully made a connection with the database");
+            ServerLogger.logInfoMessage("Successfully made a connection with the database");
             System.out.println("Successfully made a connection with the database");
             State<Boolean> serverIsWorkingState = new State<>(true);
-            Database database = new Database(connection, LOGGER);
-            DataManager dataManager = new DataManagerImpl(database, LOGGER);
+            Database database = new Database(connection);
+            DataManager dataManager = new DataManagerImpl(database);
             dataManager.initialiseData();
-            Console console = new Console(serverIsWorkingState, LOGGER);
-            MainApp serverApp = new MainApp(LOGGER,
-                    serverPort,
+            Console console = new Console(serverIsWorkingState);
+            MainApp serverApp = new MainApp(serverPort,
                     serverIp,
                     CACHED_THREAD_POOL,
                     FORK_JOIN_POOL,
@@ -60,13 +55,13 @@ public final class Server {
             CACHED_THREAD_POOL.submit(console::start);
             serverApp.start(serverIsWorkingState);
         } catch (SQLException sqlException) {
-            LOGGER.error("Couldn't connect to the server. Please check if your login and password were correct.");
+            ServerLogger.logErrorMessage("Couldn't connect to the server. Please check if your login and password were correct.");
             sqlException.printStackTrace();
 
         } catch (IOException e) {
-            LOGGER.error("An unexpected IO error occurred. The message is: " + e.getMessage());
+            ServerLogger.logErrorMessage("An unexpected IO error occurred. The message is: " + e.getMessage());
         } catch (UnresolvedAddressException e) {
-            LOGGER.error("Could not resolve the address you entered. Please re-start the server with another one");
+            ServerLogger.logErrorMessage("Could not resolve the address you entered. Please re-start the server with another one");
         } finally {
             CACHED_THREAD_POOL.shutdown();
             FORK_JOIN_POOL.shutdown();
@@ -75,15 +70,12 @@ public final class Server {
 
     private static void initMainInfoForConnection() throws IOException {
         serverPort = 7878;
-
         serverIp = "localhost";
-        dbHost = "localhost";
 
-        dbName = "s335100db_all";
-        System.out.println("Enter username");
-        username = BUFFERED_READER.nextLine();
-        System.out.println("Enter password");
-        password = BUFFERED_READER.nextLine();
+        System.out.print("Enter username: ");
+        username = SCANNER.nextLine();
+        System.out.print("Enter password: ");
+        password = SCANNER.nextLine();
     }
 }
 

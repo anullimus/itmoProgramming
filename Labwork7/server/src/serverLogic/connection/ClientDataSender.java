@@ -2,6 +2,7 @@ package serverLogic.connection;
 
 
 import dto.CommandResultDto;
+import serverLogic.executing.ServerLogger;
 import util.Pair;
 
 import java.io.ByteArrayOutputStream;
@@ -20,29 +21,26 @@ public class ClientDataSender extends RecursiveTask<Void> {
     private final CommandResultDto commandResultDto;
     private final transient DatagramChannel datagramChannel;
     private final SocketAddress socketAddress;
-    private final transient Logger logger;
 
     public ClientDataSender(
             CommandResultDto commandResultDto,
             DatagramChannel datagramChannel,
-            SocketAddress socketAddress,
-            Logger logger
+            SocketAddress socketAddress
     ) {
         this.commandResultDto = commandResultDto;
         this.datagramChannel = datagramChannel;
         this.socketAddress = socketAddress;
-        this.logger = logger;
     }
 
     @Override
     protected Void compute() {
-        logger.info("Started to send message to the client");
+        ServerLogger.logInfoMessage("Started to send message to the client");
         try {
             send(
                     socketAddress
             );
         } catch (TimeoutException | IOException e) {
-            logger.error("Could not send answer to client");
+            ServerLogger.logErrorMessage("Could not send answer to client");
         }
 
         return null;
@@ -62,7 +60,7 @@ public class ClientDataSender extends RecursiveTask<Void> {
             int limit = TIMEOUT_TO_SEND;
             while (datagramChannel.send(sendDataAmountWrapper, clientSocketAddress) <= 0) {
                 limit -= 1;
-                logger.info("could not sent a package, re-trying");
+                ServerLogger.logInfoMessage("could not sent a package, re-trying");
                 if (limit == 0) {
                     throw new TimeoutException();
                 }
@@ -70,14 +68,14 @@ public class ClientDataSender extends RecursiveTask<Void> {
             ByteBuffer sendBuffer = ByteBuffer.wrap(sendDataBytes);
             while (datagramChannel.send(sendBuffer, clientSocketAddress) <= 0) {
                 limit -= 1;
-                logger.info("could not send a package, re-trying");
+                ServerLogger.logInfoMessage("could not send a package, re-trying");
                 if (limit == 0) {
                     throw new TimeoutException();
                 }
             }
-            logger.info("sent the command result to the client");
+            ServerLogger.logInfoMessage("sent the command result to the client");
         } catch (IOException e) {
-            logger.error("could not send the data to client because the message is too big");
+            ServerLogger.logErrorMessage("could not send the data to client because the message is too big");
         }
 
 
