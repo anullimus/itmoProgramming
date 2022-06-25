@@ -37,7 +37,8 @@ public enum DBRequest {
     DELETE_ALL_LOWER_THAN_MIN_POINT_LABWORKS("delete from labworks where client_name=? and min_point<?"),
     CHECK_IF_CLIENT_EXIST("select from s335100db_clients where client_name=?"),
     CHECK_IF_CLIENT_ENTER_RIGHT_PASSWORD("select from s335100db_clients where client_name=? and password=?"),
-    REGISTER_NEW_CLIENT("insert into s335100db_clients (\"client_name\", \"password\") values(?, ?)");
+    REGISTER_NEW_CLIENT("insert into s335100db_clients (\"client_name\", \"password\") values(?, ?)"),
+    FIND_USERNAME_REQUEST("SELECT COUNT(*) AS count FROM s335100db_clients WHERE username = ?");
 
     private final String request;
 
