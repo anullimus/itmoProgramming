@@ -1,8 +1,8 @@
 package serverLogic.executing;
 
 
-import commands.PrivateAccessedStudyGroupCommand;
-import commands.RegisterCommand;
+import command.PrivateAccessedStudyGroupCommand;
+import command.RegisterCommand;
 import util.Request;
 import util.Response;
 import util.DataManager;
@@ -20,11 +20,8 @@ public class CommandHandler {
     private final DataManager dataManager;
     private final HistoryManager historyManager;
 
-    public CommandHandler(
-            Queue<Pair<Request, SocketAddress>> queueToBeExecuted,
-            Queue<Pair<Response, SocketAddress>> queueToBeSent,
-            DataManager dataManager,
-            HistoryManager historyManager) {
+    public CommandHandler(Queue<Pair<Request, SocketAddress>> queueToBeExecuted, Queue<Pair<Response,
+            SocketAddress>> queueToBeSent, DataManager dataManager, HistoryManager historyManager) {
         this.queueToBeExecuted = queueToBeExecuted;
         this.queueToBeSent = queueToBeSent;
         this.dataManager = dataManager;
@@ -46,15 +43,11 @@ public class CommandHandler {
                                 Request request = pairOfCommandAndClientAddress.getFirst();
                                 SocketAddress clientAddress = pairOfCommandAndClientAddress.getSecond();
                                 try {
-
                                     executeWithValidation(request, clientAddress);
                                 } catch (Exception e) {
                                     ServerLogger.logErrorMessage(e.getMessage());
                                 }
-
                                 ServerLogger.logInfoMessage("Successfully executed the command command");
-
-
                             }
                         };
                         cashedThreadPool.submit(executeFirstCommandTack);
@@ -81,5 +74,4 @@ public class CommandHandler {
             queueToBeSent.add(new Pair<>(new Response("Invalid login or password. Command was not executed", false), clientAddress));
         }
     }
-
 }

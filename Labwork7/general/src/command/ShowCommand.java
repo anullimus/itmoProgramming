@@ -1,4 +1,4 @@
-package commands;
+package command;
 
 import util.Response;
 import util.DataManager;
@@ -13,13 +13,8 @@ public class ShowCommand extends Command {
     }
 
     @Override
-    public Response execute(
-            DataManager dataManager,
-            HistoryManager historyManager,
-            String username
-    ) {
+    public Response execute(DataManager dataManager, HistoryManager historyManager, String username) {
         historyManager.addNote(this.getName());
-
         return new Response(dataManager.showSortedByName(), true);
     }
 }

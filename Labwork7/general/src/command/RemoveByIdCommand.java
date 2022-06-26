@@ -1,4 +1,4 @@
-package commands;
+package command;
 
 import util.Response;
 import util.DataManager;
@@ -13,12 +13,7 @@ public class RemoveByIdCommand extends Command implements PrivateAccessedStudyGr
     }
 
     @Override
-    public Response execute(
-            DataManager dataManager,
-            HistoryManager historyManager,
-            String username
-    ) {
-
+    public Response execute(DataManager dataManager, HistoryManager historyManager, String username) {
         historyManager.addNote(this.getName());
 
         int intArg;

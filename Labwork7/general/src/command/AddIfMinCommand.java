@@ -1,4 +1,4 @@
-package commands;
+package command;
 
 import data.StudyGroup;
 import util.Response;
@@ -15,16 +15,9 @@ public class AddIfMinCommand extends Command {
     }
 
     @Override
-    public Response execute(
-            DataManager dataManager,
-            HistoryManager historyManager,
-            String username
-    ) {
+    public Response execute(DataManager dataManager, HistoryManager historyManager, String username) {
         historyManager.addNote(this.getName());
-
         StudyGroup studyGroup = arg;
-
-        // stream api would be worse in this case (I would lose TreeSet optimisation)
         if (dataManager.checkIfMin(studyGroup)) {
             dataManager.addStudyGroup(studyGroup);
             return new Response("The element was added successfully", true);

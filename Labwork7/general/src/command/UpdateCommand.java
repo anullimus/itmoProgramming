@@ -1,4 +1,4 @@
-package commands;
+package command;
 
 
 import data.StudyGroup;
@@ -17,11 +17,7 @@ public class UpdateCommand extends Command implements PrivateAccessedStudyGroupC
     }
 
     @Override
-    public Response execute(
-            DataManager dataManager,
-            HistoryManager historyManager,
-            String username
-    ) {
+    public Response execute(DataManager dataManager, HistoryManager historyManager, String username) {
         historyManager.addNote(this.getName());
         int intArg;
         try {

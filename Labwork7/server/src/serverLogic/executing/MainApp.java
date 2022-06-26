@@ -29,13 +29,8 @@ public class MainApp {
     private final ExecutorService cashedThreadPool;
     private final ExecutorService fixedThreadPool;
 
-    public MainApp(
-            int port,
-            String ip,
-            ExecutorService cashedThreadPool,
-            ExecutorService fixedThreadPool,
-            DataManager dataManager
-    ) {
+    public MainApp(int port, String ip, ExecutorService cashedThreadPool, ExecutorService fixedThreadPool,
+                   DataManager dataManager) {
         this.ip = ip;
         this.port = port;
         queueToBeExecuted = new LinkedBlockingQueue<>();
@@ -46,9 +41,7 @@ public class MainApp {
         this.fixedThreadPool = fixedThreadPool;
     }
 
-    public void start(
-            State<Boolean> isWorking
-    ) throws IOException {
+    public void start(State<Boolean> isWorking) throws IOException {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
             datagramChannel.bind(new InetSocketAddress(ip, port));
             datagramChannel.configureBlocking(false);
@@ -61,12 +54,10 @@ public class MainApp {
                 }
             });
 
-
             commandHandler.startToHandleCommands(
                     isWorking,
                     cashedThreadPool
             );
-
 
             while (isWorking.getValue()) {
                 if (!queueToBeSent.isEmpty()) {

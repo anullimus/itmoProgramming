@@ -1,4 +1,4 @@
-package commands;
+package command;
 
 
 import data.User;
@@ -20,20 +20,13 @@ public class RegisterCommand extends Command {
     }
 
     @Override
-    public Response execute(
-            DataManager dataManager,
-            HistoryManager historyManager,
-            String username
-    ) {
+    public Response execute(DataManager dataManager, HistoryManager historyManager, String username) {
         historyManager.addNote(this.getName());
-
         if (dataManager.checkIfUsernameUnique(loginAndPassword[0])) {
             dataManager.addUser(new User(-1, loginAndPassword[1], loginAndPassword[0]));
         } else {
             return new RegisterCommandResult(false);
         }
-
-
         return new RegisterCommandResult(true);
     }
 

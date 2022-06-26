@@ -1,6 +1,6 @@
 package serverLogic.db;
 
-import commands.InfoCommand;
+import command.InfoCommand;
 import data.Semester;
 import data.StudyGroup;
 import data.User;
@@ -136,21 +136,12 @@ public class DataManagerImpl implements DataManager {
         try {
             readLock.lock();
             if (mainData.isEmpty()) {
-                return new InfoCommand.InfoCommandResult(
-                        0,
-                        0
-                );
+                return new InfoCommand.InfoCommandResult(0, 0);
             }
             if (mainData.first().getStudentsCount() == null) {
-                return new InfoCommand.InfoCommandResult(
-                        mainData.size(),
-                        0
-                );
+                return new InfoCommand.InfoCommandResult(mainData.size(), 0);
             }
-            return new InfoCommand.InfoCommandResult(
-                    mainData.size(),
-                    mainData.first().getStudentsCount()
-            );
+            return new InfoCommand.InfoCommandResult(mainData.size(), mainData.first().getStudentsCount());
         } finally {
             readLock.unlock();
         }
@@ -198,10 +189,7 @@ public class DataManagerImpl implements DataManager {
         Lock readLock = lock.readLock();
         try {
             readLock.lock();
-            return mainData
-                    .stream()
-                    .sorted(Comparator.comparing(StudyGroup::getName))
-                    .collect(Collectors.toList()).toString();
+            return mainData.stream().sorted(Comparator.comparing(StudyGroup::getName)).collect(Collectors.toList()).toString();
         } finally {
             readLock.unlock();
         }

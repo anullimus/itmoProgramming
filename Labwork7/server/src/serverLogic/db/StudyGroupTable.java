@@ -30,9 +30,7 @@ public class StudyGroupTable implements Table<StudyGroup> {
 
     @Override
     public void init() throws SQLException {
-        try (
-                Statement statement = connection.createStatement()
-        ) {
+        try (Statement statement = connection.createStatement()) {
             statement.execute("CREATE TABLE IF NOT EXISTS study_groups ("
                     + "id serial PRIMARY KEY,"
                     + "name varchar(100) NOT NULL,"
@@ -57,26 +55,18 @@ public class StudyGroupTable implements Table<StudyGroup> {
     public StudyGroup mapRowToObject(ResultSet resultSet) throws SQLException {
         final StudyGroup studyGroup = new StudyGroup(
                 resultSet.getString("name"),
-                new Coordinates(
-                        resultSet.getLong("coordinates_x"),
-                        resultSet.getDouble("coordinates_y")
-                ),
+                new Coordinates(resultSet.getLong("coordinates_x"), resultSet.getDouble("coordinates_y")),
                 resultSet.getInt("students_count"),
                 FormOfEducation.valueOf(resultSet.getString("form_of_education")),
                 resultSet.getString("semester") != null ? Semester.valueOf(resultSet.getString("semester")) : null,
-                new Person(
-                        resultSet.getString("admin_name"),
+                new Person(resultSet.getString("admin_name"),
                         resultSet.getInt("admin_height"),
                         resultSet.getString("admin_nationality") != null ? Country.valueOf(resultSet.getString("admin_nationality")) : null,
-                        new Location(
-                                resultSet.getFloat("admin_location_x"),
+                        new Location(resultSet.getFloat("admin_location_x"),
                                 resultSet.getLong("admin_location_y"),
-                                resultSet.getString("admin_location_name") != null ? resultSet.getString("admin_location_name") : null
-                        )
-                ),
+                                resultSet.getString("admin_location_name") != null ? resultSet.getString("admin_location_name") : null)),
                 resultSet.getTimestamp("creation_date").toLocalDateTime().toLocalDate(),
-                resultSet.getString("author_username")
-        );
+                resultSet.getString("author_username"));
 
         studyGroup.setId(resultSet.getInt("id"));
 
@@ -86,12 +76,9 @@ public class StudyGroupTable implements Table<StudyGroup> {
     @Override
     public int add(StudyGroup element) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(
-                "INSERT INTO study_groups VALUES (default, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id"
-        )) {
+                "INSERT INTO study_groups VALUES (default, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id")) {
             makePreparedStatementOfStudyGroup(preparedStatement, element);
-            try (
-                    ResultSet resultSet = preparedStatement.executeQuery()
-            ) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 resultSet.next();
                 return resultSet.getInt("id");
             }
@@ -135,24 +122,17 @@ public class StudyGroupTable implements Table<StudyGroup> {
     public TreeSet<StudyGroup> getCollection() throws SQLException {
         final TreeSet<StudyGroup> newCollection = new TreeSet<>();
 
-        try (
-                Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery("SELECT * FROM study_groups")
-
-        ) {
-
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM study_groups")) {
             while (resultSet.next()) {
                 StudyGroup studyGroup = mapRowToObject(resultSet);
                 newCollection.add(studyGroup);
             }
-
         }
-
         return newCollection;
     }
 
     public void clearOwnedData(String username) throws SQLException {
-
         String query = "DELETE FROM study_groups WHERE author_username=?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, username);
@@ -162,16 +142,12 @@ public class StudyGroupTable implements Table<StudyGroup> {
     }
 
     public void removeById(int id) throws SQLException {
-        try (
-                Statement statement = connection.createStatement()
-        ) {
+        try (Statement statement = connection.createStatement()) {
             statement.execute("DELETE FROM study_groups WHERE id=" + id);
-
         }
     }
 
     public void updateById(int id, StudyGroup studyGroup) throws SQLException {
-
         String query = "UPDATE study_groups SET "
                 + "name=?"
                 + ",coordinates_x=?"
@@ -189,14 +165,9 @@ public class StudyGroupTable implements Table<StudyGroup> {
                 + ",author_username=? "
                 + "WHERE id =" + id;
 
-        try (
-                PreparedStatement preparedStatement = connection.prepareStatement(query)
-        ) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             makePreparedStatementOfStudyGroup(preparedStatement, studyGroup);
             preparedStatement.execute();
         }
-
-
     }
-
 }

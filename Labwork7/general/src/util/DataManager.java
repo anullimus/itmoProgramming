@@ -1,7 +1,7 @@
 package util;
 
 
-import commands.InfoCommand;
+import command.InfoCommand;
 import data.Semester;
 import data.StudyGroup;
 import data.User;

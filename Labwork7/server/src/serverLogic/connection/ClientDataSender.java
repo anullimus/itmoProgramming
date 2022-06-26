@@ -20,11 +20,7 @@ public class ClientDataSender implements Runnable{
     private final transient DatagramChannel datagramChannel;
     private final SocketAddress socketAddress;
 
-    public ClientDataSender(
-            Response response,
-            DatagramChannel datagramChannel,
-            SocketAddress socketAddress
-    ) {
+    public ClientDataSender(Response response, DatagramChannel datagramChannel, SocketAddress socketAddress) {
         this.response = response;
         this.datagramChannel = datagramChannel;
         this.socketAddress = socketAddress;
@@ -42,9 +38,7 @@ public class ClientDataSender implements Runnable{
         }
     }
 
-    private void send(
-            SocketAddress clientSocketAddress
-    ) throws TimeoutException, IOException {
+    private void send(SocketAddress clientSocketAddress) throws TimeoutException, IOException {
         Pair<byte[], byte[]> pair = serializeWithHeader(response);
 
         byte[] sendDataBytes = pair.getFirst();

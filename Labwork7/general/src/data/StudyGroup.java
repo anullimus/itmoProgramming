@@ -18,16 +18,8 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
     private final String authorName;
 
     //CHECKSTYLE:OFF
-    public StudyGroup(
-            String name,
-            Coordinates coordinates,
-            Integer studentsCount,
-            FormOfEducation formOfEducation,
-            Semester semesterEnum,
-            Person groupAdmin,
-            LocalDate creationDate,
-            String authorName
-    ) {
+    public StudyGroup(String name, Coordinates coordinates, Integer studentsCount, FormOfEducation formOfEducation,
+                      Semester semesterEnum, Person groupAdmin, LocalDate creationDate, String authorName) {
         this.name = name;
         this.coordinates = coordinates;
         this.studentsCount = studentsCount;

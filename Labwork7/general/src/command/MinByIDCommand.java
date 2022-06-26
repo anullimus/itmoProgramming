@@ -1,4 +1,4 @@
-package commands;
+package command;
 
 
 import data.StudyGroup;
@@ -15,20 +15,13 @@ public class MinByIDCommand extends Command {
     }
 
     @Override
-    public Response execute(
-            DataManager dataManager,
-            HistoryManager historyManager,
-            String username
-    ) {
+    public Response execute(DataManager dataManager, HistoryManager historyManager, String username) {
         historyManager.addNote(this.getName());
-
         final StudyGroup minStudyGroup = dataManager.getMinByIdGroup();
-
         if (minStudyGroup == null) {
             return new Response("Collection is empty :(", true);
         } else {
             return new Response(minStudyGroup, true);
         }
-
     }
 }

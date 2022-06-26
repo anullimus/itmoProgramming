@@ -1,4 +1,4 @@
-package commands;
+package command;
 
 import data.StudyGroup;
 import util.Response;
@@ -14,11 +14,7 @@ public class AddCommand extends Command {
     }
 
     @Override
-    public Response execute(
-            DataManager dataManager,
-            HistoryManager historyManager,
-            String username
-    ) {
+    public Response execute(DataManager dataManager, HistoryManager historyManager, String username) {
         historyManager.addNote(this.getName());
         StudyGroup studyGroup = arg;
         studyGroup.setId(-1);

@@ -3,7 +3,6 @@ package serverLogic.db;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Class for holding database tables for working with them

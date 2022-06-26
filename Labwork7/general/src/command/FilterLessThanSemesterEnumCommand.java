@@ -1,4 +1,4 @@
-package commands;
+package command;
 
 
 import data.Semester;
@@ -15,11 +15,7 @@ public class FilterLessThanSemesterEnumCommand extends Command {
     }
 
     @Override
-    public Response execute(
-            DataManager dataManager,
-            HistoryManager historyManager,
-            String username
-    ) {
+    public Response execute(DataManager dataManager, HistoryManager historyManager, String username) {
         historyManager.addNote(this.getName());
         Semester inpEnum;
         try {

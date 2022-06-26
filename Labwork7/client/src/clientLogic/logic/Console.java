@@ -5,7 +5,7 @@ import clientLogic.connection.ConnectionManager;
 import clientLogic.util.DataObjectsMaker;
 import clientLogic.util.InputManager;
 import clientLogic.util.OutputManager;
-import commands.*;
+import command.*;
 import data.StudyGroup;
 import util.Request;
 import util.Response;

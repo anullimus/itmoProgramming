@@ -1,4 +1,4 @@
-package commands;
+package command;
 
 
 import util.Response;
@@ -17,11 +17,7 @@ public class ClearCommand extends Command {
     }
 
     @Override
-    public Response execute(
-            DataManager dataManager,
-            HistoryManager historyManager,
-            String username
-    ) {
+    public Response execute(DataManager dataManager, HistoryManager historyManager, String username) {
         historyManager.addNote(this.getName());
         dataManager.clearOwnedData(username);
         return new Response("The data you owned was cleared successfully.", true);

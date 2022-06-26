@@ -1,6 +1,6 @@
 package util;
 
-import commands.Command;
+import command.Command;
 
 import java.io.Serializable;
 import java.util.Objects;

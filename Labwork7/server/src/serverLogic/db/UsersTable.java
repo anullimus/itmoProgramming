@@ -15,9 +15,7 @@ public class UsersTable implements Table<User> {
 
     @Override
     public void init() throws SQLException {
-        try (
-                Statement statement = connection.createStatement()
-        ) {
+        try (Statement statement = connection.createStatement()) {
             statement.execute("CREATE TABLE IF NOT EXISTS users ("
                     + "    id serial PRIMARY KEY,"
                     + "    login varchar(100) NOT NULL UNIQUE,"
@@ -29,23 +27,16 @@ public class UsersTable implements Table<User> {
     @Override
     public User mapRowToObject(ResultSet resultSet) throws SQLException {
 
-        return new User(
-                resultSet.getLong("id"),
-                resultSet.getString("password"),
-                resultSet.getString("login")
-        );
-
+        return new User(resultSet.getLong("id"), resultSet.getString("password"),
+                resultSet.getString("login"));
     }
 
     @Override
     public int add(User element) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(
-                "INSERT INTO users VALUES (default, ?, ?) RETURNING id"
-        )) {
+                "INSERT INTO users VALUES (default, ?, ?) RETURNING id")) {
             makePreparedStatement(preparedStatement, element);
-            try (
-                    ResultSet resultSet = preparedStatement.executeQuery()
-            ) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 resultSet.next();
                 return resultSet.getInt("id");
             }
@@ -56,19 +47,13 @@ public class UsersTable implements Table<User> {
     @Override
     public TreeSet<User> getCollection() throws SQLException {
         final TreeSet<User> newCollection = new TreeSet<>();
-
-        try (
-                Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery("SELECT * FROM users");
-        ) {
-
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM users");) {
             while (resultSet.next()) {
                 User user = mapRowToObject(resultSet);
                 newCollection.add(user);
-
             }
         }
-
         return newCollection;
     }
 

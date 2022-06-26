@@ -1,4 +1,4 @@
-package commands;
+package command;
 
 import util.Response;
 import util.DataManager;
@@ -14,11 +14,7 @@ public abstract class Command implements Serializable {
         this.name = name;
     }
 
-    public abstract Response execute(
-            DataManager dataManager,
-            HistoryManager historyManager,
-            String username
-    );
+    public abstract Response execute(DataManager dataManager, HistoryManager historyManager, String username);
 
     public String getName() {
         return name;

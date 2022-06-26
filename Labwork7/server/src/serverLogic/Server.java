@@ -46,11 +46,7 @@ public final class Server {
             DataManager dataManager = new DataManagerImpl(database);
             dataManager.initialiseData();
             Console console = new Console(serverIsWorkingState);
-            MainApp serverApp = new MainApp(serverPort,
-                    serverIp,
-                    CACHED_THREAD_POOL,
-                    FIXED_THREAD_POOL,
-                    dataManager);
+            MainApp serverApp = new MainApp(serverPort, serverIp, CACHED_THREAD_POOL, FIXED_THREAD_POOL, dataManager);
             CACHED_THREAD_POOL.submit(console::start);
             serverApp.start(serverIsWorkingState);
         } catch (SQLException sqlException) {

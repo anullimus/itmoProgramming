@@ -1,4 +1,4 @@
-package commands;
+package command;
 
 
 import util.Response;
@@ -14,11 +14,7 @@ public class InfoCommand extends Command {
     }
 
     @Override
-    public Response execute(
-            DataManager dataManager,
-            HistoryManager historyManager,
-            String username
-    ) {
+    public Response execute(DataManager dataManager, HistoryManager historyManager, String username) {
         historyManager.addNote(this.getName());
 
         return new Response(dataManager.getInfoAboutCollections(), true);

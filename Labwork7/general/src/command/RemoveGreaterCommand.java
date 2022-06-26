@@ -1,4 +1,4 @@
-package commands;
+package command;
 
 import data.StudyGroup;
 import util.Response;
@@ -20,15 +20,9 @@ public class RemoveGreaterCommand extends Command {
     }
 
     @Override
-    public Response execute(
-            DataManager dataManager,
-            HistoryManager historyManager,
-            String username
-    ) {
+    public Response execute(DataManager dataManager, HistoryManager historyManager, String username) {
         historyManager.addNote(this.getName());
-
         dataManager.removeGreaterIfOwned(arg, username);
-
         return new Response("Successfully removed greater elements", true);
     }
 }

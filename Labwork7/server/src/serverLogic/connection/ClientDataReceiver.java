@@ -69,11 +69,7 @@ public class ClientDataReceiver {
         }
     }
 
-    private SocketAddress receiveWithTimeout(
-            DatagramChannel datagramChannel,
-            ByteBuffer byteBuffer,
-            int timeoutMills
-    ) throws IOException, InterruptedException, TimeoutException {
+    private SocketAddress receiveWithTimeout(DatagramChannel datagramChannel, ByteBuffer byteBuffer, int timeoutMills) throws IOException, InterruptedException, TimeoutException {
         int amountToWait = timeoutMills;
         SocketAddress receivedSocketAddress;
         while (amountToWait > 0) {
@@ -89,11 +85,7 @@ public class ClientDataReceiver {
         throw new TimeoutException();
     }
 
-    private SocketAddress receiveActiveWaiting(
-            DatagramChannel datagramChannel,
-            ByteBuffer byteBuffer,
-            State<Boolean> isWorking
-    ) throws IOException {
+    private SocketAddress receiveActiveWaiting(DatagramChannel datagramChannel, ByteBuffer byteBuffer, State<Boolean> isWorking) throws IOException {
         while (isWorking.getValue()) {
             SocketAddress receivedSocketAddress = datagramChannel.receive(byteBuffer);
             if (Objects.nonNull(receivedSocketAddress)) {
