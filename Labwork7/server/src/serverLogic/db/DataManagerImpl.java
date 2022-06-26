@@ -6,7 +6,7 @@ import data.StudyGroup;
 import data.User;
 import serverLogic.executing.ServerLogger;
 import util.DataManager;
-import util.Encryptor;
+import util.SHA512Encryptor;
 
 import java.sql.SQLException;
 import java.util.Comparator;
@@ -16,7 +16,6 @@ import java.util.TreeSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.apache.logging.log4j.Logger;
 import java.util.stream.Collectors;
 
 public class DataManagerImpl implements DataManager {
@@ -35,7 +34,7 @@ public class DataManagerImpl implements DataManager {
         Lock writeLock = lock.writeLock();
         try {
             writeLock.lock();
-            final User encryptedUser = new User(user.getId(), Encryptor.encryptThisString(user.getPassword()), user.getName());
+            final User encryptedUser = new User(user.getId(), SHA512Encryptor.encryptThisString(user.getPassword()), user.getName());
 
             final int generatedId;
 
@@ -75,7 +74,7 @@ public class DataManagerImpl implements DataManager {
         Lock readLock = lock.readLock();
         try {
             readLock.lock();
-            return users.stream().anyMatch(it -> it.getName().equals(username) && it.getPassword().equals(Encryptor.encryptThisString(password)));
+            return users.stream().anyMatch(it -> it.getName().equals(username) && it.getPassword().equals(SHA512Encryptor.encryptThisString(password)));
         } finally {
             readLock.unlock();
         }
