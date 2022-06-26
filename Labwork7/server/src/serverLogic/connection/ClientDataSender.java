@@ -11,10 +11,9 @@ import java.io.ObjectOutputStream;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
-import java.util.concurrent.RecursiveTask;
 import java.util.concurrent.TimeoutException;
 
-public class ClientDataSender extends RecursiveTask<Void> {
+public class ClientDataSender implements Runnable{
     private static final int TIMEOUT_TO_SEND = 10;
     private static final int HEADER_LENGTH = 4;
     private final Response response;
@@ -32,7 +31,7 @@ public class ClientDataSender extends RecursiveTask<Void> {
     }
 
     @Override
-    protected Void compute() {
+    public void run() {
         ServerLogger.logInfoMessage("Started to send message to the client");
         try {
             send(
@@ -41,8 +40,6 @@ public class ClientDataSender extends RecursiveTask<Void> {
         } catch (TimeoutException | IOException e) {
             ServerLogger.logErrorMessage("Could not send answer to client");
         }
-
-        return null;
     }
 
     private void send(

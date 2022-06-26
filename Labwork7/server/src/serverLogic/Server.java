@@ -16,7 +16,6 @@ import java.sql.SQLException;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 
 
 public final class Server {
@@ -26,7 +25,8 @@ public final class Server {
 
     private static String username;
     private static String password;
-    private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool();
+    private static final int numOfThreads = 50;
+    private static final ExecutorService FIXED_THREAD_POOL = Executors.newFixedThreadPool(numOfThreads);
     private static final ExecutorService CACHED_THREAD_POOL = Executors.newCachedThreadPool();
 
     private Server() {
@@ -49,7 +49,7 @@ public final class Server {
             MainApp serverApp = new MainApp(serverPort,
                     serverIp,
                     CACHED_THREAD_POOL,
-                    FORK_JOIN_POOL,
+                    FIXED_THREAD_POOL,
                     dataManager);
             CACHED_THREAD_POOL.submit(console::start);
             serverApp.start(serverIsWorkingState);
@@ -61,7 +61,7 @@ public final class Server {
             ServerLogger.logErrorMessage("Could not resolve the address you entered. Please re-start the server with another one");
         } finally {
             CACHED_THREAD_POOL.shutdown();
-            FORK_JOIN_POOL.shutdown();
+            FIXED_THREAD_POOL.shutdown();
         }
     }
 

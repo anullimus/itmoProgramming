@@ -17,7 +17,6 @@ import java.net.SocketAddress;
 import java.nio.channels.DatagramChannel;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class MainApp {
@@ -27,15 +26,15 @@ public class MainApp {
     private final String ip;
     private final CommandHandler commandHandler;
     private final ClientDataReceiver clientDataReceiver;
-    private final ExecutorService threadPool;
-    private final ForkJoinPool forkJoinPool;
+    private final ExecutorService cashedThreadPool;
+    private final ExecutorService fixedThreadPool;
     private final DataManager dataManager;
 
     public MainApp(
             int port,
             String ip,
-            ExecutorService threadPool,
-            ForkJoinPool forkJoinPool,
+            ExecutorService cashedThreadPool,
+            ExecutorService fixedThreadPool,
             DataManager dataManager
     ) {
         this.ip = ip;
@@ -44,8 +43,8 @@ public class MainApp {
         queueToBeSent = new LinkedBlockingQueue<>();
         this.commandHandler = new CommandHandler(queueToBeExecuted, queueToBeSent, dataManager, new HistoryManagerImpl());
         this.clientDataReceiver = new ClientDataReceiver(queueToBeExecuted);
-        this.threadPool = threadPool;
-        this.forkJoinPool = forkJoinPool;
+        this.cashedThreadPool = cashedThreadPool;
+        this.fixedThreadPool = fixedThreadPool;
         this.dataManager = dataManager;
     }
 
@@ -56,9 +55,9 @@ public class MainApp {
             datagramChannel.bind(new InetSocketAddress(ip, port));
             datagramChannel.configureBlocking(false);
 
-            threadPool.submit(() -> {
+            cashedThreadPool.submit(() -> {
                 try {
-                    clientDataReceiver.startReceivingData(datagramChannel, isWorking, threadPool);
+                    clientDataReceiver.startReceivingData(datagramChannel, isWorking, cashedThreadPool);
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -67,14 +66,14 @@ public class MainApp {
 
             commandHandler.startToHandleCommands(
                     isWorking,
-                    threadPool
+                    cashedThreadPool
             );
 
 
             while (isWorking.getValue()) {
                 if (!queueToBeSent.isEmpty()) {
                     Pair<Response, SocketAddress> commandResultDtoAndSocketAddress = queueToBeSent.poll();
-                    forkJoinPool.invoke(new ClientDataSender(commandResultDtoAndSocketAddress.getFirst(), datagramChannel,
+                    fixedThreadPool.submit(new ClientDataSender(commandResultDtoAndSocketAddress.getFirst(), datagramChannel,
                             commandResultDtoAndSocketAddress.getSecond()));
                 }
             }

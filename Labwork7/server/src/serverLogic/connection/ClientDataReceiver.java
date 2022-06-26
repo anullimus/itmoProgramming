@@ -53,9 +53,9 @@ public class ClientDataReceiver {
                 try {
                     clientSocketAddress = receiveWithTimeout(datagramChannel, dataByteBuffer, TIMEOUT_MILLS);
                 } catch (TimeoutException e) {
-                    ServerLogger.logErrorMessage("Could not receive correct information from client");
+                    ServerLogger.logErrorMessage("Couldn't receive correct information from client");
                 }
-                Request receivedCommand = null;
+                Request receivedCommand;
                 try {
                     receivedCommand = ((Request) deserialize(dataByteBuffer.array()));
                     Pair<Request, SocketAddress> pairToBeExecuted = new Pair<>(receivedCommand, clientSocketAddress);
