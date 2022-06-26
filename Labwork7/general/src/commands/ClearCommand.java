@@ -1,7 +1,7 @@
 package commands;
 
 
-import dto.CommandResultDto;
+import util.Response;
 import util.DataManager;
 import util.HistoryManager;
 
@@ -17,13 +17,13 @@ public class ClearCommand extends Command {
     }
 
     @Override
-    public CommandResultDto execute(
+    public Response execute(
             DataManager dataManager,
             HistoryManager historyManager,
             String username
     ) {
         historyManager.addNote(this.getName());
         dataManager.clearOwnedData(username);
-        return new CommandResultDto("The data you owned was cleared successfully.", true);
+        return new Response("The data you owned was cleared successfully.", true);
     }
 }

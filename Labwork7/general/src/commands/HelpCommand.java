@@ -1,7 +1,7 @@
 package commands;
 
 
-import dto.CommandResultDto;
+import util.Response;
 import util.DataManager;
 import util.HistoryManager;
 
@@ -11,14 +11,14 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    public CommandResultDto execute(
+    public Response execute(
             DataManager dataManager,
             HistoryManager historyManager,
             String username
     ) {
         historyManager.addNote(this.getName());
         // stream api would not help
-        return new CommandResultDto(
+        return new Response(
                 "help : gives information about available commands\n"
                         + "info : gives information about collection\n"
                         + "show : shows every element in collection with string\n"

@@ -1,23 +1,23 @@
-package dto;
+package util;
 
 import commands.Command;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class CommandFromClientDto implements Serializable {
+public class Request implements Serializable {
     private final Command command;
     private final String login;
     private final String password;
 
 
-    public CommandFromClientDto(Command command, String login, String password) {
+    public Request(Command command, String login, String password) {
         this.command = command;
         this.login = login;
         this.password = password;
     }
 
-    public CommandFromClientDto(Command command) {
+    public Request(Command command) {
         this.command = command;
         this.login = "";
         this.password = "";
@@ -31,7 +31,7 @@ public class CommandFromClientDto implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        CommandFromClientDto that = (CommandFromClientDto) o;
+        Request that = (Request) o;
         return Objects.equals(command, that.command) && Objects.equals(login, that.login) && Objects.equals(password, that.password);
     }
 

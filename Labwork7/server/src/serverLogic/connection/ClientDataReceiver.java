@@ -1,7 +1,7 @@
 package serverLogic.connection;
 
 
-import dto.CommandFromClientDto;
+import util.Request;
 import serverLogic.executing.ServerLogger;
 import util.Pair;
 import util.State;
@@ -16,14 +16,13 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeoutException;
-import org.apache.logging.log4j.Logger;
 
 public class ClientDataReceiver {
     private static final int HEADER_LENGTH = 4;
     private static final int TIMEOUT_MILLS = 5;
-    private final Queue<Pair<CommandFromClientDto, SocketAddress>> queueToBeExecuted;
+    private final Queue<Pair<Request, SocketAddress>> queueToBeExecuted;
 
-    public ClientDataReceiver(Queue<Pair<CommandFromClientDto, SocketAddress>> queueToBeExecuted) {
+    public ClientDataReceiver(Queue<Pair<Request, SocketAddress>> queueToBeExecuted) {
         this.queueToBeExecuted = queueToBeExecuted;
     }
 
@@ -56,10 +55,10 @@ public class ClientDataReceiver {
                 } catch (TimeoutException e) {
                     ServerLogger.logErrorMessage("Could not receive correct information from client");
                 }
-                CommandFromClientDto receivedCommand = null;
+                Request receivedCommand = null;
                 try {
-                    receivedCommand = ((CommandFromClientDto) deserialize(dataByteBuffer.array()));
-                    Pair<CommandFromClientDto, SocketAddress> pairToBeExecuted = new Pair<>(receivedCommand, clientSocketAddress);
+                    receivedCommand = ((Request) deserialize(dataByteBuffer.array()));
+                    Pair<Request, SocketAddress> pairToBeExecuted = new Pair<>(receivedCommand, clientSocketAddress);
                     queueToBeExecuted.add(pairToBeExecuted);
 
                     ServerLogger.logInfoMessage("Received a full request from a client, added it to an executing queue:\n" + pairToBeExecuted);

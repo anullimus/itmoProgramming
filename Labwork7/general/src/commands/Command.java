@@ -1,6 +1,6 @@
 package commands;
 
-import dto.CommandResultDto;
+import util.Response;
 import util.DataManager;
 import util.HistoryManager;
 
@@ -14,7 +14,7 @@ public abstract class Command implements Serializable {
         this.name = name;
     }
 
-    public abstract CommandResultDto execute(
+    public abstract Response execute(
             DataManager dataManager,
             HistoryManager historyManager,
             String username

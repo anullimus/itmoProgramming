@@ -3,8 +3,8 @@ package serverLogic.executing;
 
 import commands.PrivateAccessedStudyGroupCommand;
 import commands.RegisterCommand;
-import dto.CommandFromClientDto;
-import dto.CommandResultDto;
+import util.Request;
+import util.Response;
 import util.DataManager;
 import util.HistoryManager;
 import util.Pair;
@@ -13,17 +13,16 @@ import util.State;
 import java.net.SocketAddress;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
-import org.apache.logging.log4j.Logger;
 
 public class CommandHandler {
-    private final Queue<Pair<CommandFromClientDto, SocketAddress>> queueToBeExecuted;
-    private final Queue<Pair<CommandResultDto, SocketAddress>> queueToBeSent;
+    private final Queue<Pair<Request, SocketAddress>> queueToBeExecuted;
+    private final Queue<Pair<Response, SocketAddress>> queueToBeSent;
     private final DataManager dataManager;
     private final HistoryManager historyManager;
 
     public CommandHandler(
-            Queue<Pair<CommandFromClientDto, SocketAddress>> queueToBeExecuted,
-            Queue<Pair<CommandResultDto, SocketAddress>> queueToBeSent,
+            Queue<Pair<Request, SocketAddress>> queueToBeExecuted,
+            Queue<Pair<Response, SocketAddress>> queueToBeSent,
             DataManager dataManager,
             HistoryManager historyManager) {
         this.queueToBeExecuted = queueToBeExecuted;
@@ -41,17 +40,17 @@ public class CommandHandler {
             public void run() {
                 while (isWorkingState.getValue()) {
                     if (!queueToBeExecuted.isEmpty()) {
-                        Pair<CommandFromClientDto, SocketAddress> pairOfCommandAndClientAddress = queueToBeExecuted.poll();
+                        Pair<Request, SocketAddress> pairOfCommandAndClientAddress = queueToBeExecuted.poll();
                         Runnable executeFirstCommandTack = new Runnable() {
                             @Override
                             public void run() {
                                 ServerLogger.logInfoMessage("Starting to execute a new command");
                                 assert pairOfCommandAndClientAddress != null;
-                                CommandFromClientDto commandFromClientDto = pairOfCommandAndClientAddress.getFirst();
+                                Request request = pairOfCommandAndClientAddress.getFirst();
                                 SocketAddress clientAddress = pairOfCommandAndClientAddress.getSecond();
                                 try {
 
-                                    executeWithValidation(commandFromClientDto, clientAddress);
+                                    executeWithValidation(request, clientAddress);
                                 } catch (Exception e) {
                                     ServerLogger.logErrorMessage(e.getMessage());
                                 }
@@ -69,20 +68,20 @@ public class CommandHandler {
         threadPool.submit(startCheckingForAvailableCommandsToRun);
     }
 
-    private void executeWithValidation(CommandFromClientDto commandFromClientDto, SocketAddress clientAddress) {
-        if (dataManager.validateUser(commandFromClientDto.getLogin(), commandFromClientDto.getPassword()) || commandFromClientDto.getCommand() instanceof RegisterCommand) {
-            if (commandFromClientDto.getCommand() instanceof PrivateAccessedStudyGroupCommand) {
-                final int id = ((PrivateAccessedStudyGroupCommand) commandFromClientDto.getCommand()).getStudyGroupId();
-                if (dataManager.validateOwner(commandFromClientDto.getLogin(), id)) {
-                    queueToBeSent.add(new Pair<>(commandFromClientDto.getCommand().execute(dataManager, historyManager, commandFromClientDto.getLogin()), clientAddress));
+    private void executeWithValidation(Request request, SocketAddress clientAddress) {
+        if (dataManager.validateUser(request.getLogin(), request.getPassword()) || request.getCommand() instanceof RegisterCommand) {
+            if (request.getCommand() instanceof PrivateAccessedStudyGroupCommand) {
+                final int id = ((PrivateAccessedStudyGroupCommand) request.getCommand()).getStudyGroupId();
+                if (dataManager.validateOwner(request.getLogin(), id)) {
+                    queueToBeSent.add(new Pair<>(request.getCommand().execute(dataManager, historyManager, request.getLogin()), clientAddress));
                 } else {
-                    queueToBeSent.add(new Pair<>(new CommandResultDto("You are not the owner of the object so you can't do anything with it", true), clientAddress));
+                    queueToBeSent.add(new Pair<>(new Response("You are not the owner of the object so you can't do anything with it", true), clientAddress));
                 }
             } else {
-                queueToBeSent.add(new Pair<>(commandFromClientDto.getCommand().execute(dataManager, historyManager, commandFromClientDto.getLogin()), clientAddress));
+                queueToBeSent.add(new Pair<>(request.getCommand().execute(dataManager, historyManager, request.getLogin()), clientAddress));
             }
         } else {
-            queueToBeSent.add(new Pair<>(new CommandResultDto("Invalid login or password. Command was not executed", false), clientAddress));
+            queueToBeSent.add(new Pair<>(new Response("Invalid login or password. Command was not executed", false), clientAddress));
         }
     }
 

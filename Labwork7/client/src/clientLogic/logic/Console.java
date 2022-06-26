@@ -7,8 +7,8 @@ import clientLogic.util.InputManager;
 import clientLogic.util.OutputManager;
 import commands.*;
 import data.StudyGroup;
-import dto.CommandFromClientDto;
-import dto.CommandResultDto;
+import util.Request;
+import util.Response;
 import myException.DataCantBeSentException;
 
 import java.io.IOException;
@@ -68,7 +68,7 @@ public class Console {
                 } else {
                     try {
                         outputManager.println(
-                                connectionManager.sendCommand(new CommandFromClientDto(getCommandObjectByName(commandName, commandArg, commandArg2), username, password)).getOutput().toString()
+                                connectionManager.sendCommand(new Request(getCommandObjectByName(commandName, commandArg, commandArg2), username, password)).getOutput().toString()
                         );
                     } catch (DataCantBeSentException e) {
                         outputManager.println("Could not send a command");
@@ -94,7 +94,7 @@ public class Console {
                 return;
             }
 
-            CommandResultDto registerCommandResult = connectionManager.sendCommand(new CommandFromClientDto(new RegisterCommand(new String[]{loginToRegister, passwordToRegister})));
+            Response registerCommandResult = connectionManager.sendCommand(new Request(new RegisterCommand(new String[]{loginToRegister, passwordToRegister})));
             if (registerCommandResult.isWasExecutedCorrectly()) {
                 if (!((RegisterCommand.RegisterCommandResult) registerCommandResult).isWasRegistered()) {
                     outputManager.println("User hasn't been registered because the username was not unique.");

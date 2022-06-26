@@ -1,7 +1,7 @@
 package commands;
 
 import data.StudyGroup;
-import dto.CommandResultDto;
+import util.Response;
 import util.DataManager;
 import util.HistoryManager;
 
@@ -15,7 +15,7 @@ public class AddIfMinCommand extends Command {
     }
 
     @Override
-    public CommandResultDto execute(
+    public Response execute(
             DataManager dataManager,
             HistoryManager historyManager,
             String username
@@ -27,9 +27,9 @@ public class AddIfMinCommand extends Command {
         // stream api would be worse in this case (I would lose TreeSet optimisation)
         if (dataManager.checkIfMin(studyGroup)) {
             dataManager.addStudyGroup(studyGroup);
-            return new CommandResultDto("The element was added successfully", true);
+            return new Response("The element was added successfully", true);
         } else {
-            return new CommandResultDto("The element was not min, so it was not added", true);
+            return new Response("The element was not min, so it was not added", true);
         }
     }
 }

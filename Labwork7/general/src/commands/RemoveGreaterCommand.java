@@ -1,7 +1,7 @@
 package commands;
 
 import data.StudyGroup;
-import dto.CommandResultDto;
+import util.Response;
 import util.DataManager;
 import util.HistoryManager;
 
@@ -20,7 +20,7 @@ public class RemoveGreaterCommand extends Command {
     }
 
     @Override
-    public CommandResultDto execute(
+    public Response execute(
             DataManager dataManager,
             HistoryManager historyManager,
             String username
@@ -29,6 +29,6 @@ public class RemoveGreaterCommand extends Command {
 
         dataManager.removeGreaterIfOwned(arg, username);
 
-        return new CommandResultDto("Successfully removed greater elements", true);
+        return new Response("Successfully removed greater elements", true);
     }
 }

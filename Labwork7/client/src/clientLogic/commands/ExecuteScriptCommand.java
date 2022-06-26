@@ -2,7 +2,7 @@ package clientLogic.commands;
 
 
 import clientLogic.util.InputManager;
-import dto.CommandResultDto;
+import util.Response;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,11 +18,11 @@ public class ExecuteScriptCommand {
     public void execute(InputManager inputManager) {
         try {
             inputManager.connectToFile(new File(arg));
-            new CommandResultDto("Starting to execute script...", true);
+            new Response("Starting to execute script...", true);
         } catch (IOException e) {
-            new CommandResultDto("There was a problem opening the file. Check if it is available and you have written it in the command arg correctly.", false);
+            new Response("There was a problem opening the file. Check if it is available and you have written it in the command arg correctly.", false);
         } catch (UnsupportedOperationException e) {
-            new CommandResultDto(e.getMessage(), false);
+            new Response(e.getMessage(), false);
         }
     }
 }

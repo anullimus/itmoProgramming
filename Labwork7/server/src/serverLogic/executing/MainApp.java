@@ -1,8 +1,8 @@
 package serverLogic.executing;
 
 
-import dto.CommandFromClientDto;
-import dto.CommandResultDto;
+import util.Request;
+import util.Response;
 import serverLogic.connection.ClientDataReceiver;
 import serverLogic.connection.ClientDataSender;
 import serverLogic.util.HistoryManagerImpl;
@@ -19,11 +19,10 @@ import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
-import org.apache.logging.log4j.Logger;
 
 public class MainApp {
-    private final Queue<Pair<CommandFromClientDto, SocketAddress>> queueToBeExecuted;
-    private final Queue<Pair<CommandResultDto, SocketAddress>> queueToBeSent;
+    private final Queue<Pair<Request, SocketAddress>> queueToBeExecuted;
+    private final Queue<Pair<Response, SocketAddress>> queueToBeSent;
     private final int port;
     private final String ip;
     private final CommandHandler commandHandler;
@@ -74,7 +73,7 @@ public class MainApp {
 
             while (isWorking.getValue()) {
                 if (!queueToBeSent.isEmpty()) {
-                    Pair<CommandResultDto, SocketAddress> commandResultDtoAndSocketAddress = queueToBeSent.poll();
+                    Pair<Response, SocketAddress> commandResultDtoAndSocketAddress = queueToBeSent.poll();
                     forkJoinPool.invoke(new ClientDataSender(commandResultDtoAndSocketAddress.getFirst(), datagramChannel,
                             commandResultDtoAndSocketAddress.getSecond()));
                 }

@@ -2,7 +2,7 @@ package commands;
 
 
 import data.User;
-import dto.CommandResultDto;
+import util.Response;
 import util.DataManager;
 import util.HistoryManager;
 
@@ -20,7 +20,7 @@ public class RegisterCommand extends Command {
     }
 
     @Override
-    public CommandResultDto execute(
+    public Response execute(
             DataManager dataManager,
             HistoryManager historyManager,
             String username
@@ -37,7 +37,7 @@ public class RegisterCommand extends Command {
         return new RegisterCommandResult(true);
     }
 
-    public static class RegisterCommandResult extends CommandResultDto {
+    public static class RegisterCommandResult extends Response {
         private final boolean wasRegistered;
 
         public RegisterCommandResult(boolean wasRegistered) {

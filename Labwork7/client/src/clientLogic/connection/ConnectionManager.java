@@ -2,8 +2,8 @@ package clientLogic.connection;
 
 
 import clientLogic.util.OutputManager;
-import dto.CommandFromClientDto;
-import dto.CommandResultDto;
+import util.Request;
+import util.Response;
 import myException.DataCantBeSentException;
 import util.Pair;
 
@@ -36,26 +36,26 @@ public final class ConnectionManager {
         this.outputManager = outputManager;
     }
 
-    public CommandResultDto sendCommand(CommandFromClientDto commandFromClientDto) throws DataCantBeSentException, UnresolvedAddressException {
+    public Response sendCommand(Request request) throws DataCantBeSentException, UnresolvedAddressException {
         try (DatagramChannel datagramChannel = DatagramChannel.open()) {
             datagramChannel.configureBlocking(false); // нужно, чтобы в случае, если от сервера не придет никакого ответа не блокироваться навсегда
-            send(datagramChannel, commandFromClientDto);
+            send(datagramChannel, request);
             return receiveCommandResult(datagramChannel);
         } catch (BindException e) {
-            return new CommandResultDto("Could not send data on the Inet address, bind exception. Please re-start client with another arguments", false);
+            return new Response("Could not send data on the Inet address, bind exception. Please re-start client with another arguments", false);
         } catch (IOException e) {
-            return new CommandResultDto("Something went wrong executing the command, the message is: " + e.getMessage(), false);
+            return new Response("Something went wrong executing the command, the message is: " + e.getMessage(), false);
         }
 
     }
 
-    private void send(DatagramChannel datagramChannel, CommandFromClientDto commandFromClientDto) throws IOException, DataCantBeSentException, UnresolvedAddressException {
+    private void send(DatagramChannel datagramChannel, Request request) throws IOException, DataCantBeSentException, UnresolvedAddressException {
 
         datagramChannel.bind(new InetSocketAddress(clientIp, clientPort));
 
         SocketAddress serverSocketAddress = new InetSocketAddress(serverIp, serverPort);
 
-        Pair<byte[], byte[]> pair = serialize(commandFromClientDto);
+        Pair<byte[], byte[]> pair = serialize(request);
 
         byte[] sendDataBytes = pair.getFirst();
         byte[] sendDataAmountBytes = pair.getSecond();
@@ -85,7 +85,7 @@ public final class ConnectionManager {
 
     }
 
-    private CommandResultDto receiveCommandResult(DatagramChannel datagramChannel) throws IOException {
+    private Response receiveCommandResult(DatagramChannel datagramChannel) throws IOException {
         byte[] amountOfBytesHeader = new byte[countOfBytesForSize];
         ByteBuffer amountOfBytesHeaderWrapper = ByteBuffer.wrap(amountOfBytesHeader);
         try {
@@ -97,12 +97,12 @@ public final class ConnectionManager {
 
             receiveToBuffer(datagramChannel, dataBytesWrapper, 1);
 
-            return (CommandResultDto) deserialize(dataBytes);
+            return (Response) deserialize(dataBytes);
 
         } catch (TimeoutException e) {
-            return new CommandResultDto("Could not receive any answer from server", false);
+            return new Response("Could not receive any answer from server", false);
         } catch (ClassNotFoundException e) {
-            return new CommandResultDto("Received incorrect answer from server", false);
+            return new Response("Received incorrect answer from server", false);
         }
     }
 

@@ -2,7 +2,7 @@ package commands;
 
 
 import data.StudyGroup;
-import dto.CommandResultDto;
+import util.Response;
 import util.DataManager;
 import util.HistoryManager;
 
@@ -17,7 +17,7 @@ public class UpdateCommand extends Command implements PrivateAccessedStudyGroupC
     }
 
     @Override
-    public CommandResultDto execute(
+    public Response execute(
             DataManager dataManager,
             HistoryManager historyManager,
             String username
@@ -27,12 +27,12 @@ public class UpdateCommand extends Command implements PrivateAccessedStudyGroupC
         try {
             intArg = Integer.parseInt(idArg);
         } catch (NumberFormatException e) {
-            return new CommandResultDto("Your argument was incorrect. The command was not executed.", true);
+            return new Response("Your argument was incorrect. The command was not executed.", true);
         }
 
         dataManager.updateStudyGroupById(intArg, studyGroup);
 
-        return new CommandResultDto("Element was updated if it was in the table", true);
+        return new Response("Element was updated if it was in the table", true);
     }
 
 

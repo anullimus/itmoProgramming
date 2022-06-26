@@ -1,7 +1,7 @@
 package commands;
 
 import data.StudyGroup;
-import dto.CommandResultDto;
+import util.Response;
 import util.DataManager;
 import util.HistoryManager;
 
@@ -14,7 +14,7 @@ public class AddCommand extends Command {
     }
 
     @Override
-    public CommandResultDto execute(
+    public Response execute(
             DataManager dataManager,
             HistoryManager historyManager,
             String username
@@ -23,6 +23,6 @@ public class AddCommand extends Command {
         StudyGroup studyGroup = arg;
         studyGroup.setId(-1);
         dataManager.addStudyGroup(studyGroup);
-        return new CommandResultDto("The element was added successfully", true);
+        return new Response("The element was added successfully", true);
     }
 }

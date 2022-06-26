@@ -1,7 +1,7 @@
 package commands;
 
 
-import dto.CommandResultDto;
+import util.Response;
 import util.DataManager;
 import util.HistoryManager;
 
@@ -12,13 +12,13 @@ public class PrintAscendingCommand extends Command {
     }
 
     @Override
-    public CommandResultDto execute(
+    public Response execute(
             DataManager dataManager,
             HistoryManager historyManager,
             String username
     ) {
         historyManager.addNote(this.getName());
 
-        return new CommandResultDto(dataManager.ascendingDataToString(), true);
+        return new Response(dataManager.ascendingDataToString(), true);
     }
 }

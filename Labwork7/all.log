@@ -1,29 +1,39 @@
-2022-06-25 23:47:18.217 [main] INFO  serverLogic.executing.ServerLogger - Successfully made a connection with the database
-2022-06-25 23:47:18.789 [main] INFO  serverLogic.executing.ServerLogger - Made a data manager with initialised collections:
+2022-06-26 14:20:46.700 [main] INFO  serverLogic.executing.ServerLogger - Successfully made a connection with the database
+2022-06-26 14:20:46.879 [main] INFO  serverLogic.executing.ServerLogger - Made a data manager with initialised collections:
 [StudyGroup:name='Parovozik', coordinates=Coordinates{x=4132, y=132.0}, creationDate=2022-06-25, studentsCount=25, formOfEducation=EVENING_CLASSES, semesterEnum=FIFTH, groupAdmin=Person{name='Chagy', height=1432, nationality=SPAIN, location=Location{x=1243.0, y=14, name='1243'}}, id=1, authorName='Zenya'}]
 
-[User{id=2, password='ca244d081350810113cfafa278ffd581', name='Vlad'}, User{id=1, password='ca244d081350810113cfafa278ffd581', name='Zenya'}]
-2022-06-25 23:48:12.898 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a new client request 1/2
-2022-06-25 23:48:12.899 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a new client request 2/2
-2022-06-25 23:48:12.911 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a full request from a client, added it to an executing queue:
-Pair{first=dto.CommandFromClientDto@437bf1f3, second=/127.0.0.1:9999}
-2022-06-25 23:48:12.928 [pool-1-thread-4] INFO  serverLogic.executing.ServerLogger - Starting to execute a new command
-2022-06-25 23:48:12.938 [pool-1-thread-4] INFO  serverLogic.executing.ServerLogger - Successfully executed the command command
-2022-06-25 23:48:12.940 [ForkJoinPool-1-worker-9] INFO  serverLogic.executing.ServerLogger - Started to send message to the client
-2022-06-25 23:48:12.944 [ForkJoinPool-1-worker-9] INFO  serverLogic.executing.ServerLogger - sent the command result to the client
-2022-06-25 23:48:51.461 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a new client request 1/2
-2022-06-25 23:48:51.462 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a new client request 2/2
-2022-06-25 23:48:51.464 [pool-1-thread-4] INFO  serverLogic.executing.ServerLogger - Starting to execute a new command
-2022-06-25 23:48:51.464 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a full request from a client, added it to an executing queue:
-Pair{first=dto.CommandFromClientDto@b6f3fe5f, second=/127.0.0.1:9999}
-2022-06-25 23:48:51.470 [pool-1-thread-4] INFO  serverLogic.executing.ServerLogger - Successfully executed the command command
-2022-06-25 23:48:51.471 [ForkJoinPool-1-worker-2] INFO  serverLogic.executing.ServerLogger - Started to send message to the client
-2022-06-25 23:48:51.471 [ForkJoinPool-1-worker-2] INFO  serverLogic.executing.ServerLogger - sent the command result to the client
-2022-06-25 23:49:06.375 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a new client request 1/2
-2022-06-25 23:49:06.376 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a new client request 2/2
-2022-06-25 23:49:06.377 [pool-1-thread-4] INFO  serverLogic.executing.ServerLogger - Starting to execute a new command
-2022-06-25 23:49:06.377 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a full request from a client, added it to an executing queue:
-Pair{first=dto.CommandFromClientDto@852ff620, second=/127.0.0.1:9999}
-2022-06-25 23:49:06.378 [pool-1-thread-4] INFO  serverLogic.executing.ServerLogger - Successfully executed the command command
-2022-06-25 23:49:06.378 [ForkJoinPool-1-worker-2] INFO  serverLogic.executing.ServerLogger - Started to send message to the client
-2022-06-25 23:49:06.379 [ForkJoinPool-1-worker-2] INFO  serverLogic.executing.ServerLogger - sent the command result to the client
+[]
+2022-06-26 14:20:52.358 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a new client request 1/2
+2022-06-26 14:20:52.359 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a new client request 2/2
+2022-06-26 14:20:52.369 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a full request from a client, added it to an executing queue:
+Pair{first=util.Request@22a2dda4, second=/127.0.0.1:9999}
+2022-06-26 14:20:52.384 [pool-1-thread-4] INFO  serverLogic.executing.ServerLogger - Starting to execute a new command
+2022-06-26 14:20:52.434 [pool-1-thread-4] INFO  serverLogic.executing.ServerLogger - Successfully registered a new user: User{id=1, password='ca244d081350810113cfafa278ffd581', name='Zenya'}
+2022-06-26 14:20:52.435 [pool-1-thread-4] INFO  serverLogic.executing.ServerLogger - Successfully executed the command command
+2022-06-26 14:20:52.436 [ForkJoinPool-1-worker-9] INFO  serverLogic.executing.ServerLogger - Started to send message to the client
+2022-06-26 14:20:52.439 [ForkJoinPool-1-worker-9] INFO  serverLogic.executing.ServerLogger - sent the command result to the client
+2022-06-26 14:20:54.750 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a new client request 1/2
+2022-06-26 14:20:54.751 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a new client request 2/2
+2022-06-26 14:20:54.752 [pool-1-thread-4] INFO  serverLogic.executing.ServerLogger - Starting to execute a new command
+2022-06-26 14:20:54.752 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a full request from a client, added it to an executing queue:
+Pair{first=util.Request@1797ce9a, second=/127.0.0.1:9999}
+2022-06-26 14:20:54.753 [pool-1-thread-4] INFO  serverLogic.executing.ServerLogger - Successfully executed the command command
+2022-06-26 14:20:54.753 [ForkJoinPool-1-worker-9] INFO  serverLogic.executing.ServerLogger - Started to send message to the client
+2022-06-26 14:20:54.754 [ForkJoinPool-1-worker-9] INFO  serverLogic.executing.ServerLogger - sent the command result to the client
+2022-06-26 14:21:04.235 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a new client request 1/2
+2022-06-26 14:21:04.235 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a new client request 2/2
+2022-06-26 14:21:04.236 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a full request from a client, added it to an executing queue:
+Pair{first=util.Request@e1c9e2d5, second=/127.0.0.1:9999}
+2022-06-26 14:21:04.236 [pool-1-thread-4] INFO  serverLogic.executing.ServerLogger - Starting to execute a new command
+2022-06-26 14:21:04.279 [pool-1-thread-4] INFO  serverLogic.executing.ServerLogger - Successfully registered a new user: User{id=2, password='ca244d081350810113cfafa278ffd581', name='Vlad'}
+2022-06-26 14:21:04.279 [pool-1-thread-4] INFO  serverLogic.executing.ServerLogger - Successfully executed the command command
+2022-06-26 14:21:04.279 [ForkJoinPool-1-worker-9] INFO  serverLogic.executing.ServerLogger - Started to send message to the client
+2022-06-26 14:21:04.280 [ForkJoinPool-1-worker-9] INFO  serverLogic.executing.ServerLogger - sent the command result to the client
+2022-06-26 14:21:06.388 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a new client request 1/2
+2022-06-26 14:21:06.388 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a new client request 2/2
+2022-06-26 14:21:06.389 [pool-1-thread-2] INFO  serverLogic.executing.ServerLogger - Received a full request from a client, added it to an executing queue:
+Pair{first=util.Request@163a453b, second=/127.0.0.1:9999}
+2022-06-26 14:21:06.389 [pool-1-thread-4] INFO  serverLogic.executing.ServerLogger - Starting to execute a new command
+2022-06-26 14:21:06.389 [pool-1-thread-4] INFO  serverLogic.executing.ServerLogger - Successfully executed the command command
+2022-06-26 14:21:06.389 [ForkJoinPool-1-worker-9] INFO  serverLogic.executing.ServerLogger - Started to send message to the client
+2022-06-26 14:21:06.390 [ForkJoinPool-1-worker-9] INFO  serverLogic.executing.ServerLogger - sent the command result to the client

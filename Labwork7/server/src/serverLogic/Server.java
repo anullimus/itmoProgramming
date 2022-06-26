@@ -55,8 +55,6 @@ public final class Server {
             serverApp.start(serverIsWorkingState);
         } catch (SQLException sqlException) {
             ServerLogger.logErrorMessage("Couldn't connect to the server - check it's work. Please check if your login and password were correct.");
-            sqlException.printStackTrace();
-
         } catch (IOException e) {
             ServerLogger.logErrorMessage("An unexpected IO error occurred. The message is: " + e.getMessage());
         } catch (UnresolvedAddressException e) {

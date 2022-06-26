@@ -1,7 +1,7 @@
 package serverLogic.connection;
 
 
-import dto.CommandResultDto;
+import util.Response;
 import serverLogic.executing.ServerLogger;
 import util.Pair;
 
@@ -13,21 +13,20 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.concurrent.RecursiveTask;
 import java.util.concurrent.TimeoutException;
-import org.apache.logging.log4j.Logger;
 
 public class ClientDataSender extends RecursiveTask<Void> {
     private static final int TIMEOUT_TO_SEND = 10;
     private static final int HEADER_LENGTH = 4;
-    private final CommandResultDto commandResultDto;
+    private final Response response;
     private final transient DatagramChannel datagramChannel;
     private final SocketAddress socketAddress;
 
     public ClientDataSender(
-            CommandResultDto commandResultDto,
+            Response response,
             DatagramChannel datagramChannel,
             SocketAddress socketAddress
     ) {
-        this.commandResultDto = commandResultDto;
+        this.response = response;
         this.datagramChannel = datagramChannel;
         this.socketAddress = socketAddress;
     }
@@ -49,7 +48,7 @@ public class ClientDataSender extends RecursiveTask<Void> {
     private void send(
             SocketAddress clientSocketAddress
     ) throws TimeoutException, IOException {
-        Pair<byte[], byte[]> pair = serializeWithHeader(commandResultDto);
+        Pair<byte[], byte[]> pair = serializeWithHeader(response);
 
         byte[] sendDataBytes = pair.getFirst();
         byte[] sendDataAmountBytes = pair.getSecond();
@@ -77,8 +76,6 @@ public class ClientDataSender extends RecursiveTask<Void> {
         } catch (IOException e) {
             ServerLogger.logErrorMessage("could not send the data to client because the message is too big");
         }
-
-
     }
 
     /**

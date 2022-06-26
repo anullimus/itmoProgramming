@@ -2,7 +2,7 @@ package commands;
 
 
 import data.Semester;
-import dto.CommandResultDto;
+import util.Response;
 import util.DataManager;
 import util.HistoryManager;
 
@@ -15,7 +15,7 @@ public class FilterLessThanSemesterEnumCommand extends Command {
     }
 
     @Override
-    public CommandResultDto execute(
+    public Response execute(
             DataManager dataManager,
             HistoryManager historyManager,
             String username
@@ -29,9 +29,9 @@ public class FilterLessThanSemesterEnumCommand extends Command {
                 inpEnum = Semester.valueOf(arg);
             }
         } catch (IllegalArgumentException e) {
-            return new CommandResultDto("Your argument was incorrect", true);
+            return new Response("Your argument was incorrect", true);
         }
-        return new CommandResultDto(dataManager.filterLessThanSemesterEnumToString(inpEnum), true);
+        return new Response(dataManager.filterLessThanSemesterEnumToString(inpEnum), true);
 
     }
 }

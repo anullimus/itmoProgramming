@@ -1,13 +1,13 @@
-package dto;
+package util;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class CommandResultDto implements Serializable {
+public class Response implements Serializable {
     private final Serializable output;
     private final boolean wasExecutedCorrectly;
 
-    public CommandResultDto(Serializable output, boolean wasExecutedCorrectly) {
+    public Response(Serializable output, boolean wasExecutedCorrectly) {
         this.output = output;
         this.wasExecutedCorrectly = wasExecutedCorrectly;
     }
@@ -32,7 +32,7 @@ public class CommandResultDto implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        CommandResultDto that = (CommandResultDto) o;
+        Response that = (Response) o;
         return wasExecutedCorrectly == that.wasExecutedCorrectly && Objects.equals(output, that.output);
     }
 

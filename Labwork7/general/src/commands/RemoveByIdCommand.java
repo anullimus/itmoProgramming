@@ -1,6 +1,6 @@
 package commands;
 
-import dto.CommandResultDto;
+import util.Response;
 import util.DataManager;
 import util.HistoryManager;
 
@@ -13,7 +13,7 @@ public class RemoveByIdCommand extends Command implements PrivateAccessedStudyGr
     }
 
     @Override
-    public CommandResultDto execute(
+    public Response execute(
             DataManager dataManager,
             HistoryManager historyManager,
             String username
@@ -25,12 +25,12 @@ public class RemoveByIdCommand extends Command implements PrivateAccessedStudyGr
         try {
             intArg = Integer.parseInt(arg);
         } catch (NumberFormatException e) {
-            return new CommandResultDto("Your argument was incorrect. The command was not executed.", true);
+            return new Response("Your argument was incorrect. The command was not executed.", true);
         }
 
         dataManager.removeStudyGroupById(intArg);
 
-        return new CommandResultDto("The element was removed if it was in the data", true);
+        return new Response("The element was removed if it was in the data", true);
     }
 
     @Override
