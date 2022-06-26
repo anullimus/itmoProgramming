@@ -1,7 +1,7 @@
 package command;
 
 
-import data.Semester;
+import data.initial.Semester;
 import util.Response;
 import util.DataManager;
 import util.HistoryManager;

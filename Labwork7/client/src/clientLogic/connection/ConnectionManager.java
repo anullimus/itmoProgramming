@@ -2,10 +2,10 @@ package clientLogic.connection;
 
 
 import clientLogic.util.OutputManager;
+import javafx.util.Pair;
 import util.Request;
 import util.Response;
 import myException.DataCantBeSentException;
-import util.Pair;
 
 import java.io.*;
 import java.net.BindException;
@@ -42,7 +42,8 @@ public final class ConnectionManager {
             send(datagramChannel, request);
             return receiveCommandResult(datagramChannel);
         } catch (BindException e) {
-            return new Response("Could not send data on the Inet address, bind exception. Please re-start client with another arguments", false);
+            e.printStackTrace();
+            return new Response("Couldn't sent data on the Inet address, bind exception. Please re-start client with another arguments", false);
         } catch (IOException e) {
             return new Response("Something went wrong executing the command, the message is: " + e.getMessage(), false);
         }
@@ -57,8 +58,8 @@ public final class ConnectionManager {
 
         Pair<byte[], byte[]> pair = serialize(request);
 
-        byte[] sendDataBytes = pair.getFirst();
-        byte[] sendDataAmountBytes = pair.getSecond();
+        byte[] sendDataBytes = pair.getKey();
+        byte[] sendDataAmountBytes = pair.getValue();
 
         try {
             ByteBuffer sendDataAmountWrapper = ByteBuffer.wrap(sendDataAmountBytes);

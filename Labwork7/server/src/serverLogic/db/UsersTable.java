@@ -1,7 +1,7 @@
 package serverLogic.db;
 
 
-import data.User;
+import data.initial.User;
 
 import java.sql.*;
 import java.util.TreeSet;

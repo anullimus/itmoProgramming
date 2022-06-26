@@ -1,4 +1,4 @@
-package data;
+package data.initial;
 
 import java.util.Objects;
 

@@ -1,13 +1,13 @@
 package serverLogic.executing;
 
 
+import javafx.util.Pair;
 import util.Request;
 import util.Response;
 import serverLogic.connection.ClientDataReceiver;
 import serverLogic.connection.ClientDataSender;
 import serverLogic.util.HistoryManagerImpl;
 import util.DataManager;
-import util.Pair;
 import util.State;
 
 import java.io.IOException;
@@ -62,8 +62,8 @@ public class MainApp {
             while (isWorking.getValue()) {
                 if (!queueToBeSent.isEmpty()) {
                     Pair<Response, SocketAddress> commandResultDtoAndSocketAddress = queueToBeSent.poll();
-                    fixedThreadPool.submit(new ClientDataSender(commandResultDtoAndSocketAddress.getFirst(), datagramChannel,
-                            commandResultDtoAndSocketAddress.getSecond()));
+                    fixedThreadPool.submit(new ClientDataSender(commandResultDtoAndSocketAddress.getKey(), datagramChannel,
+                            commandResultDtoAndSocketAddress.getValue()));
                 }
             }
 

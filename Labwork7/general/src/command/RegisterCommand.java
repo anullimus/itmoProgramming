@@ -1,7 +1,7 @@
 package command;
 
 
-import data.User;
+import data.initial.User;
 import util.Response;
 import util.DataManager;
 import util.HistoryManager;

@@ -1,9 +1,9 @@
 package serverLogic.db;
 
 import command.InfoCommand;
-import data.Semester;
-import data.StudyGroup;
-import data.User;
+import data.initial.Semester;
+import data.initial.StudyGroup;
+import data.initial.User;
 import serverLogic.executing.ServerLogger;
 import util.DataManager;
 import util.SHA512Encryptor;

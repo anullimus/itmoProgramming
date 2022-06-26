@@ -3,11 +3,11 @@ package serverLogic.executing;
 
 import command.PrivateAccessedStudyGroupCommand;
 import command.RegisterCommand;
+import javafx.util.Pair;
 import util.Request;
 import util.Response;
 import util.DataManager;
 import util.HistoryManager;
-import util.Pair;
 import util.State;
 
 import java.net.SocketAddress;
@@ -40,8 +40,8 @@ public class CommandHandler {
                             public void run() {
                                 ServerLogger.logInfoMessage("Starting to execute a new command");
                                 assert pairOfCommandAndClientAddress != null;
-                                Request request = pairOfCommandAndClientAddress.getFirst();
-                                SocketAddress clientAddress = pairOfCommandAndClientAddress.getSecond();
+                                Request request = pairOfCommandAndClientAddress.getKey();
+                                SocketAddress clientAddress = pairOfCommandAndClientAddress.getValue();
                                 try {
                                     executeWithValidation(request, clientAddress);
                                 } catch (Exception e) {

@@ -6,7 +6,7 @@ import clientLogic.util.DataObjectsMaker;
 import clientLogic.util.InputManager;
 import clientLogic.util.OutputManager;
 import command.*;
-import data.StudyGroup;
+import data.initial.StudyGroup;
 import util.Request;
 import util.Response;
 import myException.DataCantBeSentException;
@@ -67,9 +67,8 @@ public class Console {
                     new ExecuteScriptCommand((String) commandArg).execute(inputManager);
                 } else {
                     try {
-                        outputManager.println(
-                                connectionManager.sendCommand(new Request(getCommandObjectByName(commandName, commandArg, commandArg2), username, password)).getOutput().toString()
-                        );
+                        outputManager.println(connectionManager.sendCommand(new Request(getCommandObjectByName
+                                (commandName, commandArg, commandArg2), username, password)).getOutput().toString());
                     } catch (DataCantBeSentException e) {
                         outputManager.println("Could not send a command");
                     }

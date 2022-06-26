@@ -1,9 +1,9 @@
 package serverLogic.connection;
 
 
+import javafx.util.Pair;
 import util.Request;
 import serverLogic.executing.ServerLogger;
-import util.Pair;
 import util.State;
 
 import java.io.ByteArrayInputStream;

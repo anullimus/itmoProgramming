@@ -1,6 +1,6 @@
 package command;
 
-import data.StudyGroup;
+import data.initial.StudyGroup;
 import util.Response;
 import util.DataManager;
 import util.HistoryManager;

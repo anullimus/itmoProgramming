@@ -2,9 +2,9 @@ package util;
 
 
 import command.InfoCommand;
-import data.Semester;
-import data.StudyGroup;
-import data.User;
+import data.initial.Semester;
+import data.initial.StudyGroup;
+import data.initial.User;
 
 /**
  * This interface does everything but giving the collection itself, so no SOLID principles should be

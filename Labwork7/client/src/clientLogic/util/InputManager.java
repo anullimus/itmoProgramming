@@ -1,11 +1,12 @@
 package clientLogic.util;
 
 import java.io.*;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Stack;
 
 public class InputManager {
-    private final Scanner scanner;
+        private final Scanner scanner;
     private final Stack<BufferedReader> currentFilesReaders = new Stack<>();
     private final Stack<File> currentFiles = new Stack<>();
 
@@ -15,18 +16,23 @@ public class InputManager {
 
 
     public String nextLine() throws IOException {
-        if (!currentFilesReaders.isEmpty()) {
-            String input = currentFilesReaders.peek().readLine();
-            if (input == null) {
-                currentFiles.pop();
-                currentFilesReaders.pop().close();
-                return nextLine();
+        try {
+            if (!currentFilesReaders.isEmpty()) {
+                String input = currentFilesReaders.peek().readLine();
+                if (input == null) {
+                    currentFiles.pop();
+                    currentFilesReaders.pop().close();
+                    return nextLine();
+                } else {
+                    return input;
+                }
             } else {
-                return input;
+                return scanner.nextLine();
             }
-        } else {
-            return scanner.nextLine();
-        }
+        }catch (NoSuchElementException noSuchElementException){
+            System.out.println("Goodbye.");
+            System.exit(0);
+        } return null;
     }
 
     public void connectToFile(File file) throws IOException, UnsupportedOperationException {

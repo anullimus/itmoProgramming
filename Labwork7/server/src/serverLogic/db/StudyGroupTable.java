@@ -1,6 +1,6 @@
 package serverLogic.db;
 
-import data.*;
+import data.initial.*;
 
 import java.sql.*;
 import java.util.TreeSet;
