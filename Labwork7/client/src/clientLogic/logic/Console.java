@@ -14,6 +14,7 @@ import myException.DataCantBeSentException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.channels.UnresolvedAddressException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 
@@ -26,6 +27,7 @@ public class Console {
     private final Collection<String> listOfCommands;
     private String username;
     private String password;
+    private final java.io.Console terminal = System.console();
 
 
     public Console(
@@ -83,10 +85,16 @@ public class Console {
         outputManager.println("Would you like to register first? (type \"yes\" to register or something else to continue with your own password+login).");
         final String answer = inputManager.nextLine();
         if ("yes".equals(answer)) {
-            outputManager.println("Enter your new login");
+            outputManager.print("Enter your new login: ");
             final String loginToRegister = inputManager.nextLine();
-            outputManager.println("Enter new password");
-            final String passwordToRegister = inputManager.nextLine();
+            String passwordToRegister;
+            try {
+                char[] passwd = terminal.readPassword("Enter password: ");
+                passwordToRegister = String.valueOf(passwd);
+            }catch (NullPointerException nullPointerException){
+                System.out.print("Enter password: ");
+                passwordToRegister = inputManager.nextLine();
+            }
 
             if (loginToRegister.length() > MAX_STRING_LENGTH || passwordToRegister.length() > MAX_STRING_LENGTH) {
                 outputManager.println("Your password or login was too long");
@@ -106,10 +114,15 @@ public class Console {
                 throw new DataCantBeSentException();
             }
         } else {
-            outputManager.println("Enter login");
+            outputManager.print("Enter login: ");
             username = inputManager.nextLine();
-            outputManager.println("Enter password");
-            password = inputManager.nextLine();
+            try {
+                char[] passwd = terminal.readPassword("Enter password: ");
+                password = String.valueOf(passwd);
+            }catch (NullPointerException nullPointerException){
+                System.out.print("Enter password: ");
+                password = inputManager.nextLine();
+            }
         }
     }
 

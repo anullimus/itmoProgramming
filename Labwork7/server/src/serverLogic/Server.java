@@ -1,5 +1,6 @@
 package serverLogic;
 
+import org.postgresql.util.PSQLException;
 import serverLogic.executing.Console;
 import serverLogic.executing.MainApp;
 import serverLogic.db.DataManagerImpl;
@@ -13,6 +14,7 @@ import java.nio.channels.UnresolvedAddressException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,10 +36,12 @@ public final class Server {
     }
 
     public static void main(String[] args) {
-        String URL = "jdbc:postgresql://localhost:9999/studs";
+        String URL = "jdbc:postgresql://pg:5432/studs";
         try {
             initMainInfoForConnection();
             Connection connection;
+            Class.forName("org.postgresql.Driver");
+
             connection = DriverManager.getConnection(URL, username, password);
 
             ServerLogger.logInfoMessage("Successfully made a connection with the database");
@@ -49,12 +53,21 @@ public final class Server {
             MainApp serverApp = new MainApp(serverPort, serverIp, CACHED_THREAD_POOL, FIXED_THREAD_POOL, dataManager);
             CACHED_THREAD_POOL.submit(console::start);
             serverApp.start(serverIsWorkingState);
-        } catch (SQLException sqlException) {
+        }catch (PSQLException psqlException){
+            ServerLogger.logErrorMessage("You may not exist. Please check it.");
+    //            psqlException.printStackTrace();
+            System.exit(-1);
+        }
+        catch (SQLException sqlException) {
             ServerLogger.logErrorMessage("Couldn't connect to the server - check it's work. Please check if your login and password were correct.");
+            sqlException.printStackTrace();
         } catch (IOException e) {
             ServerLogger.logErrorMessage("An unexpected IO error occurred. The message is: " + e.getMessage());
         } catch (UnresolvedAddressException e) {
             ServerLogger.logErrorMessage("Could not resolve the address you entered. Please re-start the server with another one");
+        }
+        catch (ClassNotFoundException e) {
+            e.printStackTrace();
         } finally {
             CACHED_THREAD_POOL.shutdown();
             FIXED_THREAD_POOL.shutdown();
@@ -67,8 +80,12 @@ public final class Server {
 
         System.out.print("Enter username: ");
         username = SCANNER.nextLine();
-        System.out.print("Enter password: ");
-        password = SCANNER.nextLine();
+        try {
+            char[] passwd = System.console().readPassword("Enter password: ");
+            password = String.valueOf(passwd);
+        }catch (NullPointerException nullPointerException){
+            password = SCANNER.nextLine();
+        }
     }
 }
 

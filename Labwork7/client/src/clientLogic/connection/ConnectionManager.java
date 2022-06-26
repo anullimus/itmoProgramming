@@ -2,7 +2,7 @@ package clientLogic.connection;
 
 
 import clientLogic.util.OutputManager;
-import javafx.util.Pair;
+import util.Pair;
 import util.Request;
 import util.Response;
 import myException.DataCantBeSentException;
@@ -58,8 +58,8 @@ public final class ConnectionManager {
 
         Pair<byte[], byte[]> pair = serialize(request);
 
-        byte[] sendDataBytes = pair.getKey();
-        byte[] sendDataAmountBytes = pair.getValue();
+        byte[] sendDataBytes = pair.getFirst();
+        byte[] sendDataAmountBytes = pair.getSecond();
 
         try {
             ByteBuffer sendDataAmountWrapper = ByteBuffer.wrap(sendDataAmountBytes);

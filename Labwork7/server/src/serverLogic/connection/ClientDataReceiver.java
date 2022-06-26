@@ -1,7 +1,7 @@
 package serverLogic.connection;
 
 
-import javafx.util.Pair;
+import util.Pair;
 import util.Request;
 import serverLogic.executing.ServerLogger;
 import util.State;

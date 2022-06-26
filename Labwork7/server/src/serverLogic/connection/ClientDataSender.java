@@ -1,7 +1,7 @@
 package serverLogic.connection;
 
 
-import javafx.util.Pair;
+import util.Pair;
 import util.Response;
 import serverLogic.executing.ServerLogger;
 
@@ -41,8 +41,8 @@ public class ClientDataSender implements Runnable{
     private void send(SocketAddress clientSocketAddress) throws TimeoutException, IOException {
         Pair<byte[], byte[]> pair = serializeWithHeader(response);
 
-        byte[] sendDataBytes = pair.getKey();
-        byte[] sendDataAmountBytes = pair.getValue();
+        byte[] sendDataBytes = pair.getFirst();
+        byte[] sendDataAmountBytes = pair.getSecond();
 
 
         try {
