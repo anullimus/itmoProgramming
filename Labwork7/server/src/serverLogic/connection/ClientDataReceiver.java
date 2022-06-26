@@ -14,7 +14,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.Objects;
 import java.util.Queue;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeoutException;
 
 public class ClientDataReceiver {
@@ -43,7 +42,7 @@ public class ClientDataReceiver {
         return is.readObject();
     }
 
-    public void startReceivingData(DatagramChannel datagramChannel, State<Boolean> isWorking, ExecutorService threadPool) throws IOException, InterruptedException {
+    public void startReceivingData(DatagramChannel datagramChannel, State<Boolean> isWorking) throws IOException, InterruptedException {
         while (isWorking.getValue()) {
             ByteBuffer amountOfBytesInMainDataBuffer = ByteBuffer.wrap(new byte[HEADER_LENGTH]);
             receiveActiveWaiting(datagramChannel, amountOfBytesInMainDataBuffer, isWorking);
@@ -55,10 +54,10 @@ public class ClientDataReceiver {
                 } catch (TimeoutException e) {
                     ServerLogger.logErrorMessage("Couldn't receive correct information from client");
                 }
-                Request receivedCommand;
+                Request receivedRequest;
                 try {
-                    receivedCommand = ((Request) deserialize(dataByteBuffer.array()));
-                    Pair<Request, SocketAddress> pairToBeExecuted = new Pair<>(receivedCommand, clientSocketAddress);
+                    receivedRequest = ((Request) deserialize(dataByteBuffer.array()));
+                    Pair<Request, SocketAddress> pairToBeExecuted = new Pair<>(receivedRequest, clientSocketAddress);
                     queueToBeExecuted.add(pairToBeExecuted);
 
                     ServerLogger.logInfoMessage("Received a full request from a client, added it to an executing queue:\n" + pairToBeExecuted);
@@ -76,7 +75,7 @@ public class ClientDataReceiver {
             int timeoutMills
     ) throws IOException, InterruptedException, TimeoutException {
         int amountToWait = timeoutMills;
-        SocketAddress receivedSocketAddress = null;
+        SocketAddress receivedSocketAddress;
         while (amountToWait > 0) {
             receivedSocketAddress = datagramChannel.receive(byteBuffer);
             if (Objects.nonNull(receivedSocketAddress)) {

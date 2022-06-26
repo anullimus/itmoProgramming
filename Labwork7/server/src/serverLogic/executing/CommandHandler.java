@@ -31,10 +31,7 @@ public class CommandHandler {
         this.historyManager = historyManager;
     }
 
-    public void startToHandleCommands(
-            State<Boolean> isWorkingState,
-            ExecutorService threadPool
-    ) {
+    public void startToHandleCommands(State<Boolean> isWorkingState, ExecutorService cashedThreadPool) {
         Runnable startCheckingForAvailableCommandsToRun = new Runnable() {
             @Override
             public void run() {
@@ -60,12 +57,12 @@ public class CommandHandler {
 
                             }
                         };
-                        threadPool.submit(executeFirstCommandTack);
+                        cashedThreadPool.submit(executeFirstCommandTack);
                     }
                 }
             }
         };
-        threadPool.submit(startCheckingForAvailableCommandsToRun);
+        cashedThreadPool.submit(startCheckingForAvailableCommandsToRun);
     }
 
     private void executeWithValidation(Request request, SocketAddress clientAddress) {

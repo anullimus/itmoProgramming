@@ -28,7 +28,6 @@ public class MainApp {
     private final ClientDataReceiver clientDataReceiver;
     private final ExecutorService cashedThreadPool;
     private final ExecutorService fixedThreadPool;
-    private final DataManager dataManager;
 
     public MainApp(
             int port,
@@ -45,7 +44,6 @@ public class MainApp {
         this.clientDataReceiver = new ClientDataReceiver(queueToBeExecuted);
         this.cashedThreadPool = cashedThreadPool;
         this.fixedThreadPool = fixedThreadPool;
-        this.dataManager = dataManager;
     }
 
     public void start(
@@ -57,7 +55,7 @@ public class MainApp {
 
             cashedThreadPool.submit(() -> {
                 try {
-                    clientDataReceiver.startReceivingData(datagramChannel, isWorking, cashedThreadPool);
+                    clientDataReceiver.startReceivingData(datagramChannel, isWorking);
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
